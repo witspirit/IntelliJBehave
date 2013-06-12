@@ -17,11 +17,9 @@ package com.github.kumaraman21.intellijbehave.utility;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
@@ -30,7 +28,7 @@ public class ScanUtils {
   public static boolean iterateInContextOf(PsiElement storyRef, ContentIterator iterator) {
       Module module = ModuleUtil.findModuleForPsiElement(storyRef);
 
-      boolean shouldContinue = ModuleRootManager.getInstance(module).getFileIndex().iterateContent(iterator);
+      boolean shouldContinue = (module != null) && ModuleRootManager.getInstance(module).getFileIndex().iterateContent(iterator);
 
       if (shouldContinue) {
         HashSet<Module> dependencies = new HashSet<Module>();

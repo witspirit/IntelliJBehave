@@ -73,6 +73,6 @@ public class StepPsiElement extends ASTWrapperPsiElement {
 
     public int getStepTextOffset() {
         String stepPrefix = getActualStepPrefix();
-        return stepPrefix != null ? stepPrefix.length() : 0;
+        return stepPrefix != null ? stepPrefix.length() + 1 : 0;
     }
 }

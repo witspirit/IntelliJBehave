@@ -16,6 +16,7 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteral;
 import org.jbehave.core.annotations.Alias;
@@ -23,7 +24,6 @@ import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.steps.PatternVariantBuilder;
 import org.jbehave.core.steps.StepType;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
@@ -32,43 +32,76 @@ import static org.apache.commons.lang.StringUtils.*;
 
 public class StepDefinitionAnnotationConverter {
 
-  public Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
+    public Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
 
-    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = newHashSet();
-    StepType stepType = null;
+        Set<StepDefinitionAnnotation> stepDefinitionAnnotations = newHashSet();
+        StepType stepType = null;
 
-    for (PsiAnnotation annotation : annotations) {
-      // Given, When, Then
-      if (ANNOTATION_TO_STEP_TYPE_MAPPING.keySet().contains(annotation.getQualifiedName())) {
-        stepType = ANNOTATION_TO_STEP_TYPE_MAPPING.get(annotation.getQualifiedName());
-        String annotationText = getTextFromValue(annotation.getParameterList().getAttributes()[0].getValue());
-        stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
-      } else if (annotation.getQualifiedName().equals(Alias.class.getName())) {
-        String annotationText = getTextFromValue(annotation.getParameterList().getAttributes()[0].getValue());
-        stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
-      } else if (annotation.getQualifiedName().equals(Aliases.class.getName())) {
-        PsiElement[] values = annotation.getParameterList().getAttributes()[0].getValue().getChildren();
-        for (PsiElement value : values) {
-          if (value instanceof PsiLiteral) {
-            String annotationText = getTextFromValue(value);
-            stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
-          }
+        for (PsiAnnotation annotation : annotations) {
+            String annotationQualifiedName = annotation.getQualifiedName();
+            // Given, When, Then
+            if (ANNOTATION_TO_STEP_TYPE_MAPPING.keySet().contains(annotationQualifiedName)) {
+                stepType = ANNOTATION_TO_STEP_TYPE_MAPPING.get(annotationQualifiedName);
+                String annotationText = getTextFromValue(annotation.getParameterList().getAttributes()[0].getValue());
+                stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
+            } else if (annotationQualifiedName != null) {
+                if (annotationQualifiedName.equals(Alias.class.getName())) {
+                    String annotationText = getTextFromValue(annotation.getParameterList().getAttributes()[0].getValue());
+                    stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
+                } else if (annotationQualifiedName.equals(Aliases.class.getName())) {
+                    PsiAnnotationMemberValue attributeValue = annotation.getParameterList().getAttributes()[0].getValue();
+                    if (attributeValue != null) {
+                        PsiElement[] values = attributeValue.getChildren();
+                        for (PsiElement value : values) {
+                            if (value instanceof PsiLiteral) {
+                                String annotationText = getTextFromValue(value);
+                                stepDefinitionAnnotations.addAll(getPatternVariants(stepType, annotationText, annotation));
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
+        return stepDefinitionAnnotations;
     }
-    return stepDefinitionAnnotations;
-  }
 
-  private Set<StepDefinitionAnnotation> getPatternVariants(StepType stepType, String annotationText, PsiAnnotation annotation) {
-    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = newHashSet();
-    PatternVariantBuilder b = new PatternVariantBuilder(annotationText);
-    for (String variant : b.allVariants()) {
-      stepDefinitionAnnotations.add(new StepDefinitionAnnotation(stepType, variant, annotation));
+    /**
+     * @return true if and only if there are no unmatched curly brackets in the string
+     */
+    private boolean hasUnmatchedBrackets(String annotationText) {
+        if (isNotEmpty(annotationText)) {
+
+            int depth = 0;
+
+            for (int i = 0; i < annotationText.length(); i++) {
+                char currChar = annotationText.charAt(i);
+
+                if (currChar == '{') depth++;
+                else if (currChar == '}') depth--;
+
+                if (depth < 0) return true;
+            }
+            if (depth != 0) return true;
+        }
+        return false;
     }
-    return stepDefinitionAnnotations;
-  }
 
-  private static String getTextFromValue(PsiElement value) {
-    return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
-  }
+    private Set<StepDefinitionAnnotation> getPatternVariants(StepType stepType, String annotationText, PsiAnnotation annotation) {
+        Set<StepDefinitionAnnotation> stepDefinitionAnnotations = newHashSet();
+
+        // Sanity check for mis
+        if (hasUnmatchedBrackets(annotationText)) {
+            stepDefinitionAnnotations.add(new StepDefinitionAnnotation(stepType, annotationText, annotation));
+        } else {
+            PatternVariantBuilder b = new PatternVariantBuilder(annotationText);
+            for (String variant : b.allVariants()) {
+                stepDefinitionAnnotations.add(new StepDefinitionAnnotation(stepType, variant, annotation));
+            }
+        }
+        return stepDefinitionAnnotations;
+    }
+
+    private static String getTextFromValue(PsiElement value) {
+        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
+    }
 }
