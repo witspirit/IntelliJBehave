@@ -424,6 +424,9 @@ public class StoryLocalizedLexer extends LexerBase {
     };
 
     private IElementType tokenType(JBKeyword value) {
+        if (value == null) {
+			return StoryTokenType.BAD_CHARACTER;
+		}
         switch (value) {
             case Given:
                 state = State.IN_STEP;
