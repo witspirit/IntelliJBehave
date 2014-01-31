@@ -14,15 +14,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jbehave-core-3.6.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
@@ -32,20 +23,11 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="Fest Test Library">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/testLib/fest-assert-core-2.0M5.jar!/" />
-          <root url="jar://$MODULE_DIR$/testLib/fest-util-1.2.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/testLib/junit-4.10.jar!/" />
-          <root url="jar://$MODULE_DIR$/testLib/mockito-all-1.9.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/testLib/mockito-all-1.9.0.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: org.jbehave:jbehave-core:3.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.easytesting:fest-assert-core:2.0M10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.easytesting:fest-util:1.2.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
   </component>
 </module>
 

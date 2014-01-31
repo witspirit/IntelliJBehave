@@ -105,10 +105,10 @@ public class RunStoryAction extends AnAction {
 
     Executor executor = DefaultRunExecutor.getRunExecutorInstance();
     ProgramRunner runner = RunnerRegistry.getInstance().getRunner(executor.getId(), conf);
-    ExecutionEnvironment environment = new ExecutionEnvironment(runner, runnerAndConfigurationSettings, project);
+    ExecutionEnvironment environment = new ExecutionEnvironment(executor, runner, runnerAndConfigurationSettings, project);
 
     try {
-      runner.execute(executor, environment);
+      runner.execute(environment);
     }
     catch (ExecutionException e1) {
       JavaExecutionUtil.showExecutionErrorMessage(e1, "Error", project);
