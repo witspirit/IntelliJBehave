@@ -2,9 +2,7 @@ package com.github.kumaraman21.intellijbehave.utility;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +18,6 @@ public class ParametrizedString {
     private List<Token> tokens = new ArrayList<Token>();
     private final String content;
     private final String parameterPrefix;
-    private int parameterCount = -1; // lazily calculated
 
 
     public ParametrizedString(String content) {
@@ -50,12 +47,8 @@ public class ParametrizedString {
         return other.content.equals(content);
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    private void parse(Pattern parameterPattern) {
-        Matcher matcher = parameterPattern.matcher(content);
+    private void parse(final Pattern parameterPattern) {
+        final Matcher matcher = parameterPattern.matcher(content);
 
         int prev = 0;
         while (matcher.find()) {
@@ -99,7 +92,17 @@ public class ParametrizedString {
         }
 
         public boolean regionMatches(int toffset, String other, int ooffset, int len) {
-            return content.regionMatches(getOffset() + toffset, other, ooffset, len);
+            try {
+                return normalize(content, getOffset() + toffset, len)
+                        .equalsIgnoreCase(normalize(other, ooffset, len));
+            } catch (final java.lang.StringIndexOutOfBoundsException e) {
+                return false;
+            }
+        }
+
+        private String normalize(final String input, final int offset, final int len) {
+            return input.substring(offset, offset + len)
+                    .replaceAll("\\s+", "");
         }
 
         public int getOffset() {
@@ -119,47 +122,8 @@ public class ParametrizedString {
         return tokens.get(index);
     }
 
-    public List<Token> getTokens() {
-        return new ArrayList<Token>(tokens);
-    }
-
-    public List<String> getParameters() {
-        List<String> parameters = new ArrayList<String>();
-        for (Token token : tokens) {
-            if (token.isIdentifier()) {
-                parameters.add(token.value());
-            }
-        }
-        return parameters;
-    }
-
     public int getTokenCount() {
         return tokens.size();
-    }
-
-    public int getParameterCount() {
-        if (parameterCount == -1) {
-            parameterCount = parameterCount();
-        }
-        return parameterCount;
-    }
-
-    private int parameterCount() {
-        int count = 0;
-        for(Token token : tokens) {
-            if(token.isIdentifier())
-                count++;
-        }
-        return count;
-    }
-
-    public float weightOf(String input) {
-        return ((float) acceptsBeginning(input)) / ((float) getTokenCount());
-    }
-
-    public int acceptsBeginning(String input) {
-        WeightChain chain = calculateWeightChain(input);
-        return chain.getWeight();
     }
 
     public WeightChain calculateWeightChain(String input) {
@@ -204,25 +168,6 @@ public class ParametrizedString {
         return stringTokens;
     }
 
-    public Map<String, String> extractParameterValues(String input) {
-        Map<String, String> namedParameters = new HashMap<String,String>();
-
-        WeightChain chain = calculateWeightChain(input);
-        List<String> inputTokens = chain.tokenize();
-        while (chain != null) {
-            if (!chain.isZero()) {
-                Token token = tokens.get(chain.getTokenIndex());
-                if (token.isIdentifier()) {
-                    String value = inputTokens.get(chain.getTokenIndex());
-                    namedParameters.put(token.value(), value);
-                }
-            }
-
-            chain = chain.getNext();
-        }
-        return namedParameters;
-    }
-
     private WeightChain acceptsBeginning(int inputIndex, String input, int tokenIndexStart) {
         WeightChain pair = new WeightChain();
         pair.inputIndex = inputIndex;
@@ -263,18 +208,15 @@ public class ParametrizedString {
                         next.inputIndex = inputIndex;
                         current.next = next;
                         current = next;
-                    }
-                    else {
+                    } else {
                         // no match
                         return WeightChain.zero();
                     }
-                }
-                else {
+                } else {
                     // not enough data, returns what has been collected
                     return pair;
                 }
-            }
-            else {
+            } else {
                 current.tokenIndex = tokenIndex;
                 current.weight++;
 
@@ -320,16 +262,8 @@ public class ParametrizedString {
             return weight == 0 && tokenIndex == -1;
         }
 
-        public int getInputIndex() {
-            return inputIndex;
-        }
-
         public WeightChain getNext() {
             return next;
-        }
-
-        public int getWeight() {
-            return weight;
         }
 
         public int getTokenIndex() {
@@ -380,10 +314,6 @@ public class ParametrizedString {
 
             return parts;
         }
-    }
-
-    public boolean matches(String input) {
-        return acceptsBeginning(input) == (2 * getTokenCount() - getParameterCount());
     }
 
     public String complete(String input) {

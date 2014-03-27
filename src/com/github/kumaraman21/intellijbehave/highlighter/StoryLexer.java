@@ -20,11 +20,11 @@ import com.intellij.lexer.FlexAdapter;
 import java.io.Reader;
 
 public class StoryLexer extends FlexAdapter {
-  public StoryLexer() {
-    super(new _StoryLexer((Reader)null));
-  }
+    public StoryLexer() {
+        super(new _StoryLexer((Reader) null));
+    }
 
-  public LexicalState lexerState() {
-      return LexicalState.fromLexer(getFlex().yystate());
-  }
+    public LexicalState lexerState() {
+        return LexicalState.fromLexer(getFlex().yystate());
+    }
 }

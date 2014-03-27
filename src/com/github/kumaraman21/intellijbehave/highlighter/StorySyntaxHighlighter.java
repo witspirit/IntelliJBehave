@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import static com.intellij.openapi.editor.colors.TextAttributesKey.*;
+
 public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
 
     private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new THashMap<IElementType, TextAttributesKey>();
@@ -79,24 +81,24 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(TABLE_DELIM_ID, DefaultLanguageHighlighterColors.BRACES);
         createKey(TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(META_TYPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
-        createKey(META_KEY_ID,  DefaultLanguageHighlighterColors.STRING);
+        createKey(META_KEY_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(META_TEXT_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(LINE_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
         createKey(BAD_CHARACTER_ID, DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
     }
 
-    public static TextAttributesKey STORY_DESCRIPTION = TextAttributesKey.createTextAttributesKey(STORY_DESCRIPTION_ID);
-    public static TextAttributesKey SCENARIO_TYPE = TextAttributesKey.createTextAttributesKey(SCENARIO_TYPE_ID);
-    public static TextAttributesKey SCENARIO_TEXT = TextAttributesKey.createTextAttributesKey(SCENARIO_TEXT_ID);
-    public static TextAttributesKey STEP_TYPE = TextAttributesKey.createTextAttributesKey(STEP_TYPE_ID);
-    public static TextAttributesKey STEP_TEXT = TextAttributesKey.createTextAttributesKey(STEP_TEXT_ID);
-    public static TextAttributesKey TABLE_DELIM = TextAttributesKey.createTextAttributesKey(TABLE_DELIM_ID);
-    public static TextAttributesKey TABLE_CELL = TextAttributesKey.createTextAttributesKey(TABLE_CELL_ID);
-    public static TextAttributesKey META_TYPE = TextAttributesKey.createTextAttributesKey(META_TYPE_ID);
-    public static TextAttributesKey META_KEY = TextAttributesKey.createTextAttributesKey(META_KEY_ID);
-    public static TextAttributesKey META_TEXT = TextAttributesKey.createTextAttributesKey(META_TEXT_ID);
-    public static TextAttributesKey LINE_COMMENT = TextAttributesKey.createTextAttributesKey(LINE_COMMENT_ID);
-    public static TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(BAD_CHARACTER_ID);
+    public static TextAttributesKey STORY_DESCRIPTION = createTextAttributesKey(STORY_DESCRIPTION_ID);
+    public static TextAttributesKey SCENARIO_TYPE = createTextAttributesKey(SCENARIO_TYPE_ID);
+    public static TextAttributesKey SCENARIO_TEXT = createTextAttributesKey(SCENARIO_TEXT_ID);
+    public static TextAttributesKey STEP_TYPE = createTextAttributesKey(STEP_TYPE_ID);
+    public static TextAttributesKey STEP_TEXT = createTextAttributesKey(STEP_TEXT_ID);
+    public static TextAttributesKey TABLE_DELIM = createTextAttributesKey(TABLE_DELIM_ID);
+    public static TextAttributesKey TABLE_CELL = createTextAttributesKey(TABLE_CELL_ID);
+    public static TextAttributesKey META_TYPE = createTextAttributesKey(META_TYPE_ID);
+    public static TextAttributesKey META_KEY = createTextAttributesKey(META_KEY_ID);
+    public static TextAttributesKey META_TEXT = createTextAttributesKey(META_TEXT_ID);
+    public static TextAttributesKey LINE_COMMENT = createTextAttributesKey(LINE_COMMENT_ID);
+    public static TextAttributesKey BAD_CHARACTER = createTextAttributesKey(BAD_CHARACTER_ID);
 
     static {
         ATTRIBUTES.put(StoryTokenType.STORY_DESCRIPTION, STORY_DESCRIPTION);
@@ -104,7 +106,9 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(StoryTokenType.NARRATIVE_TEXT, STORY_DESCRIPTION);
         ATTRIBUTES.put(StoryTokenType.SCENARIO_TYPE, SCENARIO_TYPE);
         ATTRIBUTES.put(StoryTokenType.SCENARIO_TEXT, SCENARIO_TEXT);
-        ATTRIBUTES.put(StoryTokenType.STEP_TYPE, STEP_TYPE);
+        ATTRIBUTES.put(StoryTokenType.GIVEN_TYPE, STEP_TYPE);
+        ATTRIBUTES.put(StoryTokenType.WHEN_TYPE, STEP_TYPE);
+        ATTRIBUTES.put(StoryTokenType.THEN_TYPE, STEP_TYPE);
         ATTRIBUTES.put(StoryTokenType.STEP_TYPE_GIVEN, STEP_TYPE);
         ATTRIBUTES.put(StoryTokenType.STEP_TYPE_WHEN, STEP_TYPE);
         ATTRIBUTES.put(StoryTokenType.STEP_TYPE_THEN, STEP_TYPE);
@@ -121,6 +125,6 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     }
 
     private static TextAttributesKey createKey(String externalName, TextAttributesKey textAttributesKey) {
-        return TextAttributesKey.createTextAttributesKey(externalName, textAttributesKey.getDefaultAttributes());
+        return createTextAttributesKey(externalName, textAttributesKey);
     }
 }

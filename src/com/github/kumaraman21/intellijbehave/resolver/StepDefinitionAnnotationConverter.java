@@ -78,12 +78,19 @@ public class StepDefinitionAnnotationConverter {
             for (int i = 0; i < annotationText.length(); i++) {
                 char currChar = annotationText.charAt(i);
 
-                if (currChar == '{') depth++;
-                else if (currChar == '}') depth--;
+                if (currChar == '{') {
+                    depth++;
+                } else if (currChar == '}') {
+                    depth--;
+                }
 
-                if (depth < 0) return true;
+                if (depth < 0) {
+                    return true;
+                }
             }
-            if (depth != 0) return true;
+            if (depth != 0) {
+                return true;
+            }
         }
         return false;
     }

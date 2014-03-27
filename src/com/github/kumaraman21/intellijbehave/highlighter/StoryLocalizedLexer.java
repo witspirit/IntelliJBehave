@@ -6,7 +6,6 @@ import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.intellij.lexer.LexerBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
-
 import org.jbehave.core.i18n.LocalizedKeywords;
 
 /**
@@ -130,7 +129,7 @@ public class StoryLocalizedLexer extends LexerBase {
             consume(INPUT_CHAR);
             if (state == State.YYINITIAL) {
                 String locale = LocalizedStorySupport.checkForLanguageDefinition(tokenText());
-                if(locale!=null) {
+                if (locale != null) {
                     changeLocale(locale);
                     tokenType = StoryTokenType.COMMENT_WITH_LOCALE;
                     return;
@@ -148,12 +147,10 @@ public class StoryLocalizedLexer extends LexerBase {
                     tokenType = tokenType(entry.value);
                     position += entry.length;
                     return;
-                }
-                else if (consume(CRLF)) {
+                } else if (consume(CRLF)) {
                     tokenType = StoryTokenType.WHITE_SPACE;
                     return;
-                }
-                else {
+                } else {
                     consume(INPUT_CHAR);
                     tokenType = StoryTokenType.STORY_DESCRIPTION;
                     return;
@@ -196,8 +193,7 @@ public class StoryLocalizedLexer extends LexerBase {
                         }
                     }
                     return;
-                }
-                else {
+                } else {
                     consume(INPUT_CHAR);
                     tokenType = StoryTokenType.SCENARIO_TEXT;
                     return;
@@ -217,12 +213,10 @@ public class StoryLocalizedLexer extends LexerBase {
                             position += entry.length;
                             return;
                     }
-                }
-                else if (consume(SPACES)) {
+                } else if (consume(SPACES)) {
                     tokenType = StoryTokenType.WHITE_SPACE;
                     return;
-                }
-                else if (consume(CRLF)) {
+                } else if (consume(CRLF)) {
                     tokenType = StoryTokenType.WHITE_SPACE;
 
                     //
@@ -250,8 +244,7 @@ public class StoryLocalizedLexer extends LexerBase {
                         }
                     }
                     return;
-                }
-                else {
+                } else {
                     consumeUntil(META_PROPERTY_CHARS, keywords.metaProperty());
                     tokenType = StoryTokenType.META_TEXT;
                     return;
@@ -285,8 +278,7 @@ public class StoryLocalizedLexer extends LexerBase {
                         }
                     }
                     return;
-                }
-                else {
+                } else {
                     consume(INPUT_CHAR);
                     tokenType = StoryTokenType.STEP_TEXT;
                     return;
@@ -317,16 +309,13 @@ public class StoryLocalizedLexer extends LexerBase {
                         }
                     }
                     return;
-                }
-                else if (consume(keywords.examplesTableHeaderSeparator())) {
+                } else if (consume(keywords.examplesTableHeaderSeparator())) {
                     tokenType = StoryTokenType.TABLE_DELIM;
                     return;
-                }
-                else if (consume(keywords.examplesTableValueSeparator())) {
+                } else if (consume(keywords.examplesTableValueSeparator())) {
                     tokenType = StoryTokenType.TABLE_DELIM;
                     return;
-                }
-                else if (consumeUntil(INPUT_CHAR, keywords.examplesTableHeaderSeparator(), keywords.examplesTableValueSeparator())) {
+                } else if (consumeUntil(INPUT_CHAR, keywords.examplesTableHeaderSeparator(), keywords.examplesTableValueSeparator())) {
                     tokenType = StoryTokenType.TABLE_CELL;
                     return;
                 }
@@ -372,8 +361,7 @@ public class StoryLocalizedLexer extends LexerBase {
     private boolean consumeUntil(CharFilter filter, String stopWord1, String stopWord2) {
         int previousPosition = position;
         while (position < endOffset && !(matchesAhead(stopWord1) || matchesAhead(stopWord2))
-                && filter.accept(buffer.charAt(position)))
-        {
+                && filter.accept(buffer.charAt(position))) {
             position++;
         }
         return position != previousPosition;
@@ -425,8 +413,8 @@ public class StoryLocalizedLexer extends LexerBase {
 
     private IElementType tokenType(JBKeyword value) {
         if (value == null) {
-			return StoryTokenType.BAD_CHARACTER;
-		}
+            return StoryTokenType.BAD_CHARACTER;
+        }
         switch (value) {
             case Given:
                 state = State.IN_STEP;

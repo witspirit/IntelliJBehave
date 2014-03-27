@@ -20,8 +20,8 @@ import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
 
 public class NodeToStepPsiElement implements Function<ASTNode, StepPsiElement> {
-  @Override
-  public StepPsiElement apply(ASTNode astNode) {
-    return (StepPsiElement) astNode.getPsi();
-  }
+	@Override
+	public StepPsiElement apply(ASTNode astNode) {
+		return (StepPsiElement) astNode.getPsi();
+	}
 }

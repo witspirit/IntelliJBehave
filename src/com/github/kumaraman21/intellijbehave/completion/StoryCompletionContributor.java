@@ -37,7 +37,6 @@ public class StoryCompletionContributor extends CompletionContributor {
 
             addAllKeywords(result.getPrefixMatcher(), consumer, keywords);
             addAllSteps(parameters,
-                    parameters.getInvocationCount() <= 1,
                     result.getPrefixMatcher(),
                     consumer,
                     keywords);
@@ -67,8 +66,7 @@ public class StoryCompletionContributor extends CompletionContributor {
 
     private static void addAllKeywords(PrefixMatcher prefixMatcher,
                                        Consumer<LookupElement> consumer,
-                                       LocalizedKeywords keywords)
-    {
+                                       LocalizedKeywords keywords) {
         addIfMatches(consumer, prefixMatcher, keywords.narrative());
         addIfMatches(consumer, prefixMatcher, keywords.asA());
         addIfMatches(consumer, prefixMatcher, keywords.inOrderTo());
@@ -92,10 +90,9 @@ public class StoryCompletionContributor extends CompletionContributor {
     }
 
     private static void addAllSteps(CompletionParameters parameters,
-                                    boolean filterByScope,
                                     PrefixMatcher prefixMatcher,
-                                    Consumer<LookupElement> consumer, LocalizedKeywords keywords)
-    {
+                                    Consumer<LookupElement> consumer,
+                                    LocalizedKeywords keywords) {
         StepPsiElement stepPsiElement = getStepPsiElement(parameters);
         if (stepPsiElement == null) {
             return;
@@ -120,9 +117,9 @@ public class StoryCompletionContributor extends CompletionContributor {
 
     private static boolean isStepTypeComplete(LocalizedKeywords keywords, String input) {
         return input.startsWith(keywords.given())
-               || input.startsWith(keywords.when())
-               || input.startsWith(keywords.then())
-               || input.startsWith(keywords.and());
+                || input.startsWith(keywords.when())
+                || input.startsWith(keywords.then())
+                || input.startsWith(keywords.and());
     }
 
     private static StepPsiElement getStepPsiElement(CompletionParameters parameters) {
@@ -130,14 +127,11 @@ public class StoryCompletionContributor extends CompletionContributor {
         PsiElement positionParent = position.getParent();
         if (positionParent instanceof StepPsiElement) {
             return (StepPsiElement) positionParent;
-        }
-        else if (position instanceof StepPsiReference) {
+        } else if (position instanceof StepPsiReference) {
             return (StepPsiElement) ((StepPsiReference) position).getElement();
-        }
-        else if (position instanceof StepPsiElement) {
+        } else if (position instanceof StepPsiElement) {
             return (StepPsiElement) position;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -153,9 +147,9 @@ public class StoryCompletionContributor extends CompletionContributor {
         private StepSuggester(PrefixMatcher prefixMatcher,
                               StepType stepType,
                               String actualStepPrefix,
-                              String textBeforeCaret, Consumer<LookupElement> consumer,
-                              PsiElement storyRef)
-        {
+                              String textBeforeCaret,
+                              Consumer<LookupElement> consumer,
+                              StepPsiElement storyRef) {
             super(null, storyRef);
             this.prefixMatcher = prefixMatcher;
             this.stepType = stepType;
@@ -178,8 +172,7 @@ public class StoryCompletionContributor extends CompletionContributor {
             if (StringUtil.isNotEmpty(complete)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, textBeforeCaret + complete));
-            }
-            else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
+            } else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, adjustedAnnotationText));
             }

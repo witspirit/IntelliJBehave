@@ -19,17 +19,12 @@ import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
 import com.github.kumaraman21.intellijbehave.parser.StepPsiElement;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionAnnotation;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
-import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,8 +77,7 @@ public class UndefinedStepsInspection extends BaseJavaLocalInspectionTool {
                 StepDefinitionAnnotation annotationDef = stepPsiElement.getReference().stepDefinitionAnnotation();
                 if (annotationDef == null) {
                     holder.registerProblem(stepPsiElement, "Step <code>#ref</code> is not defined");
-                }
-                else {
+                } else {
                     highlightParameters(stepPsiElement, annotationDef, holder);
                 }
             }
@@ -93,8 +87,7 @@ public class UndefinedStepsInspection extends BaseJavaLocalInspectionTool {
 
     private void highlightParameters(StepPsiElement stepPsiElement,
                                      StepDefinitionAnnotation annotation,
-                                     ProblemsHolder holder)
-    {
+                                     ProblemsHolder holder) {
         String stepText = stepPsiElement.getStepText();
         String annotationText = annotation.getAnnotationText();
         ParametrizedString pString = new ParametrizedString(annotationText);
@@ -115,8 +108,7 @@ public class UndefinedStepsInspection extends BaseJavaLocalInspectionTool {
     private static void registerHiglighting(TextAttributesKey attributesKey,
                                             StepPsiElement step,
                                             TextRange range,
-                                            ProblemsHolder holder)
-    {
+                                            ProblemsHolder holder) {
         final ProblemDescriptor descriptor = new ProblemDescriptorImpl(
                 step, step, "", LocalQuickFix.EMPTY_ARRAY,
                 ProblemHighlightType.INFORMATION, false, range, false, null,

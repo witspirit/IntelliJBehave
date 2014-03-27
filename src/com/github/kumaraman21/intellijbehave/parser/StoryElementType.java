@@ -15,15 +15,13 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
-
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-
-import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 
 public class StoryElementType extends IElementType {
     public static final StoryElementType UNKNOWN_FRAGMENT = new StoryElementType("UNKNOWN_FRAGMENT");

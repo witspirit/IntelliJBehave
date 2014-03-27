@@ -20,8 +20,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
 public class NodeToPsiElement implements Function<ASTNode, PsiElement> {
-  @Override
-  public PsiElement apply(ASTNode astNode) {
-    return astNode.getPsi();
-  }
+	@Override
+	public PsiElement apply(ASTNode astNode) {
+		return astNode.getPsi();
+	}
 }

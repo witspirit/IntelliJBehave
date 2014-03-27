@@ -77,9 +77,10 @@ public class RunStoryAction extends AnAction {
                 .getModuleForFile(storyRunnerClass.getContainingFile().getVirtualFile());
         if (module == null) {
             showMessageDialog("Could not find the module in which main class to run stories was defined.'" +
-                    "/n Resetting the main class in the JBehave settings might fix this issue.",
+                            "/n Resetting the main class in the JBehave settings might fix this issue.",
                     "Module not Found For Main Class",
-                    getErrorIcon());
+                    getErrorIcon()
+            );
             return;
         }
 

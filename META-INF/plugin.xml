@@ -14,9 +14,9 @@
   ~ limitations under the License.
   -->
 <idea-plugin version="2" url="https://github.com/witspirit/IntelliJBehave">
-  <name>JBehave Support</name>
-  <id>jbehave-support-plugin</id>
-  <description><![CDATA[
+    <name>JBehave Support</name>
+    <id>jbehave-support-plugin</id>
+    <description><![CDATA[
     <h1>IntelliJ IDEA Plugin for JBehave</h1>
     <p>
     This plugin provides some support for JBehave. <br/>
@@ -53,51 +53,60 @@
         <li>Does not take into account any custom JBehave configuration</li>
     </ul>
   ]]></description>
-  <version>1.2</version>
-  <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken</vendor>
+    <version>1.2</version>
+    <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken</vendor>
 
-  <idea-version since-build="133.0"/>
+    <idea-version since-build="133.0"/>
 
-  <application-components>
-    <component>
-      <implementation-class>com.github.kumaraman21.intellijbehave.template.JBehaveTemplateLoaderComponent</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType</implementation-class>
-      </component>
-  </application-components>
+    <application-components>
+        <component>
+            <implementation-class>com.github.kumaraman21.intellijbehave.template.JBehaveTemplateLoaderComponent
+            </implementation-class>
+        </component>
+        <component>
+            <implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>
+        </component>
+        <component>
+            <implementation-class>com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType
+            </implementation-class>
+        </component>
+    </application-components>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
 
-  <actions>
-    <action id="IntelliJBehave.NewJBehaveStory" class="com.github.kumaraman21.intellijbehave.creator.CreateStoryAction"
-            text="JBehave Story" description="Create New JBehave Story">
-      <add-to-group group-id="NewGroup1" anchor="after" relative-to-action="NewClass"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt S"/>
-    </action>
-    <action id="IntelliJBehave.RunJBehaveStory" class="com.github.kumaraman21.intellijbehave.runner.RunStoryAction"
-            text="Run Story" description="Run JBehave Story">
-      <add-to-group group-id="RunMenu" anchor="first"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="alt shift F8"/>
-    </action>
-  </actions>
+    <actions>
+        <action id="IntelliJBehave.NewJBehaveStory"
+                class="com.github.kumaraman21.intellijbehave.creator.CreateStoryAction"
+                text="JBehave Story" description="Create New JBehave Story">
+            <add-to-group group-id="NewGroup1" anchor="after" relative-to-action="NewClass"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt S"/>
+        </action>
+        <action id="IntelliJBehave.RunJBehaveStory" class="com.github.kumaraman21.intellijbehave.runner.RunStoryAction"
+                text="Run Story" description="Run JBehave Story">
+            <add-to-group group-id="RunMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift F8"/>
+        </action>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable"/>
-    <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.StoryFileTypeFactory"/>
-    <lang.parserDefinition language="Story" implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
-    <annotator language="Story" implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
-    <lang.commenter language="Story" implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
-    <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>
-    <completion.contributor language="Story" implementationClass="com.github.kumaraman21.intellijbehave.completion.StoryCompletionContributor"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable"/>
+        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.StoryFileTypeFactory"/>
+        <lang.parserDefinition language="Story"
+                               implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
+        <annotator language="Story"
+                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
+        <lang.commenter language="Story"
+                        implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
+        <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>
+        <completion.contributor language="Story"
+                                implementationClass="com.github.kumaraman21.intellijbehave.completion.StoryCompletionContributor"/>
 
-    <!--code inspections-->
-    <inspectionToolProvider id="unusedStepsInspection" order="FIRST" implementation="com.github.kumaraman21.intellijbehave.codeInspector.UnusedStepsInspectionProvider"/>
-    <inspectionToolProvider id="undefinedStepsInspection" order="LAST" implementation="com.github.kumaraman21.intellijbehave.codeInspector.UndefinedStepsInspectionProvider"/>
-  </extensions>
+        <!--code inspections-->
+        <inspectionToolProvider id="unusedStepsInspection" order="FIRST"
+                                implementation="com.github.kumaraman21.intellijbehave.codeInspector.UnusedStepsInspectionProvider"/>
+        <inspectionToolProvider id="undefinedStepsInspection" order="LAST"
+                                implementation="com.github.kumaraman21.intellijbehave.codeInspector.UndefinedStepsInspectionProvider"/>
+    </extensions>
 </idea-plugin>

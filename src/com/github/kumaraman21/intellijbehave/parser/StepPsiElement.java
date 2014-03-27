@@ -15,16 +15,15 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import static org.apache.commons.lang.StringUtils.trim;
-
 import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
 import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static org.apache.commons.lang.StringUtils.trim;
 
 public class StepPsiElement extends ASTWrapperPsiElement {
     private StepType stepType;
@@ -44,11 +43,6 @@ public class StepPsiElement extends ASTWrapperPsiElement {
         return stepType;
     }
 
-    public boolean isAndStep() {
-        ASTNode keyword = getKeyword();
-        return keyword != null && keyword.getElementType() == StoryTokenType.STEP_TYPE_AND;
-    }
-
     @Nullable
     public ASTNode getKeyword() {
         return getNode().findChildByType(StoryTokenType.STEP_TYPES);
@@ -56,13 +50,10 @@ public class StepPsiElement extends ASTWrapperPsiElement {
 
     public String getStepText() {
         int offset = getStepTextOffset();
-        String text = getText();
-
-        if (offset <= 0 || offset >= text.length()) {
-            return trim(text);
-        } else {
-            return trim(text.substring(offset));
+        if (offset == 0) {
+            return trim(getText());
         }
+        return trim(getText().substring(offset));
     }
 
     @Nullable

@@ -15,13 +15,12 @@
  */
 package com.github.kumaraman21.intellijbehave.highlighter;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
-
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-
 import org.jetbrains.annotations.NonNls;
+
+import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 
 public class StoryTokenType extends IElementType {
 
@@ -32,13 +31,15 @@ public class StoryTokenType extends IElementType {
     public static final IElementType SCENARIO_TYPE = new StoryTokenType("SCENARIO_TYPE");
     public static final IElementType SCENARIO_TEXT = new StoryTokenType("SCENARIO_TEXT");
 
-    public static final IElementType STEP_TYPE = new StoryTokenType("STEP_TYPE");
+    public static final IElementType GIVEN_TYPE = new StoryTokenType("GIVEN_TYPE");
+    public static final IElementType WHEN_TYPE = new StoryTokenType("WHEN_TYPE");
+    public static final IElementType THEN_TYPE = new StoryTokenType("THEN_TYPE");
     public static final IElementType STEP_TYPE_GIVEN = new StoryTokenType("STEP_TYPE_GIVEN");
     public static final IElementType STEP_TYPE_WHEN = new StoryTokenType("STEP_TYPE_WHEN");
     public static final IElementType STEP_TYPE_THEN = new StoryTokenType("STEP_TYPE_THEN");
     public static final IElementType STEP_TYPE_AND = new StoryTokenType("STEP_TYPE_AND");
 
-    public static final TokenSet STEP_TYPES = TokenSet.create(STEP_TYPE, STEP_TYPE_GIVEN, STEP_TYPE_WHEN, STEP_TYPE_THEN, STEP_TYPE_AND);
+    public static final TokenSet STEP_TYPES = TokenSet.create(GIVEN_TYPE, WHEN_TYPE, THEN_TYPE, STEP_TYPE_GIVEN, STEP_TYPE_WHEN, STEP_TYPE_THEN, STEP_TYPE_AND);
 
     public static final IElementType STEP_TEXT = new StoryTokenType("STEP_TEXT");
 
@@ -58,6 +59,7 @@ public class StoryTokenType extends IElementType {
     public static final IElementType NARRATIVE_TEXT = new StoryTokenType("NARRATIVE_TEXT");
 
     private final String key;
+
     public StoryTokenType(@NonNls String debugName) {
         super(debugName, STORY_FILE_TYPE.getLanguage());
         this.key = debugName;
@@ -65,21 +67,12 @@ public class StoryTokenType extends IElementType {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof StoryTokenType)
-                && ((StoryTokenType)other).key.equals(key);
+        return other instanceof StoryTokenType
+                && ((StoryTokenType) other).key.equals(key);
     }
 
     @Override
     public int hashCode() {
         return key.hashCode();
     }
-
-    public static boolean isStepType(IElementType tokenType) {
-        return tokenType == STEP_TYPE_GIVEN
-                || tokenType == STEP_TYPE_WHEN
-                || tokenType == STEP_TYPE_THEN
-                || tokenType == STEP_TYPE_AND
-                || tokenType == STEP_TYPE;
-    }
-
 }

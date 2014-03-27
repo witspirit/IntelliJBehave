@@ -8,6 +8,7 @@ import java.util.Stack;
 
 %{
     private Stack<Integer> yystates = new Stack<Integer> () {{ push(YYINITIAL); }};
+    private int currentStepStart = 0;
     public boolean trace = false;
 
     public void yystatePush(int yystate) {
@@ -47,9 +48,46 @@ import java.util.Stack;
         return popped;
     }
 
+  public final int lastIndexOfCrLf(final CharSequence source) {
+        final int length = source.length();
+        boolean foundRfOrRn = false;
+
+        for (int i = length - 1; i >= 0; i--) {
+            final char c = source.charAt(i);
+            if (c == '\r' || c == '\n') {
+                foundRfOrRn = true;
+            } else {
+                if (foundRfOrRn) {
+                    return i + 1;
+                }
+            }
+        }
+
+        if (foundRfOrRn) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    public void retrieveMultilineText() {
+        yypushback(yytext().length() - lastIndexOfCrLf(yytext()));
+        if(currentStepStart != 0) {
+            zzStartRead = currentStepStart;
+        }
+    }
+
+    public void setStepStart() {
+        if(currentStepStart==0){
+            currentStepStart = getTokenStart();
+        }
+    }
+
     public boolean checkAhead(char c) {
-        if (zzMarkedPos >= zzBuffer.length())
+
+        if (zzMarkedPos >= zzBuffer.length()) {
             return false;
+        }
         return zzBuffer.charAt(zzMarkedPos) == c;
     }
 %}
@@ -67,11 +105,15 @@ WhiteSpace     = {CRLF} | {BlankChar}
 NonWhiteSpace  = [^ \n\r\t\f]
 TableCellChar  = [^\r\n\|]
 NonMetaKey     = [^@\r\n]
+AnyKey         = {InputChar}|{InputChar}{CRLF}
+KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Then " | "And " | "!--" | "|"
 
 %state IN_DIRECTIVE
 %state IN_STORY
 %state IN_SCENARIO
-%state IN_STEP
+%state IN_GIVEN
+%state IN_WHEN
+%state IN_THEN
 %state IN_META
 %state IN_TABLE
 %state IN_EXAMPLES
@@ -96,7 +138,9 @@ NonMetaKey     = [^@\r\n]
     "Scenario: "                             { yystatePopNPush(2, IN_SCENARIO); return StoryTokenType.SCENARIO_TYPE; }
     "Meta:"                                  { yystatePopNPush(2, IN_META);     return StoryTokenType.META;          }
     "Examples:"                              { yystatePopNPush(2, IN_EXAMPLES); return StoryTokenType.EXAMPLE_TYPE;  }
-    ("Given " | "When " | "Then " | "And ")  { yystatePopNPush(2, IN_STEP);     return StoryTokenType.STEP_TYPE;     }
+    "Given "                                 { yystatePopNPush(2, IN_GIVEN);    currentStepStart = 0; return StoryTokenType.GIVEN_TYPE;    }
+    "When "                                  { yystatePopNPush(2, IN_WHEN);     currentStepStart = 0; return StoryTokenType.WHEN_TYPE;     }
+    "Then "                                  { yystatePopNPush(2, IN_THEN);     currentStepStart = 0; return StoryTokenType.THEN_TYPE;     }
     "!--" {InputChar}*                       { yystatePop();                    return StoryTokenType.COMMENT;       }
     "|"                                      { yystatePopNPush(1, IN_TABLE);    return StoryTokenType.TABLE_DELIM;   }
     {WhiteSpace}+                            {                                  return StoryTokenType.WHITE_SPACE;   }
@@ -141,16 +185,60 @@ NonMetaKey     = [^@\r\n]
     {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
 }
 
-
-<IN_STEP>  {
+<IN_GIVEN>  {
     {CRLF}
         ( "Scenario: "
         | "Meta:"
         | "Examples:"
-        | "Given " | "When " | "Then " | "And "
+        | "Given " | "When " | "Then "
         | "!--"
         | "|" )                                      { yystatePush(IN_DIRECTIVE); yypushback(yytext().length()); }
-    {InputChar}+                                     { return StoryTokenType.STEP_TEXT;     }
+    "And "{InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | {InputChar})                               { yypushback(yytext().length() - 4); currentStepStart = 0; return StoryTokenType.GIVEN_TYPE;    }
+    {InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | "| "
+        | "")                                        { retrieveMultilineText(); return StoryTokenType.STEP_TEXT; }
+    {InputChar}+{CRLF}{InputChar}                    { setStepStart(); }
+    {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
+}
+
+<IN_WHEN>  {
+    {CRLF}
+        ( "Scenario: "
+        | "Meta:"
+        | "Examples:"
+        | "Given " | "When " | "Then "
+        | "!--"
+        | "|" )                                      { yystatePush(IN_DIRECTIVE); yypushback(yytext().length()); }
+    "And "{InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | {InputChar})                               { yypushback(yytext().length() - 4); currentStepStart = 0; return StoryTokenType.WHEN_TYPE;    }
+    {InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | "| "
+        | "")                                        { retrieveMultilineText(); return StoryTokenType.STEP_TEXT; }
+    {InputChar}+{CRLF}{InputChar}                    { setStepStart(); }
+    {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
+}
+
+<IN_THEN>  {
+    {CRLF}
+        ( "Scenario: "
+        | "Meta:"
+        | "Examples:"
+        | "Given " | "When " | "Then "
+        | "!--"
+        | "|" )                                      { yystatePush(IN_DIRECTIVE); yypushback(yytext().length()); }
+    "And "{InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | {InputChar})                               { yypushback(yytext().length() - 4); currentStepStart = 0; return StoryTokenType.THEN_TYPE;    }
+    {InputChar}+{CRLF}
+        ("And " | "Given " | "When " | "Then "
+        | "| "
+        | "")                                        { retrieveMultilineText(); return StoryTokenType.STEP_TEXT; }
+    {InputChar}+{CRLF}{InputChar}                    { setStepStart(); }
     {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
 }
 

@@ -15,9 +15,6 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.StringUtils.trim;
-
 import com.github.kumaraman21.intellijbehave.parser.StepPsiElement;
 import com.github.kumaraman21.intellijbehave.utility.ScanUtils;
 import com.intellij.openapi.util.Comparing;
@@ -25,13 +22,16 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-
 import org.jbehave.core.parsers.RegexPrefixCapturingPatternParser;
 import org.jbehave.core.parsers.StepMatcher;
 import org.jbehave.core.parsers.StepPatternParser;
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.StringUtils.trim;
 
 public class StepPsiReference implements PsiReference {
 
@@ -64,7 +64,7 @@ public class StepPsiReference implements PsiReference {
     @Override
     public PsiElement resolve() {
         StepDefinitionAnnotation stepDefinitionAnnotation = stepDefinitionAnnotation();
-        if(stepDefinitionAnnotation==null)
+        if (stepDefinitionAnnotation == null)
             return null;
         return stepDefinitionAnnotation.getAnnotation();
     }
@@ -83,8 +83,7 @@ public class StepPsiReference implements PsiReference {
             ScanUtils.iterateInContextOf(stepPsiElement, stepSuggester);
 
             return stepSuggester.getSuggestions().toArray();
-        }
-        else {
+        } else {
             return new Object[0];
         }
     }
