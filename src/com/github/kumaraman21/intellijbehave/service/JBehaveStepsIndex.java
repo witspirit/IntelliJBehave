@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -9,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -38,7 +40,8 @@ public class JBehaveStepsIndex {
 
         Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
         List<JavaStepDefinition> stepDefinitions = loadStepsFor(module);
-        String stepText = step.getStepText();
+
+        String stepText = getTableOffset(step);
 
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
@@ -52,6 +55,16 @@ public class JBehaveStepsIndex {
         }
 
         return definitionsByClass.values();
+    }
+
+    private String getTableOffset(@NotNull final JBehaveStep step) {
+        final String stepText = step.getStepText();
+        for (PsiElement psiElement : step.getChildren()) {
+            if (psiElement.getNode().getElementType() == StoryElementType.TABLE_ROW) {
+                return stepText.substring(0, psiElement.getStartOffsetInParent());
+            }
+        }
+        return stepText;
     }
 
     @NotNull
