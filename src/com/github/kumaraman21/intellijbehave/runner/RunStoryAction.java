@@ -35,6 +35,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.annotations.NotNull;
 
 import static com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType.JBEHAVE_STORY_RUNNER;
 import static com.intellij.openapi.ui.Messages.getErrorIcon;
@@ -43,7 +44,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class RunStoryAction extends AnAction {
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Application application = ApplicationManager.getApplication();
         JBehaveSettings component = application.getComponent(JBehaveSettings.class);
 
@@ -64,6 +65,7 @@ public class RunStoryAction extends AnAction {
         }
 
         Project project = e.getData(PlatformDataKeys.PROJECT);
+        if (project == null) return;
         final PsiClass storyRunnerClass = JavaPsiFacade.getInstance(project).findClass(storyRunnerName,
                 GlobalSearchScope.allScope(project));
         if (storyRunnerClass == null) {
@@ -72,7 +74,6 @@ public class RunStoryAction extends AnAction {
                     getErrorIcon());
             return;
         }
-
         Module module = ProjectRootManager.getInstance(project).getFileIndex()
                 .getModuleForFile(storyRunnerClass.getContainingFile().getVirtualFile());
         if (module == null) {
@@ -83,10 +84,9 @@ public class RunStoryAction extends AnAction {
             );
             return;
         }
-
         RunManagerImpl runManager = (RunManagerImpl) RunManager.getInstance(project);
         RunnerAndConfigurationSettingsImpl runnerAndConfigurationSettings = findConfigurationByName(JBEHAVE_STORY_RUNNER, runManager);
-        ApplicationConfiguration conf = null;
+        ApplicationConfiguration conf;
 
         if (runnerAndConfigurationSettings != null) {
             conf = (ApplicationConfiguration) runnerAndConfigurationSettings.getConfiguration();
@@ -100,16 +100,18 @@ public class RunStoryAction extends AnAction {
             runManager.addConfiguration(runnerAndConfigurationSettings, true);
         }
 
-        runManager.setActiveConfiguration(runnerAndConfigurationSettings);
+        runManager.setSelectedConfiguration(runnerAndConfigurationSettings);
 
         Executor executor = DefaultRunExecutor.getRunExecutorInstance();
         ProgramRunner runner = RunnerRegistry.getInstance().getRunner(executor.getId(), conf);
-        ExecutionEnvironment environment = new ExecutionEnvironment(executor, runner, runnerAndConfigurationSettings, project);
 
-        try {
-            runner.execute(environment);
-        } catch (ExecutionException e1) {
-            JavaExecutionUtil.showExecutionErrorMessage(e1, "Error", project);
+        if (runner != null) {
+            ExecutionEnvironment environment = new ExecutionEnvironment(executor, runner, runnerAndConfigurationSettings, project);
+            try {
+                runner.execute(environment);
+            } catch (ExecutionException e1) {
+                JavaExecutionUtil.showExecutionErrorMessage(e1, "Error", project);
+            }
         }
     }
 

@@ -32,8 +32,8 @@ public class JBehaveJavaMethodUsageSearcher extends QueryExecutorBase<PsiReferen
         for (String stepText : stepTexts) {
             String word = getTheBiggestWordToSearchByIndex(stepText);
             if (isNotEmpty(word)) {
-                if (searchParameters.getScope() instanceof GlobalSearchScope) {
-                    GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) searchParameters.getScope(), StoryFileType.STORY_FILE_TYPE);
+                if (searchParameters.getScopeDeterminedByUser() instanceof GlobalSearchScope) {
+                    GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) searchParameters.getScopeDeterminedByUser(), StoryFileType.STORY_FILE_TYPE);
                     Query<PsiReference> query = ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, searchParameters.getOptimizer()));
                     query.forEach(consumer);
                 }
