@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.intellij.openapi.editor.colors.TextAttributesKey.*;
+import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
 
@@ -57,6 +57,8 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     @NonNls
     public static final String STEP_TEXT_ID = "JBEHAVE.STEP_TEXT";
     @NonNls
+    public static final String STEP_PARAMETER_ID = "JBEHAVE.STEP_PARAMETER";
+    @NonNls
     public static final String TABLE_DELIM_ID = "JBEHAVE.TABLE_DELIM";
     @NonNls
     public static final String TABLE_CELL_ID = "JBEHAVE.TABLE_CELL";
@@ -78,6 +80,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(SCENARIO_TEXT_ID, CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
         createKey(STEP_TYPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STEP_TEXT_ID, HighlighterColors.TEXT);
+        createKey(STEP_PARAMETER_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(TABLE_DELIM_ID, DefaultLanguageHighlighterColors.BRACES);
         createKey(TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(META_TYPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
@@ -92,6 +95,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey SCENARIO_TEXT = createTextAttributesKey(SCENARIO_TEXT_ID);
     public static TextAttributesKey STEP_TYPE = createTextAttributesKey(STEP_TYPE_ID);
     public static TextAttributesKey STEP_TEXT = createTextAttributesKey(STEP_TEXT_ID);
+    public static TextAttributesKey STEP_PARAMETER = createTextAttributesKey(STEP_PARAMETER_ID);
     public static TextAttributesKey TABLE_DELIM = createTextAttributesKey(TABLE_DELIM_ID);
     public static TextAttributesKey TABLE_CELL = createTextAttributesKey(TABLE_CELL_ID);
     public static TextAttributesKey META_TYPE = createTextAttributesKey(META_TYPE_ID);
