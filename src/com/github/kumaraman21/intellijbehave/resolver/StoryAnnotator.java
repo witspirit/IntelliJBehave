@@ -18,8 +18,11 @@ package com.github.kumaraman21.intellijbehave.resolver;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -56,12 +59,19 @@ public class StoryAnnotator implements Annotator {
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
         ParametrizedString pString = new ParametrizedString(annotationText);
 
-        int offset = step.getTextOffset();
+        int offset = step.getTextOffset() + step.getStepTextOffset();
+        int i=0;
         for (StringToken token : pString.tokenize(stepText)) {
             int length = token.getValue().length();
             if (token.isIdentifier()) {
-                annotationHolder.createInfoAnnotation(TextRange.from(offset, length), "Parameter");
+                ParametrizedString.Token token1 = pString.getToken(i);
+                Annotation infoAnnotation = annotationHolder.createInfoAnnotation(TextRange.from(offset, length), "Parameter: " + token1.value());
+                infoAnnotation.setTextAttributes(TextAttributesKey.createTextAttributesKey(
+                        "PROPERTIES.VALUE",
+                        DefaultLanguageHighlighterColors.STRING
+                ));
             }
+            ++i;
             offset += length;
         }
     }

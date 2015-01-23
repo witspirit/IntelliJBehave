@@ -15,16 +15,11 @@
  */
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
-import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
-import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
-import com.github.kumaraman21.intellijbehave.utility.ParametrizedString.StringToken;
-import com.intellij.codeInspection.*;
-import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
@@ -63,40 +58,9 @@ public class UndefinedStepInspection extends LocalInspectionTool {
 
                 if (definition == null) {
                     holder.registerProblem(step, "Step <code>#ref</code> is not defined");
-                } else {
-                    highlightParameters(step, definition, holder);
                 }
             }
         };
-    }
-
-
-    private void highlightParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition, ProblemsHolder holder) {
-        String stepText = step.getStepText();
-
-        String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-        ParametrizedString pString = new ParametrizedString(annotationText);
-
-        int offset = step.getStepTextOffset();
-        for (StringToken token : pString.tokenize(stepText)) {
-            int length = token.getValue().length();
-            if (token.isIdentifier()) {
-                registerHiglighting(StorySyntaxHighlighter.TABLE_CELL, step, TextRange.from(offset, length), holder);
-            }
-            offset += length;
-        }
-    }
-
-    private static void registerHiglighting(TextAttributesKey attributesKey,
-                                            JBehaveStep step,
-                                            TextRange range,
-                                            ProblemsHolder holder) {
-        final ProblemDescriptor descriptor = new ProblemDescriptorImpl(
-                step, step, "", LocalQuickFix.EMPTY_ARRAY,
-                ProblemHighlightType.INFORMATION, false, range, false, null,
-                holder.isOnTheFly());
-        descriptor.setTextAttributes(attributesKey);
-        holder.registerProblem(descriptor);
     }
 }
 
