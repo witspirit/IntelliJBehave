@@ -77,8 +77,9 @@ public class StoryParserDefinition implements ParserDefinition {
             return new JBehaveStep(node, StepType.WHEN);
         } else if (type == StoryElementType.THEN_STEP) {
             return new JBehaveStep(node, StepType.THEN);
+        } else if (type == StoryElementType.GIVEN_STORIES_TEXT) {
+            return new JBehaveGivenStories(node);
         }
-
         return new ASTWrapperPsiElement(node);
     }
 

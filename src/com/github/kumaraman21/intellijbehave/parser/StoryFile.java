@@ -33,7 +33,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
 
-public class StoryFile extends PsiFileBase {
+public class StoryFile extends PsiFileBase implements Comparable<StoryFile> {
 
     public StoryFile(FileViewProvider fileViewProvider) {
         super(fileViewProvider, STORY_FILE_TYPE.getLanguage());
@@ -77,5 +77,14 @@ public class StoryFile extends PsiFileBase {
         }
 
         return null;
+    }
+
+    @Override
+    public int compareTo(@NotNull StoryFile o) {
+        String myCanonicalPath = getVirtualFile().getCanonicalPath();
+        String otherCanonicalPath = o.getVirtualFile().getCanonicalPath();
+        if (myCanonicalPath == null) return -1;
+        if (otherCanonicalPath == null) return 1;
+        return myCanonicalPath.compareTo(otherCanonicalPath);
     }
 }

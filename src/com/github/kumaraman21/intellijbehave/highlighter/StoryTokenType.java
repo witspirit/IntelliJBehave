@@ -26,6 +26,7 @@ public class StoryTokenType extends IElementType {
 
     public static final IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
     public static final IElementType BAD_CHARACTER = TokenType.BAD_CHARACTER;
+    public static final IElementType PUNCTUATION = new StoryTokenType("PUNCTUATION");
 
     public static final IElementType STORY_DESCRIPTION = new StoryTokenType("STORY_DESCRIPTION");
     public static final IElementType SCENARIO_TYPE = new StoryTokenType("SCENARIO_TYPE");
@@ -53,7 +54,8 @@ public class StoryTokenType extends IElementType {
     public static final IElementType META_KEY = new StoryTokenType("META_KEY");
     public static final IElementType META_TEXT = new StoryTokenType("META_TEXT");
     public static final IElementType EXAMPLE_TYPE = new StoryTokenType("EXAMPLE_TYPE");
-    public static final IElementType GIVEN_STORIES = new StoryTokenType("GIVEN_STORIES");
+    public static final IElementType GIVEN_STORIES_TYPE = new StoryTokenType("GIVEN_STORIES_TYPE");
+    public static final IElementType GIVEN_STORIES_TEXT = new StoryTokenType("GIVEN_STORIES_TEXT");
 
     public static final IElementType NARRATIVE_TYPE = new StoryTokenType("NARRATIVE_TYPE");
     public static final IElementType NARRATIVE_TEXT = new StoryTokenType("NARRATIVE_TEXT");

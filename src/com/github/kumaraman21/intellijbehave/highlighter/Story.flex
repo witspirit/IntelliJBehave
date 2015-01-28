@@ -106,7 +106,7 @@ NonWhiteSpace  = [^ \n\r\t\f]
 TableCellChar  = [^\r\n\|]
 NonMetaKey     = [^@\r\n]
 AnyKey         = {InputChar}|{InputChar}{CRLF}
-KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Then " | "And " | "!--" | "|"
+KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Then " | "And " | "!--" | "|" | "GivenStories:"
 
 %state IN_DIRECTIVE
 %state IN_STORY
@@ -117,6 +117,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 %state IN_META
 %state IN_TABLE
 %state IN_EXAMPLES
+%state IN_GIVENSTORIES
 %eof{
     return;
 %eof}
@@ -127,6 +128,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
     ( "Scenario: "
     | "Meta:"
     | "Examples:"
+    | "GivenStories:"
     | "Given " | "When " | "Then " | "And "
     | "!--"
     | "|" ) {InputChar}+  { yystatePush(IN_DIRECTIVE); yypushback(yytext().length());       }
@@ -138,6 +140,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
     "Scenario: "                             { yystatePopNPush(2, IN_SCENARIO); return StoryTokenType.SCENARIO_TYPE; }
     "Meta:"                                  { yystatePopNPush(2, IN_META);     return StoryTokenType.META;          }
     "Examples:"                              { yystatePopNPush(2, IN_EXAMPLES); return StoryTokenType.EXAMPLE_TYPE;  }
+    "GivenStories:"                          { yystatePopNPush(2, IN_GIVENSTORIES); return StoryTokenType.GIVEN_STORIES_TYPE;  }
     "Given "                                 { yystatePopNPush(2, IN_GIVEN);    currentStepStart = 0; return StoryTokenType.GIVEN_TYPE;    }
     "When "                                  { yystatePopNPush(2, IN_WHEN);     currentStepStart = 0; return StoryTokenType.WHEN_TYPE;     }
     "Then "                                  { yystatePopNPush(2, IN_THEN);     currentStepStart = 0; return StoryTokenType.THEN_TYPE;     }
@@ -151,6 +154,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
         ( "Scenario: "
         | "Meta:"
         | "Examples:"
+        | "GivenStories:"
         | "Given " | "When " | "Then " | "And "
         | "!--"
         | "|" )                                      { yystatePush(IN_DIRECTIVE); yypushback(yytext().length()); }
@@ -162,6 +166,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 <IN_SCENARIO>  {
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then " | "And "
@@ -171,11 +176,24 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
     {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
 }
 
+<IN_GIVENSTORIES>  {
+    {CRLF}
+        ( "Scenario: "
+        | "GivenStories: "
+        | "Meta:"
+        | "Examples:"
+        | "Given " | "When " | "Then " | "And "
+        | "!--"
+        | "|" )                                      { yystatePush(IN_DIRECTIVE); yypushback(yytext().length()); }
+    {InputChar}+                                     { return StoryTokenType.GIVEN_STORIES_TEXT; }
+    {CRLF}                                           { return StoryTokenType.WHITE_SPACE;   }
+}
 
 <IN_META>  {
     "@" {NonWhiteSpace}*                             { return StoryTokenType.META_KEY; }
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then " | "And "
@@ -188,6 +206,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 <IN_GIVEN>  {
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then "
@@ -207,6 +226,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 <IN_WHEN>  {
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then "
@@ -226,6 +246,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 <IN_THEN>  {
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then "
@@ -245,6 +266,7 @@ KeyWords       = "Scenario: " | "Meta:" | "Examples:" | "Given " | "When " | "Th
 <IN_EXAMPLES> {
     {CRLF}
         ( "Scenario: "
+        | "GivenStories: "
         | "Meta:"
         | "Examples:"
         | "Given " | "When " | "Then " | "And "

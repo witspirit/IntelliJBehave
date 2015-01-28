@@ -5,10 +5,10 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import java.util.Map;
 
@@ -44,7 +44,8 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Meta key", StorySyntaxHighlighter.META_KEY),//
             new AttributesDescriptor("Meta text", StorySyntaxHighlighter.META_TEXT), //
             new AttributesDescriptor("Line comment", StorySyntaxHighlighter.LINE_COMMENT),//
-            new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER)
+            new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),
+            new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.GIVEN_STORIES),
     };
 
     @NotNull
@@ -65,6 +66,7 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
                 "As a player\n" + //
                 "I want to be able to create and manage my account\n" + //
                 "\n" + //
+                "GivenStories: product/wire/ConfigStory.story\n\n" + //
                 "Scenario: An unknown user cannot be logged\n" + //
                 "\n" + //
                 "Meta:\n" + //

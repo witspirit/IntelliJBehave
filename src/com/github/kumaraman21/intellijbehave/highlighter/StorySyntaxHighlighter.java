@@ -72,6 +72,8 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String LINE_COMMENT_ID = "JBEHAVE.COMMENT";
     @NonNls
     public static final String BAD_CHARACTER_ID = "JBEHAVE.BAD_CHARACTER";
+    @NonNls
+    public static final String GIVEN_STORIES_ID = "JBEHAVE.GIVEN_STORIES_TYPE";
 
     // Registering TextAttributes
     static {
@@ -88,6 +90,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(META_TEXT_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(LINE_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
         createKey(BAD_CHARACTER_ID, DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
+        createKey(GIVEN_STORIES_ID, DefaultLanguageHighlighterColors.KEYWORD);
     }
 
     public static TextAttributesKey STORY_DESCRIPTION = createTextAttributesKey(STORY_DESCRIPTION_ID);
@@ -103,6 +106,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey META_TEXT = createTextAttributesKey(META_TEXT_ID);
     public static TextAttributesKey LINE_COMMENT = createTextAttributesKey(LINE_COMMENT_ID);
     public static TextAttributesKey BAD_CHARACTER = createTextAttributesKey(BAD_CHARACTER_ID);
+    public static TextAttributesKey GIVEN_STORIES = createTextAttributesKey(GIVEN_STORIES_ID);
 
     static {
         ATTRIBUTES.put(StoryTokenType.STORY_DESCRIPTION, STORY_DESCRIPTION);
@@ -126,6 +130,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(StoryTokenType.COMMENT, LINE_COMMENT);
         ATTRIBUTES.put(StoryTokenType.COMMENT_WITH_LOCALE, LINE_COMMENT);
         ATTRIBUTES.put(StoryTokenType.BAD_CHARACTER, BAD_CHARACTER);
+        ATTRIBUTES.put(StoryTokenType.GIVEN_STORIES_TYPE, GIVEN_STORIES);
     }
 
     private static TextAttributesKey createKey(String externalName, TextAttributesKey textAttributesKey) {

@@ -99,6 +99,23 @@ public class StoryParser implements PsiParser {
                 continue whileLoop;
             }
 
+            if (isGivenStories(tokenType)) {
+                state.enterGivenStories();
+                builder.advanceLexer();
+                continue whileLoop;
+            } else if (!belongsToGivenStories(tokenType)) {
+                state.leaveGivenStories();
+            }
+
+            if (isGivenStoriesText(tokenType)) {
+                state.enterGivenStoriesText();
+                builder.advanceLexer();
+                continue whileLoop;
+            } else if (!belongsToGivenStoriesText(tokenType)) {
+                state.leaveGivenStoriesText();
+            }
+
+
             if (isStepType(tokenType)) {
                 state.enterStepType(tokenType);
                 builder.advanceLexer();
@@ -276,6 +293,30 @@ public class StoryParser implements PsiParser {
             popUntilOnlyIfPresent(StoryElementType.META);
         }
 
+        public void enterGivenStories() {
+            leaveStoryDescription();
+            leaveExampleTable();
+            leaveTableRow();
+            leaveStep();
+            matchesHeadOrPush(StoryElementType.GIVEN_STORIES);
+        }
+
+        private void leaveGivenStories() {
+            popUntilOnlyIfPresent(StoryElementType.GIVEN_STORIES);
+        }
+        public void enterGivenStoriesText() {
+            leaveStoryDescription();
+            leaveExampleTable();
+            leaveTableRow();
+            leaveStep();
+            matchesHeadOrPush(StoryElementType.GIVEN_STORIES_TEXT);
+        }
+
+        private void leaveGivenStoriesText() {
+            popUntilOnlyIfPresent(StoryElementType.GIVEN_STORIES_TEXT);
+        }
+
+
         public void enterStepType(IElementType tokenType) {
             leaveExampleTable();
             leaveMeta();
@@ -348,6 +389,40 @@ public class StoryParser implements PsiParser {
         return tokenType == StoryTokenType.META
                 || tokenType == StoryTokenType.META_KEY
                 || tokenType == StoryTokenType.META_TEXT;
+    }
+
+    private static boolean isGivenStories(IElementType tokenType) {
+        return tokenType == StoryTokenType.GIVEN_STORIES_TYPE;
+    }
+
+    private static boolean isGivenStoriesText(IElementType tokenType) {
+        return tokenType == StoryTokenType.GIVEN_STORIES_TEXT;
+    }
+
+    private static boolean belongsToGivenStories(IElementType tokenType) {
+        return isWhitespace(tokenType)
+                || isComment(tokenType)
+                || isGivenStoriesText(tokenType)
+                || isScenarioText(tokenType)
+                || isStoryDescription(tokenType)
+                || isStepType(tokenType)
+                || isStepText(tokenType)
+                || isExampleTable(tokenType)
+                || isTableRow(tokenType)
+                || isMeta(tokenType);
+    }
+
+    private static boolean belongsToGivenStoriesText(IElementType tokenType) {
+        return isWhitespace(tokenType)
+                || isComment(tokenType)
+                || isGivenStoriesText(tokenType)
+                || isScenarioText(tokenType)
+                || isStoryDescription(tokenType)
+                || isStepType(tokenType)
+                || isStepText(tokenType)
+                || isExampleTable(tokenType)
+                || isTableRow(tokenType)
+                || isMeta(tokenType);
     }
 
     private static boolean isExampleTable(IElementType tokenType) {

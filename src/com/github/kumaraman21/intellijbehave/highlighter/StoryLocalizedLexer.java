@@ -26,7 +26,7 @@ public class StoryLocalizedLexer extends LexerBase {
         IN_TABLE,
         IN_STEP_TABLE,
         IN_META,
-        IN_EXAMPLES, IN_OTHER_TABLE
+        IN_EXAMPLES, IN_OTHER_TABLE, IN_GIVENSTORIES
     }
 
     private final LocalizedStorySupport kwSupport;
@@ -204,6 +204,48 @@ public class StoryLocalizedLexer extends LexerBase {
                     consume(INPUT_CHAR);
                     tokenType = StoryTokenType.SCENARIO_TEXT;
                     return;
+                }
+            }
+            case IN_GIVENSTORIES: {
+                if (consume(CRLF)) {
+                    tokenType = StoryTokenType.WHITE_SPACE;
+                    //
+                    CharTree.Entry<JBKeyword> entry = charTree.lookup(buffer, position);
+                    if (entry.hasValue()) {
+                        switch (entry.value) {
+                            case Given:
+                            case When:
+                            case Then:
+                            case And:
+                            case Meta:
+                            case ExamplesTable:
+                            case Narrative:
+                            case AsA:
+                            case IWantTo:
+                            case InOrderTo:
+                            case Scenario:
+                                state = State.IN_DISPATCH;
+                                return;
+                            case ExamplesTableHeaderSeparator:
+                            case ExamplesTableValueSeparator:
+                                state = State.IN_OTHER_TABLE;
+                                return;
+                        }
+                    }
+                    return;
+                } else {
+                    if (consume(SPACES)) {
+                        tokenType = StoryTokenType.WHITE_SPACE;
+                        return;
+                    }
+                    if (consume(INPUT_CHAR_NO_COMMA)) {
+                        tokenType = StoryTokenType.GIVEN_STORIES_TEXT;
+                        return;
+                    }
+                    if (consume(COMMA)) {
+                        tokenType = StoryTokenType.PUNCTUATION;
+                        return;
+                    }
                 }
             }
             case IN_META: {
@@ -391,6 +433,7 @@ public class StoryLocalizedLexer extends LexerBase {
 
     /**
      * Increment the position as long as the filter matches the current character
+     *
      * @return whether the position has changed as a result of a call to this function
      */
     private boolean consume(CharFilter filter) {
@@ -427,6 +470,19 @@ public class StoryLocalizedLexer extends LexerBase {
         @Override
         public boolean accept(char c) {
             return c != '\r' && c != '\n';
+        }
+    };
+
+    private static CharFilter INPUT_CHAR_NO_COMMA = new CharFilter() {
+        @Override
+        public boolean accept(char c) {
+            return c != '\r' && c != '\n' && c != ',';
+        }
+    };
+    private static CharFilter COMMA = new CharFilter() {
+        @Override
+        public boolean accept(char c) {
+            return c == ',';
         }
     };
 
@@ -471,7 +527,8 @@ public class StoryLocalizedLexer extends LexerBase {
                 state = State.IN_TABLE;
                 return StoryTokenType.TABLE_DELIM;
             case GivenStories:
-                return StoryTokenType.GIVEN_STORIES;
+                state = State.IN_GIVENSTORIES;
+                return StoryTokenType.GIVEN_STORIES_TYPE;
             case Meta:
                 state = State.IN_META;
                 return StoryTokenType.META;

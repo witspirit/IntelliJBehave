@@ -32,6 +32,8 @@ public class StoryElementType extends IElementType {
     public static final StoryElementType STORY_DESCRIPTION = new StoryElementType("STORY_DESCRIPTION");
     public static final StoryElementType SCENARIO = new StoryElementType("SCENARIO");
     public static final StoryElementType META = new StoryElementType("META");
+    public static final StoryElementType GIVEN_STORIES = new StoryElementType("GIVEN_STORIES");
+    public static final StoryElementType GIVEN_STORIES_TEXT = new StoryElementType("GIVEN_STORIES_TEXT");
     public static final StoryElementType EXAMPLES = new StoryElementType("EXAMPLES");
     public static final StoryElementType TABLE_ROW = new StoryElementType("TABLE_ROW");
 

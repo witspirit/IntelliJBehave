@@ -16,6 +16,7 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveGivenStories;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
@@ -32,24 +33,33 @@ import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.S
 public class StoryAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
-        if (!(psiElement instanceof JBehaveStep)) {
-            return;
-        }
+        if (psiElement instanceof JBehaveStep) {
+            JBehaveStep step = (JBehaveStep) psiElement;
+            PsiReference[] references = step.getReferences();
 
-        JBehaveStep step = (JBehaveStep) psiElement;
-        PsiReference[] references = step.getReferences();
+            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
+                return;
+            }
 
-        if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-            return;
-        }
+            StepPsiReference reference = (StepPsiReference) references[0];
+            JavaStepDefinition definition = reference.resolveToDefinition();
 
-        StepPsiReference reference = (StepPsiReference) references[0];
-        JavaStepDefinition definition = reference.resolveToDefinition();
+            if (definition == null) {
+                annotationHolder.createErrorAnnotation(psiElement, "No definition found for the step");
+            } else {
+                annotateParameters(step, definition, annotationHolder);
+            }
+        } else if (psiElement instanceof JBehaveGivenStories) {
+            JBehaveGivenStories givenStories = (JBehaveGivenStories) psiElement;
+            PsiReference[] references = givenStories.getReferences();
+            if (references.length != 1 || !(references[0] instanceof GivenStoriesPsiReference)) {
+                return;
+            }
+            GivenStoriesPsiReference reference= (GivenStoriesPsiReference) references[0];
 
-        if (definition == null) {
-            annotationHolder.createErrorAnnotation(psiElement, "No definition found for the step");
-        } else {
-            annotateParameters(step, definition, annotationHolder);
+            if (reference.multiResolve(false).length == 0) {
+                annotationHolder.createErrorAnnotation(psiElement, "File not found");
+            }
         }
     }
 
