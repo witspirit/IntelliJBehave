@@ -30,6 +30,7 @@
         <li><a href="https://github.com/Arnauld">https://github.com/Arnauld</a></li>
         <li><a href="https://github.com/harley84">https://github.com/harley84</a></li>
         <li><a href="https://github.com/dmalch">https://github.com/dmalch</a></li>
+        <li><a href="https://github.com/debritod">https://github.com/debritod</a></li>
     </ul>
     And <a href="https://github.com/witspirit/IntelliJBehave/graphs/contributors">others</a>.
     </p>
@@ -73,7 +74,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>1.52</version>
+    <version>1.54</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
