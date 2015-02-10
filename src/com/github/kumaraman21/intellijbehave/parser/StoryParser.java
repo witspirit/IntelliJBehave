@@ -396,7 +396,7 @@ public class StoryParser implements PsiParser {
     }
 
     private static boolean isGivenStoriesText(IElementType tokenType) {
-        return tokenType == StoryTokenType.GIVEN_STORIES_TEXT;
+        return tokenType == StoryTokenType.STORY_PATH;
     }
 
     private static boolean belongsToGivenStories(IElementType tokenType) {

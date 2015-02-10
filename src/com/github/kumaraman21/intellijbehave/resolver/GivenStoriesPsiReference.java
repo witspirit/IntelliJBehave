@@ -16,16 +16,15 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveGivenStories;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GivenStoriesPsiReference implements PsiPolyVariantReference {
@@ -82,9 +81,39 @@ public class GivenStoriesPsiReference implements PsiPolyVariantReference {
         return false;
     }
 
+    private List<PsiFile> getAllFiles(PsiDirectory dir) {
+        final List<PsiFile> result = new ArrayList<PsiFile>();
+        Collections.addAll(result, dir.getFiles());
+        for (PsiDirectory directory : dir.getSubdirectories()) {
+            result.addAll(getAllFiles(directory));
+        }
+        return result;
+    }
+
     @NotNull
     @Override
     public Object[] getVariants() {
+        PsiFile file = myGivenStory.getContainingFile();
+
+        final List<PsiFile> storyFiles = new ArrayList<PsiFile>();
+        final PsiDirectory storyRootDir = myGivenStory.getStoriesRootDirectories(file);
+        if (storyRootDir != null) {
+            storyFiles.addAll(getAllFiles(storyRootDir));
+            final String matcher = myGivenStory.getValue().replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
+            final String storyRoot = String.format("%s/", storyRootDir.getVirtualFile().getCanonicalPath());
+            final List<String> variants = new ArrayList<String>(storyFiles.size());
+            for (PsiFile psiFile : storyFiles) {
+                final String fullFileName = psiFile.getVirtualFile().getCanonicalPath();
+                if (fullFileName != null && fullFileName.lastIndexOf(storyRoot) >= 0) {
+                    final String capedFileName = fullFileName.substring(storyRoot.length());
+                    if (capedFileName.startsWith(matcher)) {
+                        variants.add(capedFileName);
+                    }
+                }
+
+            }
+            return variants.toArray(new String[variants.size()]);
+        }
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 

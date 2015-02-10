@@ -19,12 +19,15 @@ import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -93,4 +96,54 @@ public class JBehaveGivenStories extends ASTWrapperPsiElement {
         }
         return myFiles.toArray(new PsiFile[myFiles.size()]);
     }
+
+    private boolean hasStory(PsiDirectory aDir) {
+        PsiFile[] files = aDir.getFiles();
+        if (files.length == 0) return true;
+        for (PsiFile file : files) {
+            if (file.getFileType() == StoryFileType.STORY_FILE_TYPE)
+                return true;
+        }
+        return false;
+    }
+
+    private static final Key<Boolean> hasStories = new Key<Boolean>("hasStories");
+
+    private boolean hasDirTreeOnlyStories(PsiDirectory aDir) {
+        Boolean userData = aDir.getUserData(hasStories);
+        if (userData != null) {
+            return userData;
+        }
+        PsiDirectory[] subdirectories = aDir.getSubdirectories();
+        userData = hasStory(aDir);
+        if (userData) {
+            for (PsiDirectory subDir : subdirectories) {
+                userData = hasDirTreeOnlyStories(subDir);
+                if (!userData) {
+                    break;
+                }
+            }
+        }
+        aDir.putUserData(hasStories, userData);
+        return userData;
+    }
+
+    @Nullable
+    private PsiDirectory getBiggestStoryTree(PsiDirectory start) {
+        if (hasDirTreeOnlyStories(start)) {
+            PsiDirectory parentDirectory = start.getParentDirectory();
+            PsiDirectory tree = getBiggestStoryTree(parentDirectory);
+            if (tree != null)
+                return getBiggestStoryTree(tree);
+            else
+                return start;
+        }
+        return null;
+    }
+
+    @Nullable
+    public PsiDirectory getStoriesRootDirectories(PsiFile file) {
+        return getBiggestStoryTree(file.getOriginalFile().getParent());
+    }
+
 }

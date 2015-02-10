@@ -238,8 +238,8 @@ public class StoryLocalizedLexer extends LexerBase {
                         tokenType = StoryTokenType.WHITE_SPACE;
                         return;
                     }
-                    if (consume(INPUT_CHAR_NO_COMMA)) {
-                        tokenType = StoryTokenType.GIVEN_STORIES_TEXT;
+                    if (consume(PATH_CHARACTER)) {
+                        tokenType = StoryTokenType.STORY_PATH;
                         return;
                     }
                     if (consume(COMMA)) {
@@ -473,10 +473,10 @@ public class StoryLocalizedLexer extends LexerBase {
         }
     };
 
-    private static CharFilter INPUT_CHAR_NO_COMMA = new CharFilter() {
+    private static CharFilter PATH_CHARACTER = new CharFilter() {
         @Override
         public boolean accept(char c) {
-            return c != '\r' && c != '\n' && c != ',';
+            return (c == '/' || c == '.' || c == '_' || c == '@' || Character.isLetterOrDigit(c)) && c != ',';
         }
     };
     private static CharFilter COMMA = new CharFilter() {

@@ -55,7 +55,7 @@ public class StoryTokenType extends IElementType {
     public static final IElementType META_TEXT = new StoryTokenType("META_TEXT");
     public static final IElementType EXAMPLE_TYPE = new StoryTokenType("EXAMPLE_TYPE");
     public static final IElementType GIVEN_STORIES_TYPE = new StoryTokenType("GIVEN_STORIES_TYPE");
-    public static final IElementType GIVEN_STORIES_TEXT = new StoryTokenType("GIVEN_STORIES_TEXT");
+    public static final IElementType STORY_PATH = new StoryTokenType("STORY_PATH");
 
     public static final IElementType NARRATIVE_TYPE = new StoryTokenType("NARRATIVE_TYPE");
     public static final IElementType NARRATIVE_TEXT = new StoryTokenType("NARRATIVE_TEXT");
