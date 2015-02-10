@@ -85,16 +85,15 @@
             </implementation-class>
         </component>
         <component>
-            <implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>
-        </component>
-        <component>
             <implementation-class>com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType
             </implementation-class>
         </component>
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
+        <!--<component>-->
+            <!--<implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>-->
+        <!--</component>-->
     </project-components>
 
     <actions>
@@ -142,5 +141,7 @@
 
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
+        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
+                        serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
     </extensions>
 </idea-plugin>

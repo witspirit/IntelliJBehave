@@ -37,7 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JBehaveSettingsPanel {
-
     private static final ClassFilter MAIN_CLASS_FILTER = new MainClassFilter();
 
     private JPanel contentPane;
@@ -46,8 +45,8 @@ public class JBehaveSettingsPanel {
 
     private JBehaveSettings jBehaveSettings;
 
-    public JBehaveSettingsPanel() {
-        jBehaveSettings = JBehaveSettings.getInstance();
+    public JBehaveSettingsPanel(Project project) {
+        jBehaveSettings = JBehaveSettings.getInstance(project);
         storyRunnerField.addActionListener(new BrowseMainClassListener(storyRunnerField));
     }
 
@@ -56,7 +55,8 @@ public class JBehaveSettingsPanel {
     }
 
     public void reset() {
-        storyRunnerField.setText(jBehaveSettings.getStoryRunner());
+        String storyRunner = jBehaveSettings.getStoryRunner();
+        storyRunnerField.setText(storyRunner);
     }
 
     public boolean isModified() {
