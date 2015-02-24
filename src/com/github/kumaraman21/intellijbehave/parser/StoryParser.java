@@ -304,6 +304,7 @@ public class StoryParser implements PsiParser {
         private void leaveGivenStories() {
             popUntilOnlyIfPresent(StoryElementType.GIVEN_STORIES);
         }
+
         public void enterGivenStoriesText() {
             leaveStoryDescription();
             leaveExampleTable();
@@ -318,6 +319,8 @@ public class StoryParser implements PsiParser {
 
 
         public void enterStepType(IElementType tokenType) {
+            leaveGivenStoriesText();
+            leaveGivenStories();
             leaveExampleTable();
             leaveMeta();
             leaveStep();
@@ -350,6 +353,8 @@ public class StoryParser implements PsiParser {
             leaveStep();
             leaveMeta();
             leaveExampleTable();
+            leaveGivenStoriesText();
+            leaveGivenStories();
             matchesHeadOrPush(StoryElementType.EXAMPLES);
         }
 
@@ -376,7 +381,9 @@ public class StoryParser implements PsiParser {
                 || isStepText(tokenType)
                 || isExampleTable(tokenType)
                 || isTableRow(tokenType)
-                || isMeta(tokenType);
+                || isMeta(tokenType)
+                || isGivenStories(tokenType)
+                ;
     }
 
     private boolean belongsToTable(IElementType tokenType) {
@@ -402,27 +409,14 @@ public class StoryParser implements PsiParser {
     private static boolean belongsToGivenStories(IElementType tokenType) {
         return isWhitespace(tokenType)
                 || isComment(tokenType)
-                || isGivenStoriesText(tokenType)
-                || isScenarioText(tokenType)
-                || isStoryDescription(tokenType)
-                || isStepType(tokenType)
-                || isStepText(tokenType)
-                || isExampleTable(tokenType)
-                || isTableRow(tokenType)
-                || isMeta(tokenType);
+                || isGivenStories(tokenType)
+                || isGivenStoriesText(tokenType);
     }
 
     private static boolean belongsToGivenStoriesText(IElementType tokenType) {
         return isWhitespace(tokenType)
                 || isComment(tokenType)
-                || isGivenStoriesText(tokenType)
-                || isScenarioText(tokenType)
-                || isStoryDescription(tokenType)
-                || isStepType(tokenType)
-                || isStepText(tokenType)
-                || isExampleTable(tokenType)
-                || isTableRow(tokenType)
-                || isMeta(tokenType);
+                || isGivenStoriesText(tokenType);
     }
 
     private static boolean isExampleTable(IElementType tokenType) {

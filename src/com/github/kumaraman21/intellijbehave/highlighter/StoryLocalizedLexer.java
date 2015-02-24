@@ -26,7 +26,9 @@ public class StoryLocalizedLexer extends LexerBase {
         IN_TABLE,
         IN_STEP_TABLE,
         IN_META,
-        IN_EXAMPLES, IN_OTHER_TABLE, IN_GIVENSTORIES
+        IN_EXAMPLES,
+        IN_OTHER_TABLE,
+        IN_GIVENSTORIES
     }
 
     private final LocalizedStorySupport kwSupport;
@@ -190,6 +192,7 @@ public class StoryLocalizedLexer extends LexerBase {
                             case AsA:
                             case IWantTo:
                             case InOrderTo:
+                            case GivenStories:
                             case Scenario:
                                 state = State.IN_DISPATCH;
                                 return;
@@ -225,28 +228,28 @@ public class StoryLocalizedLexer extends LexerBase {
                             case InOrderTo:
                             case Scenario:
                                 state = State.IN_DISPATCH;
-                                return;
+                                break;
                             case ExamplesTableHeaderSeparator:
                             case ExamplesTableValueSeparator:
                                 state = State.IN_OTHER_TABLE;
-                                return;
+                                break;
                         }
                     }
                     return;
-                } else {
-                    if (consume(SPACES)) {
-                        tokenType = StoryTokenType.WHITE_SPACE;
-                        return;
-                    }
-                    if (consume(PATH_CHARACTER)) {
-                        tokenType = StoryTokenType.STORY_PATH;
-                        return;
-                    }
-                    if (consume(COMMA)) {
-                        tokenType = StoryTokenType.PUNCTUATION;
-                        return;
-                    }
                 }
+                if (consume(SPACES)) {
+                    tokenType = StoryTokenType.WHITE_SPACE;
+                    return;
+                }
+                if (consume(PATH_CHARACTER)) {
+                    tokenType = StoryTokenType.STORY_PATH;
+                    return;
+                }
+                if (consume(COMMA)) {
+                    tokenType = StoryTokenType.PUNCTUATION;
+                    return;
+                }
+
             }
             case IN_META: {
                 CharTree.Entry<JBKeyword> entry = charTree.lookup(buffer, position);
@@ -277,6 +280,7 @@ public class StoryLocalizedLexer extends LexerBase {
                             case Then:
                             case And:
                             case Meta:
+                            case GivenStories:
                             case ExamplesTable:
                             case Narrative:
                             case AsA:
@@ -312,6 +316,7 @@ public class StoryLocalizedLexer extends LexerBase {
                             case Then:
                             case And:
                             case Meta:
+                            case GivenStories:
                             case ExamplesTable:
                             case Narrative:
                             case AsA:
@@ -347,6 +352,7 @@ public class StoryLocalizedLexer extends LexerBase {
                             case Then:
                             case And:
                             case Meta:
+                            case GivenStories:
                             case ExamplesTable:
                                 state = State.IN_EXAMPLES;
                                 break;
