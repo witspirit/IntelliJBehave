@@ -54,6 +54,8 @@
     <li> Code inspections to report unused steps definitions and undefined step usages </li>
     <li> Run *.story files</li>
     <li> Finding usages of steps methods </li>
+    <li> Jump to files given in GivenStories </li>
+    <li> Show parameter names of step implementation (point the mouse over the parameter of an step) </li>
     </ul>
 
     <p>
@@ -74,7 +76,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>1.54</version>
+    <version>1.55</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
