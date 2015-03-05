@@ -306,6 +306,7 @@ public class StoryLocalizedLexer extends LexerBase {
             case IN_STEP: {
                 if (consume(CRLF)) {
                     tokenType = StoryTokenType.WHITE_SPACE;
+                    consume(SPACES);
 
                     //
                     CharTree.Entry<JBKeyword> entry = charTree.lookup(buffer, position);
@@ -343,6 +344,7 @@ public class StoryLocalizedLexer extends LexerBase {
             case IN_TABLE: {
                 if (consume(CRLF)) {
                     tokenType = StoryTokenType.WHITE_SPACE;
+                    consume(SPACES);
                     //
                     CharTree.Entry<JBKeyword> entry = charTree.lookup(buffer, position);
                     if (entry.hasValue()) {

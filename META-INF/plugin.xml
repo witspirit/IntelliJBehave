@@ -76,7 +76,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>1.55</version>
+    <version>1.56</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
