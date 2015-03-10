@@ -1,0 +1,102 @@
+{
+  //parserUtilClass="generated.JBehaveParserUtil"
+  tokens=[
+    TOKEN_META = 'Meta:'
+    TOKEN_NARRATIVE = 'Narrative:'
+    TOKEN_SCENARIO = 'Scenario:'
+    TOKEN_GIVEN_STORIES= 'GivenStories:'
+    TOKEN_GIVEN = 'Given '
+    TOKEN_WHEN='When '
+    TOKEN_THEN='Then '
+    TOKEN_AND='And '
+    TOKEN_EXAMPLES='Examples: '
+    TOKEN_COMMENT='regexp:!--.*'
+
+    TOKEN_TEXT_LINE = 'regexp:(?!GivenStories:|Meta:|Narrative:|Scenario:|GivenStories:|Given |When |Then |And |!--)[\w\p{Blank}./@<>-]+'
+    TOKEN_META_KEY_START = '@'
+    TABLE_ROW_DELIMITER='|'
+    NEWLINE='regexp:(\r|\n|\r\n)+'
+    SPACE='regexp:[ \t]'
+  ]
+}
+root ::= !<<eof>> Story {pin=1}
+// The story describes a feature via description, narrative and a set of scenarios
+Story ::= Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
+// JBehave Grammar expressed in EBNF (http://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form)
+
+// The Description is expressed by any sequence of words that must not contain any keywords at start of lines.
+Description ::= ((TOKEN_TEXT_LINE (','|':'|'-')?)+ Newline)+
+
+// The meta is identified by keyword "Meta:" (or equivalent in I18n-ed locale),
+// It is followed by any number of meta elements
+MetaStatement ::= TOKEN_META (SPACE MetaElement)? Newline (MetaElement Newline)* {pin=1 }
+// The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
+// It is followed by a name-value pair, where the value can be empty or have multiple words
+MetaElement::= TOKEN_META_KEY_START MetaKey LINE_WS MetaValue
+MetaKey::= '@' TOKEN_TEXT_LINE
+MetaValue::=TOKEN_TEXT_LINE
+// The narrative is identified by keyword "Narrative:" (or equivalent in I18n-ed locale),
+// It is followed by the narrative elements
+Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
+NarrativeLine ::= TOKEN_TEXT_LINE ((','|':'|'-') TOKEN_TEXT_LINE)*
+NarrativeText ::= (NarrativeLine Newline)+
+
+// The comma-separated list of story resources that specify the stories to be run before a story or a scenario
+GivenStories::= TOKEN_GIVEN_STORIES StoryPaths Newline {pin=1 }
+StoryPaths ::= StoryPath (',' StoryPath)*
+StoryPath ::= TOKEN_TEXT_LINE
+
+// The lifecycle is identified by keyword "Lifecycle:" (or equivalent in I18n-ed locale),
+// It is followed by the lifecycle elements
+Lifecycle::= "Lifecycle:" LifecycleBefore? LifecycleAfter?
+
+// The before lifecyle element identified by keyword "Before:" (or equivalent in I18n-ed locale),
+// followed by one or more steps
+LifecycleBefore::= "Before:" Step+ {pin=2}
+
+// The after lifecyle element identified by keyword "After:" (or equivalent in I18n-ed locale),
+// followed by one or more steps
+LifecycleAfter::= "After:" Step+ {pin=2}
+
+// The scenario is identified by keyword "Scenario:" (or equivalent in I18n-ed locale),
+// which is optional in the case of a single scenario.
+// It can optionally be followed by a title, which is expressed by any sequence of words
+// that must not contain any keywords at start of lines.
+// It is followed by one or more Steps.
+// Finally the optional Examples table, which if present will execute the scenario for as many table rows present
+Scenario ::= TOKEN_SCENARIO Title? MetaStatement? GivenStories? (Step | StepComment)+ Examples? {pin=1}
+private RecoverScenario ::= !(TOKEN_GIVEN)
+// The free-text description
+Title ::= TOKEN_TEXT_LINE (',' TOKEN_TEXT_LINE)* Newline
+
+// The scenario step is a step starting work followed by any number of characters
+Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
+StepTypeGiven ::= TOKEN_GIVEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
+StepTypeWhen ::= TOKEN_WHEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
+StepTypeThen ::= TOKEN_THEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
+StepTypeAnd ::= TOKEN_AND (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
+StepNormal ::= StepLine Newline
+StepTable ::= StepLineEx Newline (Table)?
+StepPath ::= StepLineEx StoryPath Newline
+
+RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
+
+StepLine ::= TOKEN_TEXT_LINE (',' TOKEN_TEXT_LINE)*
+StepLineEx ::= StepLine ':'
+StepComment ::= TOKEN_COMMENT Newline
+
+
+// The examples table
+Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
+
+// The examples table comprises of a header row and data rows
+Table ::= TableHeader TableRow+
+
+// The examples table header contains the column names, separated by TABLE_ROW_DELIMITER
+TableHeader ::= TABLE_ROW_DELIMITER TableCell TABLE_ROW_DELIMITER (TableCell TABLE_ROW_DELIMITER)+ Newline
+
+// The examples table row contains the column values, separated by TABLE_ROW_DELIMITER
+TableRow ::= TABLE_ROW_DELIMITER TableCell TABLE_ROW_DELIMITER (TableCell TABLE_ROW_DELIMITER)+ Newline
+TableCell ::=TOKEN_TEXT_LINE (':' TOKEN_TEXT_LINE)*
+
+private Newline ::= NEWLINE|<<eof>>
