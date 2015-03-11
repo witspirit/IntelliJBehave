@@ -1,5 +1,20 @@
 {
-  //parserUtilClass="generated.JBehaveParserUtil"
+    parserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParser"
+  parserUtilClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
+  //parserUtilClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
+    //stubParserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
+    //implements="com.github.kumaraman21.intellijbehave.psi.StoryPegCompositeElement"
+    //extends="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegCompositeElementImpl"
+    elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType"
+    elementTypePrefix="STORY_"
+    elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType"
+    tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegTokenType"
+    psiClassPrefix="Story"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.github.kumaraman21.intellijbehave.psi"
+    psiImplPackage="com.github.kumaraman21.intellijbehave.psi.impl"
+    //psiImplUtilClass="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegPsiImplUtil"
+
   tokens=[
     TOKEN_META = 'Meta:'
     TOKEN_NARRATIVE = 'Narrative:'
