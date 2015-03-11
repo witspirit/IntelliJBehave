@@ -20,18 +20,22 @@
     TOKEN_NARRATIVE = 'Narrative:'
     TOKEN_SCENARIO = 'Scenario:'
     TOKEN_GIVEN_STORIES= 'GivenStories:'
-    TOKEN_GIVEN = 'Given '
-    TOKEN_WHEN='When '
-    TOKEN_THEN='Then '
-    TOKEN_AND='And '
-    TOKEN_EXAMPLES='Examples: '
+    TOKEN_GIVEN = 'Given'
+    TOKEN_WHEN='When'
+    TOKEN_THEN='Then'
+    TOKEN_AND='And'
+    TOKEN_EXAMPLES='Examples:'
     TOKEN_COMMENT='regexp:!--.*'
 
-    TOKEN_TEXT_LINE = 'regexp:(?!GivenStories:|Meta:|Narrative:|Scenario:|GivenStories:|Given |When |Then |And |!--)[\w\p{Blank}./@<>-]+'
+    TOKEN_WORD = 'regexp:[\w.-]+'
+    TOKEN_INJECT = 'regexp:<[\w.@-]+>'
+    TOKEN_USER_INJECT = 'regexp:<<[\w.@-|]+>>'
+    TOKEN_PATH = 'regexp:[\w._@]+(/[\w._@]+)+'
     TOKEN_META_KEY_START = '@'
-    TABLE_ROW_DELIMITER='|'
-    NEWLINE='regexp:(\r|\n|\r\n)+'
-    SPACE='regexp:[ \t]'
+    TOKEN_TABLE_ROW_DELIMITER='|'
+    TOKEN_NEWLINE='regexp:(\r|\n|\r\n)+'
+    TOKEN_SPACE='regexp:[ \t]'
+    TOKEN_SPACE_PLUS='regexp:[ \t]+'
   ]
 }
 root ::= !<<eof>> Story {pin=1}
@@ -40,26 +44,25 @@ Story ::= Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenar
 // JBehave Grammar expressed in EBNF (http://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form)
 
 // The Description is expressed by any sequence of words that must not contain any keywords at start of lines.
-Description ::= ((TOKEN_TEXT_LINE (','|':'|'-')?)+ Newline)+
+Description ::= MultiTextLine
 
 // The meta is identified by keyword "Meta:" (or equivalent in I18n-ed locale),
 // It is followed by any number of meta elements
-MetaStatement ::= TOKEN_META (SPACE MetaElement)? Newline (MetaElement Newline)* {pin=1 }
+MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement Newline)* {pin=1 }
 // The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
 // It is followed by a name-value pair, where the value can be empty or have multiple words
 MetaElement::= TOKEN_META_KEY_START MetaKey LINE_WS MetaValue
-MetaKey::= '@' TOKEN_TEXT_LINE
-MetaValue::=TOKEN_TEXT_LINE
+MetaKey::= '@' TOKEN_WORD
+MetaValue::=TOKEN_WORD
 // The narrative is identified by keyword "Narrative:" (or equivalent in I18n-ed locale),
 // It is followed by the narrative elements
 Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
-NarrativeLine ::= TOKEN_TEXT_LINE ((','|':'|'-') TOKEN_TEXT_LINE)*
-NarrativeText ::= (NarrativeLine Newline)+
+NarrativeText ::= MultiTextLine
 
 // The comma-separated list of story resources that specify the stories to be run before a story or a scenario
-GivenStories::= TOKEN_GIVEN_STORIES StoryPaths Newline {pin=1 }
+GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1 }
 StoryPaths ::= StoryPath (',' StoryPath)*
-StoryPath ::= TOKEN_TEXT_LINE
+StoryPath ::= TOKEN_PATH
 
 // The lifecycle is identified by keyword "Lifecycle:" (or equivalent in I18n-ed locale),
 // It is followed by the lifecycle elements
@@ -79,25 +82,20 @@ LifecycleAfter::= "After:" Step+ {pin=2}
 // that must not contain any keywords at start of lines.
 // It is followed by one or more Steps.
 // Finally the optional Examples table, which if present will execute the scenario for as many table rows present
-Scenario ::= TOKEN_SCENARIO Title? MetaStatement? GivenStories? (Step | StepComment)+ Examples? {pin=1}
-private RecoverScenario ::= !(TOKEN_GIVEN)
+Scenario ::= TOKEN_SCENARIO SpaceStar (Title Newline)? MetaStatement? GivenStories? (Step | StepComment)+ Examples? {pin=1}
 // The free-text description
-Title ::= TOKEN_TEXT_LINE (',' TOKEN_TEXT_LINE)* Newline
+Title ::= TOKEN_WORD ((','|Space) TOKEN_WORD)* | StoryPath
 
 // The scenario step is a step starting work followed by any number of characters
-Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
-StepTypeGiven ::= TOKEN_GIVEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
-StepTypeWhen ::= TOKEN_WHEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
-StepTypeThen ::= TOKEN_THEN (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
-StepTypeAnd ::= TOKEN_AND (StepNormal | StepTable | StepPath) {pin=1 recoverWhile=RecoverStep}
-StepNormal ::= StepLine Newline
-StepTable ::= StepLineEx Newline (Table)?
-StepPath ::= StepLineEx StoryPath Newline
+
+//Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
+Step ::=  StepType StepText {pin=1 recoverWhile=RecoverStep}
+StepType ::= (TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+
+StepText ::= (Line Newline|LineEx Newline (Table)?|LineEx SpacePlus StoryPath Newline)
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
-StepLine ::= TOKEN_TEXT_LINE (',' TOKEN_TEXT_LINE)*
-StepLineEx ::= StepLine ':'
 StepComment ::= TOKEN_COMMENT Newline
 
 
@@ -105,13 +103,23 @@ StepComment ::= TOKEN_COMMENT Newline
 Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 
 // The examples table comprises of a header row and data rows
-Table ::= TableHeader TableRow+
+Table ::= TableRow+
 
-// The examples table header contains the column names, separated by TABLE_ROW_DELIMITER
-TableHeader ::= TABLE_ROW_DELIMITER TableCell TABLE_ROW_DELIMITER (TableCell TABLE_ROW_DELIMITER)+ Newline
+// The examples table row contains the column values, separated by TOKEN_TABLE_ROW_DELIMITER
+TableRow ::= TOKEN_TABLE_ROW_DELIMITER (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER)* Newline
+TableCell ::= (TOKEN_WORD|TOKEN_INJECT|TOKEN_USER_INJECT|':' | ' ' | '@' | ','|'*')+
+TableCellEmpty ::= SpaceStar
 
-// The examples table row contains the column values, separated by TABLE_ROW_DELIMITER
-TableRow ::= TABLE_ROW_DELIMITER TableCell TABLE_ROW_DELIMITER (TableCell TABLE_ROW_DELIMITER)+ Newline
-TableCell ::=TOKEN_TEXT_LINE (':' TOKEN_TEXT_LINE)*
+Line ::= (Text|Inject|UserInject)+
+TextLine ::=(','|'-'|':'|'@'|'<'|'>'|Space|TOKEN_WORD)+
+MultiTextLine ::= (TextLine Newline)+
+LineEx ::= (Text|Inject|UserInject)+ ':'
 
-private Newline ::= NEWLINE|<<eof>>
+Text ::= (','|'-'|Space|TOKEN_WORD)+
+UserInject ::= TOKEN_USER_INJECT
+Inject ::= TOKEN_INJECT
+
+private Newline ::= TOKEN_NEWLINE|<<eof>>
+private Space ::= TOKEN_SPACE
+private SpacePlus ::= TOKEN_SPACE+
+private SpaceStar ::= TOKEN_SPACE*
