@@ -1,10 +1,25 @@
+/*
+  parserClass="com.simpleplugin.parser.SimpleParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Simple"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.simpleplugin.psi"
+  psiImplPackage="com.simpleplugin.psi.impl"
+
+  elementTypeHolderClass="com.simpleplugin.psi.SimpleTypes"
+  elementTypeClass="com.simpleplugin.psi.SimpleElementType"
+  tokenTypeClass="com.simpleplugin.psi.SimpleTokenType"
+*/
+
 {
     parserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParser"
-  parserUtilClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
-  //parserUtilClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
-    //stubParserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParserUtil"
+  parserUtilClass="com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil"
+    //stubParserClass="com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil"
     //implements="com.github.kumaraman21.intellijbehave.psi.StoryPegCompositeElement"
     //extends="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegCompositeElementImpl"
+    //extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
     elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType"
     elementTypePrefix="STORY_"
     elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType"
@@ -25,19 +40,26 @@
     TOKEN_THEN='Then'
     TOKEN_AND='And'
     TOKEN_EXAMPLES='Examples:'
-    TOKEN_COMMENT='regexp:!--.*'
+    TOKEN_COMMENT="!--"
+    TOKEN_COLON=":"
+    TOKEN_AT="@"
+    //TOKEN_COMMA=","
+    TOKEN_DOT="."
+    TOKEN_LIFECYCLE="Lifecycle:"
+    TOKEN_BEFORE="Before:"
+    TOKEN_AFTER="After:"
 
-    TOKEN_PUNCT = 'regexp:[\p{Punct}&&[^|@:]]'
-    TOKEN_WORD = 'regexp:[\w]+'
+
+    //TOKEN_PUNCT = 'regexp:[\p{Punct}&&[^|@:]]'
+    TOKEN_PUNCT = "regexp:[!\"#$%&'()*+,-./;<=>?\[\\\]\^_`{}~]"
+    TOKEN_WORD = 'regexp:[a-zA-Z_0-9]+'
     //TOKEN_WORD_EX = 'regexp:[\w]+\p{Blank}*:'
-    TOKEN_INJECT = 'regexp:<[\w.@-]+>'
-    TOKEN_USER_INJECT = 'regexp:<<[\w.@-|]+>>'
-    TOKEN_PATH = 'regexp:[\w._@]+(/[\w._@]+)+'
-    TOKEN_META_KEY_START = '@'
+    TOKEN_INJECT = 'regexp:<[a-zA-Z_0-9.@-]+>'
+    TOKEN_USER_INJECT = 'regexp:<<[a-zA-Z_0-9.@-|]+>>'
+    TOKEN_PATH = 'regexp:[a-zA-Z_0-9._@]+(/[a-zA-Z_0-9._@]+)+'
     TOKEN_TABLE_ROW_DELIMITER='|'
     TOKEN_NEWLINE='regexp:(\r|\n|\r\n)+'
-    TOKEN_SPACE='regexp:[ \t]'
-    TOKEN_SPACE_PLUS='regexp:[ \t]+'
+    TOKEN_SPACE='regexp:[ \t\f]'
   ]
 }
 root ::= !<<eof>> Story {pin=1}
@@ -53,8 +75,8 @@ Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement Newline)* {pin=1 }
 // The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
 // It is followed by a name-value pair, where the value can be empty or have multiple words
-MetaElement::= TOKEN_META_KEY_START MetaKey LINE_WS MetaValue
-MetaKey::= '@' TOKEN_WORD
+MetaElement::= TOKEN_AT MetaKey Space MetaValue
+MetaKey::= TOKEN_AT TOKEN_WORD
 MetaValue::=TOKEN_WORD
 // The narrative is identified by keyword "Narrative:" (or equivalent in I18n-ed locale),
 // It is followed by the narrative elements
@@ -63,20 +85,20 @@ NarrativeText ::= MultiTextLine
 
 // The comma-separated list of story resources that specify the stories to be run before a story or a scenario
 GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1 }
-StoryPaths ::= StoryPath (',' StoryPath)*
+StoryPaths ::= StoryPath (TOKEN_COMMA StoryPath)*
 StoryPath ::= TOKEN_PATH
 
 // The lifecycle is identified by keyword "Lifecycle:" (or equivalent in I18n-ed locale),
 // It is followed by the lifecycle elements
-Lifecycle::= "Lifecycle:" LifecycleBefore? LifecycleAfter?
+Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter?
 
 // The before lifecyle element identified by keyword "Before:" (or equivalent in I18n-ed locale),
 // followed by one or more steps
-LifecycleBefore::= "Before:" Step+ {pin=2}
+LifecycleBefore::= TOKEN_BEFORE Step+ {pin=2}
 
 // The after lifecyle element identified by keyword "After:" (or equivalent in I18n-ed locale),
 // followed by one or more steps
-LifecycleAfter::= "After:" Step+ {pin=2}
+LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
 
 // The scenario is identified by keyword "Scenario:" (or equivalent in I18n-ed locale),
 // which is optional in the case of a single scenario.
@@ -84,24 +106,26 @@ LifecycleAfter::= "After:" Step+ {pin=2}
 // that must not contain any keywords at start of lines.
 // It is followed by one or more Steps.
 // Finally the optional Examples table, which if present will execute the scenario for as many table rows present
-Scenario ::= TOKEN_SCENARIO SpaceStar (Title Newline)? MetaStatement? GivenStories? (Step | StepComment)+ Examples? {pin=1}
+Scenario ::= TOKEN_SCENARIO SpaceStar (Title Newline)? MetaStatement? GivenStories? Step+ Examples? {pin=1}
 // The free-text description
-Title ::= TOKEN_WORD ((','|Space) TOKEN_WORD)* | StoryPath
+Title ::= TOKEN_WORD ((TOKEN_PUNCT|Space) TOKEN_WORD)* | StoryPath
 
 // The scenario step is a step starting work followed by any number of characters
 
 //Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
-Step ::=  StepType (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
-StepType ::= (TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+Step ::=  (StepWhen|StepGiven|StepThen|StepAnd|StepComment)
+StepWhen ::=  TOKEN_WHEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
+StepGiven ::=  TOKEN_GIVEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
+StepThen ::=  TOKEN_THEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
+StepAnd ::=  TOKEN_AND (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
+//StepType ::= (TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+StepComment ::= TOKEN_COMMENT (TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|LineEx|Line)* Newline
 
 StepArgumentStandard ::= Line Newline
 StepArgumentTable ::= LineEx Newline (Table)?
 StepArgumentPath ::= LineEx SpacePlus StoryPath Newline
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
-
-StepComment ::= TOKEN_COMMENT Newline
-
 
 // The examples table
 Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
@@ -115,13 +139,14 @@ TableCell ::= (Word|TOKEN_PUNCT) (SpaceStar (Word|TOKEN_PUNCT))*
 TableCellEmpty ::= SpaceStar
 
 Line ::= (Word|Space|TOKEN_PUNCT)+
-LineEx ::= (Word|Space|TOKEN_PUNCT)* ':'
-MultiTextLine ::= ((Word  SpaceStar ':'|Word |Space|TOKEN_PUNCT)+ Newline)+
+LineEx ::= (Word|Space|TOKEN_PUNCT)+ TOKEN_COLON
+//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|TOKEN_PUNCT)+ Newline)+
+MultiTextLine ::= ((Word|Space|TOKEN_COLON|TOKEN_PUNCT|TOKEN_DOT)+ Newline)+
 
-private Word ::= Uri|Alnum|Inject|UserInject
+Word ::= Uri|Alnum|Inject|UserInject
 UserInject ::= TOKEN_USER_INJECT
 Inject ::= TOKEN_INJECT
-Uri::= TOKEN_WORD ':' TOKEN_WORD '@' (TOKEN_WORD '.')* TOKEN_WORD ':' TOKEN_WORD
+Uri::= TOKEN_WORD TOKEN_COLON TOKEN_WORD TOKEN_AT (TOKEN_WORD TOKEN_DOT)* TOKEN_WORD TOKEN_COLON TOKEN_WORD
 Alnum::=TOKEN_WORD
 
 private Newline ::= TOKEN_NEWLINE|<<eof>>
