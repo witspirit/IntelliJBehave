@@ -27,7 +27,9 @@
     TOKEN_EXAMPLES='Examples:'
     TOKEN_COMMENT='regexp:!--.*'
 
-    TOKEN_WORD = 'regexp:[\w.-]+'
+    TOKEN_PUNCT = 'regexp:[\p{Punct}&&[^|@:]]'
+    TOKEN_WORD = 'regexp:[\w]+'
+    //TOKEN_WORD_EX = 'regexp:[\w]+\p{Blank}*:'
     TOKEN_INJECT = 'regexp:<[\w.@-]+>'
     TOKEN_USER_INJECT = 'regexp:<<[\w.@-|]+>>'
     TOKEN_PATH = 'regexp:[\w._@]+(/[\w._@]+)+'
@@ -89,10 +91,12 @@ Title ::= TOKEN_WORD ((','|Space) TOKEN_WORD)* | StoryPath
 // The scenario step is a step starting work followed by any number of characters
 
 //Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
-Step ::=  StepType StepText {pin=1 recoverWhile=RecoverStep}
+Step ::=  StepType (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
 StepType ::= (TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
 
-StepText ::= (Line Newline|LineEx Newline (Table)?|LineEx SpacePlus StoryPath Newline)
+StepArgumentStandard ::= Line Newline
+StepArgumentTable ::= LineEx Newline (Table)?
+StepArgumentPath ::= LineEx SpacePlus StoryPath Newline
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
@@ -107,17 +111,18 @@ Table ::= TableRow+
 
 // The examples table row contains the column values, separated by TOKEN_TABLE_ROW_DELIMITER
 TableRow ::= TOKEN_TABLE_ROW_DELIMITER (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER)* Newline
-TableCell ::= (TOKEN_WORD|TOKEN_INJECT|TOKEN_USER_INJECT|':' | ' ' | '@' | ','|'*')+
+TableCell ::= (Word|TOKEN_PUNCT) (SpaceStar (Word|TOKEN_PUNCT))*
 TableCellEmpty ::= SpaceStar
 
-Line ::= (Text|Inject|UserInject)+
-TextLine ::=(','|'-'|':'|'@'|'<'|'>'|Space|TOKEN_WORD)+
-MultiTextLine ::= (TextLine Newline)+
-LineEx ::= (Text|Inject|UserInject)+ ':'
+Line ::= (Word|Space|TOKEN_PUNCT)+
+LineEx ::= (Word|Space|TOKEN_PUNCT)* ':'
+MultiTextLine ::= ((Word  SpaceStar ':'|Word |Space|TOKEN_PUNCT)+ Newline)+
 
-Text ::= (','|'-'|Space|TOKEN_WORD)+
+private Word ::= Uri|Alnum|Inject|UserInject
 UserInject ::= TOKEN_USER_INJECT
 Inject ::= TOKEN_INJECT
+Uri::= TOKEN_WORD ':' TOKEN_WORD '@' (TOKEN_WORD '.')* TOKEN_WORD ':' TOKEN_WORD
+Alnum::=TOKEN_WORD
 
 private Newline ::= TOKEN_NEWLINE|<<eof>>
 private Space ::= TOKEN_SPACE
