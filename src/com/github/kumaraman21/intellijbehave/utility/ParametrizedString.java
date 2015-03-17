@@ -1,8 +1,10 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.openapi.util.Pair;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,11 @@ public class ParametrizedString {
     @Override
     public int hashCode() {
         return content.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.join(tokens.toArray(), " ");
     }
 
     @Override
@@ -93,16 +100,14 @@ public class ParametrizedString {
 
         public boolean regionMatches(int toffset, String other, int ooffset, int len) {
             try {
-                return normalize(content, getOffset() + toffset, len)
-                        .equalsIgnoreCase(normalize(other, ooffset, len));
+                return normalize(content, getOffset() + toffset, len).equalsIgnoreCase(normalize(other, ooffset, len));
             } catch (final java.lang.StringIndexOutOfBoundsException e) {
                 return false;
             }
         }
 
         private String normalize(final String input, final int offset, final int len) {
-            return input.substring(offset, offset + len)
-                    .replaceAll("\\s+", "");
+            return input.substring(offset, offset + len).replaceAll("\\s+", "");
         }
 
         public int getOffset() {
@@ -317,30 +322,76 @@ public class ParametrizedString {
     }
 
     public String complete(String input) {
-        WeightChain chain = calculateWeightChain(input);
-        WeightChain last = chain.last();
-        if (last.isZero()) {
-            return "";
-        }
-        int inputIndex = last.inputIndex;
-        int tokenIndex = last.tokenIndex;
+        List<String> builder = new ArrayList<String>();
+        List<Pair<String, Boolean>> myTokens = new ArrayList<Pair<String, Boolean>>();
 
-        StringBuilder builder = new StringBuilder();
-
-        Token token = getToken(tokenIndex);
-        if (!token.isIdentifier()) {
-            int consumed = input.length() - inputIndex;
-            builder.append(getToken(tokenIndex).value().substring(consumed));
-        }
-        tokenIndex++;
-        for (int i = tokenIndex; i < getTokenCount(); i++) {
-            token = getToken(i);
-            if (token.isIdentifier()) {
-                builder.append(parameterPrefix);
+        for (Token token : tokens) {
+            String value = token.value();
+            if (token.isIdentifier) {
+                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
+            } else {
+                StringTokenizer tok = new StringTokenizer(value);
+                while (tok.hasMoreTokens()) {
+                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
+                }
             }
-            builder.append(token.value());
         }
-        return builder.toString();
+
+        StringTokenizer tok = new StringTokenizer(input);
+        String[] inputTokens = new String[tok.countTokens()];
+        for (int i = 0; i < inputTokens.length; ++i) {
+            inputTokens[i] = tok.nextToken();
+        }
+        Iterator<Pair<String, Boolean>> myTokenIt = myTokens.iterator();
+        Iterator<String> myInputIt = Arrays.asList(inputTokens).iterator();
+        boolean match = false;
+        //for (int markInput = 0; markInput < inputTokens.length; ++markInput) {
+        while (myInputIt.hasNext()) {
+            Pair<String, Boolean> token = myTokenIt.next();// myTokens.get(markMine);
+            String currentInput = myInputIt.next();
+            if (token.second) {
+                if (!myTokenIt.hasNext() || !myInputIt.hasNext()) {
+                    builder.add(currentInput);
+                    break;
+                }
+                //lookahead
+                Pair<String, Boolean> lookAheadToken = myTokenIt.next();
+                while (lookAheadToken.second && myTokenIt.hasNext()) {
+                    lookAheadToken = myTokenIt.next();
+                }
+                String value = lookAheadToken.first;
+                //find a matching input token
+                match = false;
+                List<String> subs = new ArrayList<String>();
+
+                do{
+                    subs.add(currentInput);
+                    currentInput = myInputIt.next();
+                    boolean b1 = !myInputIt.hasNext() && value.startsWith(currentInput);
+                    boolean b2 = myInputIt.hasNext() && value.equals(currentInput);
+                    if (b1 || b2) {
+                        builder.addAll(subs);
+                        builder.add(value);
+                        match = true;
+                        break;
+                    }
+
+                }while(myInputIt.hasNext());
+                if (!match) return "";
+            } else {
+                match = (!myInputIt.hasNext() && token.first.startsWith(
+                        currentInput)) || (myInputIt.hasNext() && token.first.equals(currentInput));
+                if (!match) return "";
+                builder.add(token.first);
+            }
+        }
+        if (!match) return "";
+        while (myTokenIt.hasNext()) {
+            Pair<String, Boolean> token = myTokenIt.next();
+            builder.add(token.second ? "$" + token.first : token.first);
+        }
+
+        return StringUtils.join(builder, " ");
     }
 
 }

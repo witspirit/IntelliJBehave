@@ -19,6 +19,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.Consumer;
 import org.jbehave.core.i18n.LocalizedKeywords;
 import org.jbehave.core.steps.StepType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -28,7 +29,7 @@ public class StoryCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void fillCompletionVariants(CompletionParameters parameters, final CompletionResultSet _result) {
+    public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet _result) {
         if (parameters.getCompletionType() == CompletionType.BASIC) {
             String prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(parameters);
             CompletionResultSet result = _result.withPrefixMatcher(prefix);
@@ -37,10 +38,7 @@ public class StoryCompletionContributor extends CompletionContributor {
             Consumer<LookupElement> consumer = newConsumer(_result);
 
             addAllKeywords(result.getPrefixMatcher(), consumer, keywords);
-            addAllSteps(parameters,
-                    result.getPrefixMatcher(),
-                    consumer,
-                    keywords);
+            addAllSteps(parameters, result.getPrefixMatcher(), consumer, keywords);
         }
     }
 
@@ -65,8 +63,7 @@ public class StoryCompletionContributor extends CompletionContributor {
         };
     }
 
-    private static void addAllKeywords(PrefixMatcher prefixMatcher,
-                                       Consumer<LookupElement> consumer,
+    private static void addAllKeywords(PrefixMatcher prefixMatcher, Consumer<LookupElement> consumer,
                                        LocalizedKeywords keywords) {
         addIfMatches(consumer, prefixMatcher, keywords.narrative());
         addIfMatches(consumer, prefixMatcher, keywords.asA());
@@ -90,10 +87,8 @@ public class StoryCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static void addAllSteps(CompletionParameters parameters,
-                                    PrefixMatcher prefixMatcher,
-                                    Consumer<LookupElement> consumer,
-                                    LocalizedKeywords keywords) {
+    private static void addAllSteps(CompletionParameters parameters, PrefixMatcher prefixMatcher,
+                                    Consumer<LookupElement> consumer, LocalizedKeywords keywords) {
         JBehaveStep step = getStepPsiElement(parameters);
         if (step == null) {
             return;
@@ -106,35 +101,35 @@ public class StoryCompletionContributor extends CompletionContributor {
 
         // suggest only if at least the actualStepPrefix is complete
         if (isStepTypeComplete(keywords, textBeforeCaret)) {
-            StepSuggester stepAnnotationFinder = new StepSuggester(prefixMatcher,
-                    stepType,
-                    actualStepPrefix,
-                    textBeforeCaret,
-                    consumer,
-                    step.getProject());
+            StepSuggester stepAnnotationFinder = new StepSuggester(prefixMatcher, stepType, actualStepPrefix,
+                    textBeforeCaret, consumer, step.getProject());
             ScanUtils.iterateInContextOf(step, stepAnnotationFinder);
         }
     }
 
     private static boolean isStepTypeComplete(LocalizedKeywords keywords, String input) {
-        return input.startsWith(keywords.given())
-                || input.startsWith(keywords.when())
-                || input.startsWith(keywords.then())
-                || input.startsWith(keywords.and());
+        return input.startsWith(keywords.given()) || input.startsWith(keywords.when()) || input.startsWith(
+                keywords.then()) || input.startsWith(keywords.and());
     }
 
     private static JBehaveStep getStepPsiElement(CompletionParameters parameters) {
         PsiElement position = parameters.getPosition();
-        PsiElement positionParent = position.getParent();
-        if (positionParent instanceof JBehaveStep) {
-            return (JBehaveStep) positionParent;
-        } else if (position instanceof StepPsiReference) {
-            return ((StepPsiReference) position).getElement();
-        } else if (position instanceof JBehaveStep) {
-            return (JBehaveStep) position;
-        } else {
-            return null;
+        while (position != null) {
+            if (position instanceof JBehaveStep) return (JBehaveStep) position;
+            if (position instanceof StepPsiReference) return ((StepPsiReference) position).getElement();
+            position = position.getParent();
         }
+        return null;
+//        PsiElement positionParent = position.getParent();
+//        if (positionParent instanceof JBehaveStep) {
+//            return (JBehaveStep) positionParent;
+//        } else if (position instanceof StepPsiReference) {
+//            return ((StepPsiReference) position).getElement();
+//        } else if (position instanceof JBehaveStep) {
+//            return (JBehaveStep) position;
+//        } else {
+//            return null;
+//        }
     }
 
     private static class StepSuggester extends StepDefinitionIterator {
@@ -144,12 +139,8 @@ public class StoryCompletionContributor extends CompletionContributor {
         private final String textBeforeCaret;
         private final Consumer<LookupElement> consumer;
 
-        private StepSuggester(PrefixMatcher prefixMatcher,
-                              StepType stepType,
-                              String actualStepPrefix,
-                              String textBeforeCaret,
-                              Consumer<LookupElement> consumer,
-                              Project project) {
+        private StepSuggester(PrefixMatcher prefixMatcher, StepType stepType, String actualStepPrefix,
+                              String textBeforeCaret, Consumer<LookupElement> consumer, Project project) {
             super(stepType, project);
             this.prefixMatcher = prefixMatcher;
             this.actualStepPrefix = actualStepPrefix;
@@ -170,11 +161,12 @@ public class StoryCompletionContributor extends CompletionContributor {
             String complete = pString.complete(textBeforeCaret);
             if (StringUtil.isNotEmpty(complete)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
-                consumer.consume(LookupElementBuilder.create(matchingAnnotation, textBeforeCaret + complete));
+                consumer.consume(LookupElementBuilder.create(matchingAnnotation, complete));
             } else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, adjustedAnnotationText));
             }
+
             return true;
         }
     }
