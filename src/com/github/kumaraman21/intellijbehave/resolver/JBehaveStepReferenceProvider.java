@@ -1,7 +1,8 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveGivenStories;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
+import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -18,10 +19,15 @@ public class JBehaveStepReferenceProvider extends PsiReferenceProvider {
 
             return new PsiReference[]{new StepPsiReference(step, TextRange.from(0, element.getTextLength()))};
         }
-        if (element instanceof JBehaveGivenStories) {
-            final JBehaveGivenStories step = (JBehaveGivenStories) element;
+//        if (element instanceof JBehaveGivenStories) {
+//            final JBehaveGivenStories step = (JBehaveGivenStories) element;
+//
+//            return new PsiReference[]{new GivenStoriesPsiReference(step, TextRange.from(0, element.getTextLength()))};
+//        }
+        if (element instanceof PegStoryPath) {
+            final PegStoryPath step = (PegStoryPath) element;
 
-            return new PsiReference[]{new GivenStoriesPsiReference(step, TextRange.from(0, element.getTextLength()))};
+            return new PsiReference[]{new StoryPathPsiReference(step, TextRange.from(0, element.getTextLength()))};
         }
 
         return PsiReference.EMPTY_ARRAY;

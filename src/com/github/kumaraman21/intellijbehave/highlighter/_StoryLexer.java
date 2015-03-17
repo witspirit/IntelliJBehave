@@ -797,7 +797,7 @@ class _StoryLexer implements FlexLexer {
           }
         case 50: break;
         case 12: 
-          { return StoryTokenType.GIVEN_STORIES_TEXT;
+          { return StoryTokenType.STORY_PATH;
           }
         case 51: break;
         case 4: 

@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveGivenStories;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import org.jetbrains.annotations.NotNull;
@@ -14,5 +15,7 @@ public class StepPsiReferenceContributor extends PsiReferenceContributor {
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         JBehaveStepReferenceProvider provider = new JBehaveStepReferenceProvider();
         registrar.registerReferenceProvider(psiElement(JBehaveStep.class), provider);
-        registrar.registerReferenceProvider(psiElement(JBehaveGivenStories.class), provider);    }
+        registrar.registerReferenceProvider(psiElement(JBehaveGivenStories.class), provider);
+        registrar.registerReferenceProvider(psiElement(PegStoryPath.class), provider);
+    }
 }

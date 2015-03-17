@@ -15,6 +15,9 @@
  */
 package com.github.kumaraman21.intellijbehave.highlighter;
 
+import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
+import com.github.kumaraman21.intellijbehave.peg._StoryPegLexer;
+import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -26,6 +29,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Reader;
 import java.util.Map;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
@@ -37,7 +41,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     @NotNull
     @Override
     public Lexer getHighlightingLexer() {
-        return new StorySyntaxHighlightingLexer();
+        return new FlexAdapter(new _StoryPegLexer((Reader) null));
     }
 
     @NotNull
@@ -74,6 +78,10 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String BAD_CHARACTER_ID = "JBEHAVE.BAD_CHARACTER";
     @NonNls
     public static final String GIVEN_STORIES_ID = "JBEHAVE.GIVEN_STORIES_TYPE";
+    @NonNls
+    public static final String STORY_PATH_ID = "JBEHAVE.STORY_PATH";
+    @NonNls
+    public static final String STORY_PATH_FOUND_ID = "JBEHAVE.STORY_PATH_FOUND";
 
     // Registering TextAttributes
     static {
@@ -91,6 +99,8 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(LINE_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
         createKey(BAD_CHARACTER_ID, DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
         createKey(GIVEN_STORIES_ID, DefaultLanguageHighlighterColors.KEYWORD);
+        createKey(STORY_PATH_ID, DefaultLanguageHighlighterColors.STRING);
+        createKey(STORY_PATH_FOUND_ID, DefaultLanguageHighlighterColors.IDENTIFIER);
     }
 
     public static TextAttributesKey STORY_DESCRIPTION = createTextAttributesKey(STORY_DESCRIPTION_ID);
@@ -107,30 +117,34 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey LINE_COMMENT = createTextAttributesKey(LINE_COMMENT_ID);
     public static TextAttributesKey BAD_CHARACTER = createTextAttributesKey(BAD_CHARACTER_ID);
     public static TextAttributesKey GIVEN_STORIES = createTextAttributesKey(GIVEN_STORIES_ID);
+    public static TextAttributesKey STORY_PATH = createTextAttributesKey(STORY_PATH_ID);
+    public static TextAttributesKey STORY_PATH_FOUND = createTextAttributesKey(STORY_PATH_FOUND_ID);
 
     static {
-        ATTRIBUTES.put(StoryTokenType.STORY_DESCRIPTION, STORY_DESCRIPTION);
-        ATTRIBUTES.put(StoryTokenType.NARRATIVE_TYPE, STORY_DESCRIPTION);
-        ATTRIBUTES.put(StoryTokenType.NARRATIVE_TEXT, STORY_DESCRIPTION);
-        ATTRIBUTES.put(StoryTokenType.SCENARIO_TYPE, SCENARIO_TYPE);
-        ATTRIBUTES.put(StoryTokenType.SCENARIO_TEXT, SCENARIO_TEXT);
-        ATTRIBUTES.put(StoryTokenType.GIVEN_TYPE, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.WHEN_TYPE, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.THEN_TYPE, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.STEP_TYPE_GIVEN, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.STEP_TYPE_WHEN, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.STEP_TYPE_THEN, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.STEP_TYPE_AND, STEP_TYPE);
-        ATTRIBUTES.put(StoryTokenType.STEP_TEXT, STEP_TEXT);
-        ATTRIBUTES.put(StoryTokenType.TABLE_DELIM, TABLE_DELIM);
-        ATTRIBUTES.put(StoryTokenType.TABLE_CELL, TABLE_CELL);
-        ATTRIBUTES.put(StoryTokenType.META, META_TYPE);
-        ATTRIBUTES.put(StoryTokenType.META_KEY, META_KEY);
-        ATTRIBUTES.put(StoryTokenType.META_TEXT, META_TEXT);
-        ATTRIBUTES.put(StoryTokenType.COMMENT, LINE_COMMENT);
-        ATTRIBUTES.put(StoryTokenType.COMMENT_WITH_LOCALE, LINE_COMMENT);
-        ATTRIBUTES.put(StoryTokenType.BAD_CHARACTER, BAD_CHARACTER);
-        ATTRIBUTES.put(StoryTokenType.GIVEN_STORIES_TYPE, GIVEN_STORIES);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_GIVEN, STEP_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_WHEN, STEP_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_THEN, STEP_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_AND, STEP_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_SCENARIO, SCENARIO_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_NARRATIVE, STORY_DESCRIPTION);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_PIPE, TABLE_DELIM);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_META, META_TYPE);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_GIVEN_STORIES, GIVEN_STORIES);
+        //=============================================================================
+        ATTRIBUTES.put(IStoryPegElementType.STORY_DESCRIPTION, STORY_DESCRIPTION);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_NARRATIVE_TEXT, STORY_DESCRIPTION);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_SCENARIO_TITLE, SCENARIO_TEXT);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_LINE, STEP_TEXT);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE_CELL, TABLE_CELL);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_META_KEY, META_KEY);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_META_VALUE, META_TEXT);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_COMMENT, LINE_COMMENT);
+//        ATTRIBUTES.put(IStoryPegElementType.BAD_CHARACTER, BAD_CHARACTER);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_STORY_PATH, STORY_PATH);
+    }
+
+    static public TextAttributesKey getTextAttribute(IElementType elementType) {
+        return ATTRIBUTES.get(elementType);
     }
 
     private static TextAttributesKey createKey(String externalName, TextAttributesKey textAttributesKey) {

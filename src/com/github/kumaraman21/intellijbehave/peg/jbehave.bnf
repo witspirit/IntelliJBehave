@@ -43,24 +43,29 @@
     TOKEN_COMMENT="!--"
     TOKEN_COLON=":"
     TOKEN_AT="@"
-    //TOKEN_COMMA=","
-    TOKEN_DOT="."
+    TOKEN_COMMA=","
+    //TOKEN_DOT="."
+    TOKEN_DBRACKET_OPEN = "<<"
+    TOKEN_DBRACKET_CLOSE = ">>"
+    TOKEN_BRACKET_OPEN = "<"
+    TOKEN_BRACKET_CLOSE = ">"
     TOKEN_LIFECYCLE="Lifecycle:"
     TOKEN_BEFORE="Before:"
     TOKEN_AFTER="After:"
+    TOKEN_PIPE='|'
 
-
+    TOKEN_PATH = 'regexp:[a-zA-Z_0-9._@-]+(/[a-zA-Z_0-9._@-]+)+'
+    TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     //TOKEN_PUNCT = 'regexp:[\p{Punct}&&[^|@:]]'
-    TOKEN_PUNCT = "regexp:[!\"#$%&'()*+,-./;<=>?\[\\\]\^_`{}~]"
+    TOKEN_PUNCT = "regexp:[!\"#$%&'()*+,-./;=?\[\\\]\^_`{}~]"
     TOKEN_WORD = 'regexp:[a-zA-Z_0-9]+'
     //TOKEN_WORD_EX = 'regexp:[\w]+\p{Blank}*:'
-    TOKEN_INJECT = 'regexp:<[a-zA-Z_0-9.@-]+>'
-    TOKEN_USER_INJECT = 'regexp:<<[a-zA-Z_0-9.@-|]+>>'
-    TOKEN_PATH = 'regexp:[a-zA-Z_0-9._@]+(/[a-zA-Z_0-9._@]+)+'
-    TOKEN_TABLE_ROW_DELIMITER='|'
     TOKEN_NEWLINE='regexp:(\r|\n|\r\n)+'
     TOKEN_SPACE='regexp:[ \t\f]'
   ]
+  extends("StoryPath")=" com.github.kumaraman21.intellijbehave.peg.PegStoryPath"
+  extends("StepGiven|StepThen|StepWhen|StepAnd")=" com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
+  extends("ScenarioTitle|TableCell")=" com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
 }
 root ::= !<<eof>> Story {pin=1}
 // The story describes a feature via description, narrative and a set of scenarios
@@ -106,24 +111,24 @@ LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
 // that must not contain any keywords at start of lines.
 // It is followed by one or more Steps.
 // Finally the optional Examples table, which if present will execute the scenario for as many table rows present
-Scenario ::= TOKEN_SCENARIO SpaceStar (Title Newline)? MetaStatement? GivenStories? Step+ Examples? {pin=1}
+Scenario ::= TOKEN_SCENARIO SpaceStar (ScenarioTitle Newline)? MetaStatement? GivenStories? Step+ Examples? {pin=1}
 // The free-text description
-Title ::= TOKEN_WORD ((TOKEN_PUNCT|Space) TOKEN_WORD)* | StoryPath
+ScenarioTitle ::= TOKEN_WORD ((Punct|Space) TOKEN_WORD)* | TOKEN_PATH
 
 // The scenario step is a step starting work followed by any number of characters
 
 //Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
 Step ::=  (StepWhen|StepGiven|StepThen|StepAnd|StepComment)
-StepWhen ::=  TOKEN_WHEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
-StepGiven ::=  TOKEN_GIVEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
-StepThen ::=  TOKEN_THEN (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
-StepAnd ::=  TOKEN_AND (StepArgumentPath|StepArgumentTable|StepArgumentStandard) {pin=1 recoverWhile=RecoverStep}
-//StepType ::= (TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+StepWhen ::=  TOKEN_WHEN StepArgument {pin=1 recoverWhile=RecoverStep}
+StepGiven ::=  TOKEN_GIVEN StepArgument {pin=1 recoverWhile=RecoverStep}
+StepThen ::=  TOKEN_THEN StepArgument {pin=1 recoverWhile=RecoverStep}
+StepAnd ::=  TOKEN_AND StepArgument {pin=1 recoverWhile=RecoverStep}
+
 StepComment ::= TOKEN_COMMENT (TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|LineEx|Line)* Newline
 
-StepArgumentStandard ::= Line Newline
-StepArgumentTable ::= LineEx Newline (Table)?
-StepArgumentPath ::= LineEx SpacePlus StoryPath Newline
+StepArgument ::=  StepLine StepPostParameter? Newline?
+StepLine ::= Line
+StepPostParameter ::=  Newline Table| StoryPath
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
@@ -133,23 +138,26 @@ Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 // The examples table comprises of a header row and data rows
 Table ::= TableRow+
 
-// The examples table row contains the column values, separated by TOKEN_TABLE_ROW_DELIMITER
-TableRow ::= TOKEN_TABLE_ROW_DELIMITER (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_TABLE_ROW_DELIMITER)* Newline
-TableCell ::= (Word|TOKEN_PUNCT) (SpaceStar (Word|TOKEN_PUNCT))*
+// The examples table row contains the column values, separated by TOKEN_PIPE
+TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
+TableCell ::= (Word|Punct) (SpacePlus|Word|Punct)*
 TableCellEmpty ::= SpaceStar
 
-Line ::= (Word|Space|TOKEN_PUNCT)+
-LineEx ::= (Word|Space|TOKEN_PUNCT)+ TOKEN_COLON
-//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|TOKEN_PUNCT)+ Newline)+
-MultiTextLine ::= ((Word|Space|TOKEN_COLON|TOKEN_PUNCT|TOKEN_DOT)+ Newline)+
+Line ::= (Word|Space|Punct)+
+LineEx ::= (Word|Space|Punct)+ TOKEN_COLON
+//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|Punct)+ Newline)+
+MultiTextLine ::= ((Word|Space|TOKEN_COLON|Punct)+ Newline)+
 
-Word ::= Uri|Alnum|Inject|UserInject
-UserInject ::= TOKEN_USER_INJECT
-Inject ::= TOKEN_INJECT
-Uri::= TOKEN_WORD TOKEN_COLON TOKEN_WORD TOKEN_AT (TOKEN_WORD TOKEN_DOT)* TOKEN_WORD TOKEN_COLON TOKEN_WORD
+Word ::= IpAddress|Uri|Alnum|Inject|UserInject
+UserInject ::= TOKEN_DBRACKET_OPEN (IpAddress|Uri|Alnum|Space|TOKEN_PIPE|Punct)+ TOKEN_DBRACKET_CLOSE
+Inject ::= TOKEN_BRACKET_OPEN (IpAddress|Uri|Alnum|Space|TOKEN_PIPE|Punct)+ TOKEN_BRACKET_CLOSE
+Uri::= TOKEN_WORD TOKEN_COLON TOKEN_WORD TOKEN_AT IpAddress (TOKEN_COLON TOKEN_WORD)? {pin=5}
+IpAddress ::= TOKEN_IP
 Alnum::=TOKEN_WORD
 
 private Newline ::= TOKEN_NEWLINE|<<eof>>
 private Space ::= TOKEN_SPACE
 private SpacePlus ::= TOKEN_SPACE+
 private SpaceStar ::= TOKEN_SPACE*
+private Punct ::= TOKEN_PUNCT | TOKEN_BRACKET_CLOSE|TOKEN_BRACKET_OPEN|TOKEN_COMMA|TOKEN_COLON
+

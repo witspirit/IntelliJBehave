@@ -29,7 +29,8 @@ public class JavaStepDefinition {
     private final StepPatternParser stepPatternParser = new RegexPrefixCapturingPatternParser();
 
     public JavaStepDefinition(PsiAnnotation annotation) {
-        myElementPointer = SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation);
+        myElementPointer = SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(
+                annotation);
     }
 
     public boolean matches(String stepText) {
@@ -79,8 +80,7 @@ public class JavaStepDefinition {
     private Set<StepMatcher> getStepMatchers(Set<String> annotationTextVariants) {
         final StepType annotationType = getAnnotationType();
 
-        return from(annotationTextVariants)
-                .transform(toStepMatchers(annotationType)).toSet();
+        return from(annotationTextVariants).transform(toStepMatchers(annotationType)).toSet();
     }
 
     private Function<String, StepMatcher> toStepMatchers(final StepType annotationType) {
@@ -147,6 +147,7 @@ public class JavaStepDefinition {
 
     public boolean supportsStep(@NotNull JBehaveStep step) {
         StepType stepType = step.getStepType();
+        if (stepType == StepType.AND) return true;
         StepType annotationType = getAnnotationType();
 
         return Objects.equal(stepType, annotationType);

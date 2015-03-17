@@ -15,9 +15,14 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
+import com.github.kumaraman21.intellijbehave.peg.StoryPegParserDefinition;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepAnd;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepGiven;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepThen;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepWhen;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jbehave.core.steps.StepType;
@@ -26,12 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import static org.apache.commons.lang.StringUtils.trim;
 
-public class JBehaveStep extends ASTWrapperPsiElement {
-    private StepType stepType;
-
-    public JBehaveStep(@NotNull ASTNode node, StepType stepType) {
+public class JBehaveStep extends JBehaveRule {
+    public JBehaveStep(@NotNull ASTNode node) {
         super(node);
-        this.stepType = stepType;
     }
 
     @Override
@@ -41,17 +43,31 @@ public class JBehaveStep extends ASTWrapperPsiElement {
     }
 
     public StepType getStepType() {
-        return stepType;
+        if (this instanceof StoryStepWhen) return StepType.WHEN;
+        if (this instanceof StoryStepThen) return StepType.THEN;
+        if (this instanceof StoryStepGiven) return StepType.GIVEN;
+        if (this instanceof StoryStepAnd) {
+            PsiElement prevSibling = getParent().getPrevSibling().getFirstChild();
+            if(prevSibling instanceof JBehaveStep){
+                JBehaveStep sibling= (JBehaveStep) prevSibling;
+                StepType stepType = sibling.getStepType();
+                return stepType;
+            }
+            return StepType.AND;
+        }
+        //return stepType;
+        return StepType.IGNORABLE;
     }
 
     @Nullable
     public ASTNode getKeyword() {
-        return getNode().findChildByType(StoryTokenType.STEP_TYPES);
+        //return getNode().findChildByType(StoryTokenType.STEP_TYPES);
+        return getNode().findChildByType(StoryPegParserDefinition.STEP_TYPES);
     }
 
     public String getStepText() {
         int offset = getStepTextOffset();
-        String text = getText();
+        final String text = String.format("%s%s", getFirstChild().getText(), getLastChild().getFirstChild().getText());
 
         if (offset <= 0 || offset >= text.length()) {
             return trim(text);

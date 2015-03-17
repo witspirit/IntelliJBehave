@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.parser;
+package com.github.kumaraman21.intellijbehave.peg;
 
-import com.github.kumaraman21.intellijbehave.highlighter.StoryLexerFactory;
-import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
+import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
+import com.github.kumaraman21.intellijbehave.parser.StoryFile;
+import com.github.kumaraman21.intellijbehave.parser.StoryPegParser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
+import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -30,16 +32,18 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
-public class StoryParserDefinition implements ParserDefinition {
+import java.io.Reader;
+
+public class StoryPegParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
-        return new StoryLexerFactory().createLexer();
+        return new FlexAdapter(new _StoryPegLexer((Reader) null));
     }
 
     @Override
     public PsiParser createParser(Project project) {
-        return new StoryParser();
+        return new StoryPegParser();
     }
 
     @Override
@@ -50,31 +54,33 @@ public class StoryParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public TokenSet getWhitespaceTokens() {
-        return TokenSet.create(StoryTokenType.WHITE_SPACE);
+//        return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
+        return TokenSet.EMPTY;
+        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
     }
 
     @NotNull
     @Override
     public TokenSet getCommentTokens() {
-        return TokenSet.create(StoryTokenType.COMMENT, StoryTokenType.COMMENT_WITH_LOCALE);
+        return TokenSet.EMPTY;
+        //return TokenSet.create(IStoryPegElementType.STORY_STEP_COMMENT);
     }
 
     @NotNull
     @Override
     public TokenSet getStringLiteralElements() {
         return TokenSet.EMPTY;
+        //return TokenSet.create(IStoryPegElementType.STORY_WORD);
     }
+
+    public static final TokenSet STEP_TYPES = TokenSet.create(IStoryPegElementType.STORY_TOKEN_AND,
+            IStoryPegElementType.STORY_TOKEN_WHEN, IStoryPegElementType.STORY_TOKEN_THEN,
+            IStoryPegElementType.STORY_TOKEN_GIVEN);
 
     @NotNull
     @Override
     public PsiElement createElement(ASTNode node) {
-//        final IElementType type = node.getElementType();
-//        if (type == StoryElementType.GIVEN_STEP || type == StoryElementType.WHEN_STEP || type == StoryElementType.THEN_STEP) {
-//            return new JBehaveStep(node);
-//        } else if (type == StoryElementType.GIVEN_STORIES_TEXT) {
-//            return new JBehaveGivenStories(node);
-//        }
-        return new ASTWrapperPsiElement(node);
+        return IStoryPegElementType.Factory.createElement(node);
     }
 
     @Override
@@ -84,6 +90,6 @@ public class StoryParserDefinition implements ParserDefinition {
 
     @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-        return SpaceRequirements.MAY;
+        return SpaceRequirements.MUST;
     }
 }

@@ -1,7 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -41,11 +40,12 @@ public class JBehaveStepsIndex {
         Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
         List<JavaStepDefinition> stepDefinitions = loadStepsFor(module);
 
-        String stepText = getTableOffset(step);
+        String stepText = getTableOffset(step).trim();
 
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
-                Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
+                Integer currentHighestPriority = getPriorityByDefinition(
+                        definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);
 
                 if (newPriority > currentHighestPriority) {
@@ -58,13 +58,35 @@ public class JBehaveStepsIndex {
     }
 
     private String getTableOffset(@NotNull final JBehaveStep step) {
-        final String stepText = step.getStepText();
-        for (PsiElement psiElement : step.getChildren()) {
-            if (psiElement.getNode().getElementType() == StoryElementType.TABLE_ROW) {
-                return stepText.substring(0, psiElement.getStartOffsetInParent());
-            }
-        }
-        return stepText;
+        PsiElement lastChild = step.getLastChild();
+        PsiElement[] children = lastChild.getChildren();
+        PsiElement firstChild = lastChild.getFirstChild();
+        String text = firstChild.getText().trim();
+
+        if (children.length > 1) return text + " dummy";
+        return text;
+
+//        if(lastChild instanceof StoryStepArgument){
+//            PsiElement arg=lastChild.getFirstChild();
+//            if(arg instanceof StoryStepArgumentStandard){
+//                return arg.getText();
+//            }
+//            if(arg instanceof StoryStepArgumentTable){
+//                PsiElement firstChild = arg.getFirstChild();
+//                String text = firstChild.getText();
+//                return text+" dummy";
+//            }
+//            if(arg instanceof StoryStepArgumentPath){
+//                return arg.getText();
+//            }
+//        }
+//        final String stepText = step.getStepText();
+//        for (PsiElement psiElement : step.getChildren()) {
+//            if (psiElement.getNode().getElementType() == StoryElementType.TABLE_ROW) {
+//                return stepText.substring(0, psiElement.getStartOffsetInParent());
+//            }
+//        }
+        //return "";
     }
 
     @NotNull
@@ -103,7 +125,8 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
+    private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass,
+                                                                   @NotNull final GlobalSearchScope scope) {
         return ApplicationManager.getApplication().runReadAction(new Computable<Collection<PsiAnnotation>>() {
             @Override
             public Collection<PsiAnnotation> compute() {
@@ -114,8 +137,8 @@ public class JBehaveStepsIndex {
 
     @Nullable
     private PsiClass findStepAnnotation(String stepClass, Module module, GlobalSearchScope dependenciesScope) {
-        Collection<PsiClass> stepDefAnnotationCandidates =
-                JavaFullClassNameIndex.getInstance().get(stepClass.hashCode(), module.getProject(), dependenciesScope);
+        Collection<PsiClass> stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(
+                stepClass.hashCode(), module.getProject(), dependenciesScope);
 
         for (PsiClass stepDefAnnotations : stepDefAnnotationCandidates) {
             if (stepClass.equals(stepDefAnnotations.getQualifiedName())) {

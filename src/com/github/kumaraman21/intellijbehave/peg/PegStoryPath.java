@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.parser;
+package com.github.kumaraman21.intellijbehave.peg;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -32,9 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class JBehaveGivenStories extends JBehaveRule {
+public class PegStoryPath extends ASTWrapperPsiElement {
 
-    public JBehaveGivenStories(@NotNull ASTNode node) {
+    public PegStoryPath(@NotNull ASTNode node) {
         super(node);
     }
 

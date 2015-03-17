@@ -16,15 +16,19 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
-import com.github.kumaraman21.intellijbehave.parser.JBehaveGivenStories;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
+import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
+import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,24 +55,40 @@ public class StoryAnnotator implements Annotator {
             } else {
                 annotateParameters(step, definition, annotationHolder);
             }
-        } else if (psiElement instanceof JBehaveGivenStories) {
-            JBehaveGivenStories givenStories = (JBehaveGivenStories) psiElement;
-            PsiReference[] references = givenStories.getReferences();
-            if (references.length != 1 || !(references[0] instanceof GivenStoriesPsiReference)) {
+        } else if (psiElement instanceof StoryStoryPath) {
+            StoryStoryPath storyPath = (StoryStoryPath) psiElement;
+            PsiReference[] references = storyPath.getReferences();
+            if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
                 return;
             }
-            GivenStoriesPsiReference reference = (GivenStoriesPsiReference) references[0];
+            StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
 
             if (reference.multiResolve(false).length == 0) {
                 annotationHolder.createErrorAnnotation(psiElement, "File not found");
+            } else {
+                Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, "");
+                infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_PATH_FOUND);
+            }
+        } else if (psiElement instanceof JBehaveRule) {
+            Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, null);
+            IElementType elementType = psiElement.getNode().getElementType();
+            if (elementType != null) {
+                TextAttributesKey textAttribute = StorySyntaxHighlighter.getTextAttribute(elementType);
+                if (textAttribute != null) infoAnnotation.setTextAttributes(textAttribute);
             }
         }
+
     }
 
     private void annotateParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition,
                                     AnnotationHolder annotationHolder) {
         String stepText = step.getStepText();
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
+        if (annotationText == null) {
+            stepText = stepText + " dummy";
+            annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
+            if (annotationText == null) return;
+        }
         ParametrizedString pString = new ParametrizedString(annotationText);
 
         Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
