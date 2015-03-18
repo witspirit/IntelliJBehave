@@ -127,12 +127,12 @@ public class StepPsiReference implements PsiPolyVariantReference {
         List<ResolveResult> result = new ArrayList<ResolveResult>();
         List<PsiMethod> resolvedElements = new ArrayList<PsiMethod>();
 
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        Collection<JavaStepDefinition> resolvedStepDefinitions = index.findStepDefinitions(myStep);
+        Collection<JavaStepDefinition> resolvedStepDefinitions = resolveToDefinitions();
 
         for (JavaStepDefinition resolvedStepDefinition : resolvedStepDefinitions) {
             final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
+
                 resolvedElements.add(method);
                 result.add(new ResolveResult() {
                     public PsiElement getElement() {

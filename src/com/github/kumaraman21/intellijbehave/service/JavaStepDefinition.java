@@ -64,7 +64,7 @@ public class JavaStepDefinition {
     }
 
     @Nullable
-    private PsiAnnotation getAnnotation() {
+    public PsiAnnotation getAnnotation() {
         return myElementPointer.getElement();
     }
 

@@ -23,15 +23,17 @@ import com.github.kumaraman21.intellijbehave.psi.StoryStepThen;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepWhen;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.util.IncorrectOperationException;
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.apache.commons.lang.StringUtils.trim;
 
-public class JBehaveStep extends JBehaveRule {
+public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
     public JBehaveStep(@NotNull ASTNode node) {
         super(node);
     }
@@ -88,5 +90,10 @@ public class JBehaveStep extends JBehaveRule {
     public int getStepTextOffset() {
         String stepPrefix = getActualStepPrefix();
         return stepPrefix != null ? stepPrefix.length() + 1 : 0;
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        return this;
     }
 }

@@ -145,6 +145,7 @@
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
-        <lang.findUsagesProvider language="JAVA" implementationClass="com.github.kumaraman21.intellijbehave.usages.JBehaveFindUsages"/>
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JbehaveRenameAnnotationHandler" />
+        <renamePsiElementProcessor implementation="com.github.kumaraman21.intellijbehave.refactor.RenameJbehaveAnnotationProcessor" />
     </extensions>
 </idea-plugin>
