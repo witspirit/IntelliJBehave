@@ -17,10 +17,7 @@ package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.peg.StoryPegParserDefinition;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepAnd;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepGiven;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepThen;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepWhen;
+import com.github.kumaraman21.intellijbehave.psi.*;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
@@ -32,6 +29,7 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -108,17 +106,28 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
                     Iterator<PsiLiteralExpression> childrenOfType = PsiTreeUtil.findChildrenOfType(annotation,
                             PsiLiteralExpression.class).iterator();
                     if (childrenOfType.hasNext()) {
+                        boolean hasTable = false;
                         String text = childrenOfType.next().getText();
                         if (text.contains("\"")) {
                             text = text.replace("\"", "");
                         }
-                        String oldText = getStepText();
+                        String oldText = getStepText().trim();
+                        Collection<StoryStepPostParameter> storyStepPostParameters = PsiTreeUtil.findChildrenOfType(
+                                this, StoryStepPostParameter.class);
+
+                        if (storyStepPostParameters.size() > 0) {
+                            oldText = oldText + " TABLE";
+                            hasTable = true;
+                        }
                         ParametrizedString pOldText = new ParametrizedString(oldText);
                         ParametrizedString pNewText = new ParametrizedString(name);
                         ParametrizedString pAnnotationText = new ParametrizedString(text);
                         List<Pair<String, String>> tokensOf = pAnnotationText.getTokensOf(oldText);
                         if (tokensOf != null) {
-                            pNewText.textAccordingTo(tokensOf);
+                            String newText = pNewText.textAccordingTo(tokensOf);
+                            if (hasTable) {
+                                newText = newText.replace(" TABLE", "");
+                            }
                             String g = "";
                         }
                     }

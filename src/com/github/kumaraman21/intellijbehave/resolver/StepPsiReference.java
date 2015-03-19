@@ -72,7 +72,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        return myStep;
+        return myStep.setName(newElementName);
     }
 
     @Override

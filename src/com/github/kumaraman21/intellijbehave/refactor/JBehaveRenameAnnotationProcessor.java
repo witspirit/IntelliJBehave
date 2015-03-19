@@ -50,15 +50,8 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
     @Override
     public void renameElement(PsiElement element, String newName, UsageInfo[] usages,
                               RefactoringElementListener listener) throws IncorrectOperationException {
-        //4
-        if (element instanceof PsiNamedElement) super.renameElement(element, newName, usages, listener);
-        if(element instanceof PsiMethod){
-            PsiElement firstChild = element.getFirstChild();
-            if (firstChild instanceof PsiJavaTokenImpl) {
-                ((PsiJavaTokenImpl) firstChild).replaceWithText(String.format("\"%s\"", newName));
-            }
-        }
         if (element instanceof PsiLiteralExpression || element instanceof PsiSuggestionHolder) {
+            super.renameElement(element, newName, usages, listener);
             PsiElement firstChild = element.getFirstChild();
             if (firstChild instanceof PsiJavaTokenImpl) {
                 ((PsiJavaTokenImpl) firstChild).replaceWithText(String.format("\"%s\"", newName));
@@ -110,7 +103,6 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
     public void prepareRenaming(PsiElement element, String newName, Map<PsiElement, String> allRenames,
                                 SearchScope scope) {
         PsiMethod method = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
-        PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
         if (method != null) {
             Map<PsiElement, String> buffer = new HashMap<PsiElement, String>();
             buffer.putAll(allRenames);
@@ -118,13 +110,12 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
             for (Map.Entry<PsiElement, String> entry : buffer.entrySet()) {
                 PsiElement key = entry.getKey();
                 if (key instanceof PsiLiteralExpression) {
-                    PsiElement parentOfType = PsiTreeUtil.getParentOfType(key, PsiMethod.class);
                     allRenames.put(new PsiSuggestionHolder(key), entry.getValue());
                 } else {
                     allRenames.put(key, entry.getValue());
                 }
             }
-            String f="";
+            String f = "";
         }
     }
 
