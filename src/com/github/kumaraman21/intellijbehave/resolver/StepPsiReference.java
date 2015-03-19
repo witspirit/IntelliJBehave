@@ -20,18 +20,13 @@ import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class StepPsiReference implements PsiPolyVariantReference {
     private final JBehaveStep myStep;
@@ -121,18 +116,25 @@ public class StepPsiReference implements PsiPolyVariantReference {
         return index.findStepDefinitions(myStep);
     }
 
+    private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
+
+    public boolean containsAnnotation(PsiAnnotation psiAnnotation) {
+        return theAnnotations.contains(psiAnnotation);
+    }
+
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         List<ResolveResult> result = new ArrayList<ResolveResult>();
         List<PsiMethod> resolvedElements = new ArrayList<PsiMethod>();
+        theAnnotations.clear();
 
         Collection<JavaStepDefinition> resolvedStepDefinitions = resolveToDefinitions();
 
         for (JavaStepDefinition resolvedStepDefinition : resolvedStepDefinitions) {
             final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
-
+                theAnnotations.add(resolvedStepDefinition.getAnnotation());
                 resolvedElements.add(method);
                 result.add(new ResolveResult() {
                     public PsiElement getElement() {
