@@ -21,15 +21,19 @@ import com.github.kumaraman21.intellijbehave.psi.StoryStepAnd;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepGiven;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepThen;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepWhen;
+import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.trim;
 
@@ -50,10 +54,8 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         if (this instanceof StoryStepGiven) return StepType.GIVEN;
         if (this instanceof StoryStepAnd) {
             PsiElement prevSibling = getParent().getPrevSibling().getFirstChild();
-            if(prevSibling instanceof JBehaveStep){
-                JBehaveStep sibling= (JBehaveStep) prevSibling;
-                StepType stepType = sibling.getStepType();
-                return stepType;
+            if (prevSibling instanceof JBehaveStep) {
+                return ((JBehaveStep) prevSibling).getStepType();
             }
             return StepType.AND;
         }
@@ -94,6 +96,35 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        PsiReference[] references = getReferences();
+        if (references.length == 1) {
+            PsiReference reference = references[0];
+            PsiMethod resolve = (PsiMethod) reference.resolve();
+            if (resolve != null) {
+                PsiModifierList modifierList = resolve.getModifierList();
+                PsiAnnotation[] annotations = modifierList.getAnnotations();
+                for (PsiAnnotation annotation : annotations) {
+                    //check if this is my annotation
+                    Iterator<PsiLiteralExpression> childrenOfType = PsiTreeUtil.findChildrenOfType(annotation,
+                            PsiLiteralExpression.class).iterator();
+                    if (childrenOfType.hasNext()) {
+                        String text = childrenOfType.next().getText();
+                        if (text.contains("\"")) {
+                            text = text.replace("\"", "");
+                        }
+                        String oldText = getStepText();
+                        ParametrizedString pOldText = new ParametrizedString(oldText);
+                        ParametrizedString pNewText = new ParametrizedString(name);
+                        ParametrizedString pAnnotationText = new ParametrizedString(text);
+                        List<Pair<String, String>> tokensOf = pAnnotationText.getTokensOf(oldText);
+                        if (tokensOf != null) {
+                            pNewText.textAccordingTo(tokensOf);
+                            String g = "";
+                        }
+                    }
+                }
+            }
+        }
         return this;
     }
 }

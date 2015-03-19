@@ -1,6 +1,8 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -9,10 +11,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -58,35 +60,17 @@ public class JBehaveStepsIndex {
     }
 
     private String getTableOffset(@NotNull final JBehaveStep step) {
-        PsiElement lastChild = step.getLastChild();
-        PsiElement[] children = lastChild.getChildren();
-        PsiElement firstChild = lastChild.getFirstChild();
-        String text = firstChild.getText().trim();
-
-        if (children.length > 1) return text + " dummy";
-        return text;
-
-//        if(lastChild instanceof StoryStepArgument){
-//            PsiElement arg=lastChild.getFirstChild();
-//            if(arg instanceof StoryStepArgumentStandard){
-//                return arg.getText();
-//            }
-//            if(arg instanceof StoryStepArgumentTable){
-//                PsiElement firstChild = arg.getFirstChild();
-//                String text = firstChild.getText();
-//                return text+" dummy";
-//            }
-//            if(arg instanceof StoryStepArgumentPath){
-//                return arg.getText();
-//            }
-//        }
-//        final String stepText = step.getStepText();
-//        for (PsiElement psiElement : step.getChildren()) {
-//            if (psiElement.getNode().getElementType() == StoryElementType.TABLE_ROW) {
-//                return stepText.substring(0, psiElement.getStartOffsetInParent());
-//            }
-//        }
-        //return "";
+        final Iterator<StoryStepLine> stepLines = PsiTreeUtil.findChildrenOfType(step, StoryStepLine.class).iterator();
+        final Iterator<StoryStepPostParameter> storyStepPostParameters = PsiTreeUtil.findChildrenOfType(step,
+                StoryStepPostParameter.class).iterator();
+        if (stepLines.hasNext()) {
+            final String text = stepLines.next().getText().trim();
+            if (storyStepPostParameters.hasNext()) {
+                return text + " dummy";
+            }
+            return text;
+        }
+        return "";
     }
 
     @NotNull

@@ -321,6 +321,10 @@ public class ParametrizedString {
         }
     }
 
+    public boolean isSameAs(String input) {
+        return complete(input).equals(input);
+    }
+
     public String complete(String input) {
         List<String> builder = new ArrayList<String>();
         List<Pair<String, Boolean>> myTokens = new ArrayList<Pair<String, Boolean>>();
@@ -364,7 +368,7 @@ public class ParametrizedString {
                 match = false;
                 List<String> subs = new ArrayList<String>();
 
-                do{
+                do {
                     subs.add(currentInput);
                     currentInput = myInputIt.next();
                     boolean b1 = !myInputIt.hasNext() && value.startsWith(currentInput);
@@ -376,7 +380,7 @@ public class ParametrizedString {
                         break;
                     }
 
-                }while(myInputIt.hasNext());
+                } while (myInputIt.hasNext());
                 if (!match) return "";
             } else {
                 match = (!myInputIt.hasNext() && token.first.startsWith(
@@ -394,4 +398,125 @@ public class ParametrizedString {
         return StringUtils.join(builder, " ");
     }
 
+    /**
+     * Process input and return a list of tokens in the same syntax as me.
+     * E.g. if I'm: "the red $fox jumps over the $hill" and input is:
+     * "the red funny bird jumps over the mountains" then the tokens returned are:
+     * [the red, false]
+     * [funny bird, true]
+     * [jumps over the, false]
+     * [mountains, true]
+     *
+     * @param input
+     * @return
+     */
+    public List<Pair<String, String>> getTokensOf(String input) {
+        List<Pair<String, String>> retVal = new ArrayList<Pair<String, String>>();
+        Deque<Pair<String, Boolean>> myTokens = new ArrayDeque<Pair<String, Boolean>>();
+
+        for (Token token : tokens) {
+            String value = token.value();
+            if (token.isIdentifier) {
+                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
+            } else {
+                StringTokenizer tok = new StringTokenizer(value);
+                while (tok.hasMoreTokens()) {
+                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
+                }
+            }
+        }
+
+        StringTokenizer tok = new StringTokenizer(input);
+        Deque<String> inputTokens = new ArrayDeque<String>();
+
+        while (tok.hasMoreTokens()) {
+            inputTokens.add(tok.nextToken().trim());
+        }
+        //Iterator<Pair<String, Boolean>> myTokenIt = myTokens.iterator();
+        //ListIterator<String> myInputIt = inputTokens.listIterator();
+        boolean match = false;
+        final List<String> subs = new ArrayList<String>();
+        while (!inputTokens.isEmpty()) {
+            Pair<String, Boolean> token = myTokens.removeFirst();
+            String currentInput = inputTokens.removeFirst();
+            if (token.second) {
+                if (!subs.isEmpty()) {
+                    retVal.add(Pair.create(StringUtils.join(subs, " "), (String) null));
+                    subs.clear();
+                }
+                if (myTokens.isEmpty()) {
+                    subs.add(currentInput);
+                    while (!inputTokens.isEmpty()) {
+                        currentInput = inputTokens.removeFirst();
+                        subs.add(currentInput);
+                    }
+                    retVal.add(Pair.create(StringUtils.join(subs, " "), token.first));
+                    subs.clear();
+                    break;
+                }
+                if (inputTokens.isEmpty()) {
+                    return null;
+                }
+                //lookahead
+                Pair<String, Boolean> lookAheadToken = myTokens.removeFirst();
+                while (lookAheadToken.second && !myTokens.isEmpty()) {
+                    lookAheadToken = myTokens.removeFirst();
+                }
+                String value = lookAheadToken.first;
+                //find a matching input token
+                match = false;
+                do {
+                    subs.add(currentInput);
+                    currentInput = inputTokens.removeFirst();
+                    boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput);
+                    boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput);
+                    if (b1 || b2) {
+                        retVal.add(Pair.create(StringUtils.join(subs, " "), token.first));
+                        match = true;
+                        myTokens.addFirst(lookAheadToken);
+                        inputTokens.addFirst(currentInput);
+                        break;
+                    }
+
+                } while (!inputTokens.isEmpty());
+                subs.clear();
+                if (!match) return null;
+            } else {
+                match = (inputTokens.isEmpty() && token.first.startsWith(
+                        currentInput)) || (!inputTokens.isEmpty() && token.first.equals(currentInput));
+                if (!match) return null;
+                subs.add(currentInput);
+            }
+        }
+        if (!match || !myTokens.isEmpty()) return null;
+        if (!subs.isEmpty()) {
+            retVal.add(Pair.create(StringUtils.join(subs, " "), (String) null));
+            subs.clear();
+        }
+
+        return retVal;
+    }
+
+    public String textAccordingTo(List<Pair<String, String>> actualText) {
+        Map<String, String> parameters = new HashMap<String, String>();
+
+        for (Pair<String, String> pair : actualText) {
+            if (pair.second != null) {
+                parameters.put(pair.second, pair.first);
+            }
+        }
+        List<String> retval = new ArrayList<String>();
+        for (Token token : tokens) {
+            String value = token.value().trim();
+            if (token.isIdentifier) {
+                String oldParameter = parameters.get(value);
+                if (oldParameter != null) {
+                    retval.add(oldParameter);
+                }
+            } else {
+                retval.add(value);
+            }
+        }
+        return StringUtils.join(retval, " ");
+    }
 }

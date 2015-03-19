@@ -145,7 +145,11 @@
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
-        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JbehaveRenameAnnotationHandler" />
-        <renamePsiElementProcessor implementation="com.github.kumaraman21.intellijbehave.refactor.RenameJbehaveAnnotationProcessor" />
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler" />
+        <renamePsiElementProcessor implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationProcessor" />
+        <nameSuggestionProvider
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveNameSuggestionProvider"/>
+        <elementDescriptionProvider
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
     </extensions>
 </idea-plugin>
