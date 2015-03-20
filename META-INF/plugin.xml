@@ -151,5 +151,6 @@
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveNameSuggestionProvider"/>
         <elementDescriptionProvider
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
+        <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder" language="Story"/>
     </extensions>
 </idea-plugin>

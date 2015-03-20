@@ -140,7 +140,7 @@ Table ::= TableRow+
 
 // The examples table row contains the column values, separated by TOKEN_PIPE
 TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
-TableCell ::= (Word|Punct) (SpacePlus|Word|Punct)*
+TableCell ::= (Word|Punct)+ (SpacePlus (Word|Punct)+)*
 TableCellEmpty ::= SpaceStar
 
 Line ::= (Word|Space|Punct)+

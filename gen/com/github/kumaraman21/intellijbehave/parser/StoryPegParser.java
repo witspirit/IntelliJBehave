@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
+import com.intellij.psi.tree.IElementType;
+
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
 import static com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class StoryPegParser implements PsiParser {
@@ -1143,7 +1143,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (Word|Punct) (SpacePlus|Word|Punct)*
+  // (Word|Punct)+ (SpacePlus (Word|Punct)+)*
   public static boolean TableCell(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableCell")) return false;
     boolean r;
@@ -1154,9 +1154,25 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // Word|Punct
+  // (Word|Punct)+
   private static boolean TableCell_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableCell_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = TableCell_0_0(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!TableCell_0_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "TableCell_0", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // Word|Punct
+  private static boolean TableCell_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableCell_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Word(b, l + 1);
@@ -1165,7 +1181,7 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // (SpacePlus|Word|Punct)*
+  // (SpacePlus (Word|Punct)+)*
   private static boolean TableCell_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableCell_1")) return false;
     int c = current_position_(b);
@@ -1177,13 +1193,39 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // SpacePlus|Word|Punct
+  // SpacePlus (Word|Punct)+
   private static boolean TableCell_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableCell_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpacePlus(b, l + 1);
-    if (!r) r = Word(b, l + 1);
+    r = r && TableCell_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (Word|Punct)+
+  private static boolean TableCell_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableCell_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = TableCell_1_0_1_0(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!TableCell_1_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "TableCell_1_0_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // Word|Punct
+  private static boolean TableCell_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableCell_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = Word(b, l + 1);
     if (!r) r = Punct(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
