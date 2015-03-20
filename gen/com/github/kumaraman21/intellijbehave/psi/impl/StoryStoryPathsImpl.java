@@ -1,16 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
-import com.github.kumaraman21.intellijbehave.psi.StoryStoryPaths;
-import com.github.kumaraman21.intellijbehave.psi.StoryVisitor;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class StoryStoryPathsImpl extends ASTWrapperPsiElement implements StoryStoryPaths {
 

@@ -497,7 +497,7 @@ public class ParametrizedString {
         return retVal;
     }
 
-    public String textAccordingTo(List<Pair<String, String>> actualText) {
+    public List<String> textAccordingTo(List<Pair<String, String>> actualText) {
         Map<String, String> parameters = new HashMap<String, String>();
 
         for (Pair<String, String> pair : actualText) {
@@ -517,6 +517,6 @@ public class ParametrizedString {
                 retval.add(value);
             }
         }
-        return StringUtils.join(retval, " ");
+        return retval;
     }
 }
