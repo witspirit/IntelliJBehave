@@ -18,6 +18,7 @@ import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.
 %type IElementType
 %unicode
 
+TOKEN_COLON=:
 TOKEN_PATH=[a-zA-Z_0-9._@-]+("/"[a-zA-Z_0-9._@-]+)+
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
 TOKEN_PUNCT=[!\"#$%&'()*+,-./;=?\[\\\]\^_`{}~]
@@ -38,7 +39,6 @@ TOKEN_SPACE=[ \t\f]
   "And"                { return STORY_TOKEN_AND; }
   "Examples:"          { return STORY_TOKEN_EXAMPLES; }
   "!--"                { return STORY_TOKEN_COMMENT; }
-  ":"                  { return STORY_TOKEN_COLON; }
   "@"                  { return STORY_TOKEN_AT; }
   ","                  { return STORY_TOKEN_COMMA; }
   "<<"                 { return STORY_TOKEN_DBRACKET_OPEN; }
@@ -50,6 +50,7 @@ TOKEN_SPACE=[ \t\f]
   "After:"             { return STORY_TOKEN_AFTER; }
   "|"                  { return STORY_TOKEN_PIPE; }
 
+  {TOKEN_COLON}        { return STORY_TOKEN_COLON; }
   {TOKEN_PATH}         { return STORY_TOKEN_PATH; }
   {TOKEN_IP}           { return STORY_TOKEN_IP; }
   {TOKEN_PUNCT}        { return STORY_TOKEN_PUNCT; }
