@@ -25,4 +25,7 @@ public interface StoryScenario extends PsiElement {
   @Nullable
   PsiElement getTokenNewline();
 
+  @NotNull
+  PsiElement getTokenScenario();
+
 }

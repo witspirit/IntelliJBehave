@@ -33,7 +33,7 @@
   tokens=[
     TOKEN_META = 'Meta:'
     TOKEN_NARRATIVE = 'Narrative:'
-    TOKEN_SCENARIO = 'Scenario:'
+    TOKEN_SCENARIO = 'regexp:Scenario:'
     TOKEN_GIVEN_STORIES= 'GivenStories:'
     TOKEN_GIVEN = 'Given'
     TOKEN_WHEN='When'
@@ -77,7 +77,7 @@ Description ::= MultiTextLine
 
 // The meta is identified by keyword "Meta:" (or equivalent in I18n-ed locale),
 // It is followed by any number of meta elements
-MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement Newline)* {pin=1 }
+MetaStatement ::= TOKEN_META (Space MetaElement)? (TOKEN_NEWLINE|<<eof>>) (MetaElement (TOKEN_NEWLINE|<<eof>>))* {pin=1 }
 // The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
 // It is followed by a name-value pair, where the value can be empty or have multiple words
 MetaElement::= TOKEN_AT MetaKey Space MetaValue
@@ -119,15 +119,15 @@ ScenarioTitle ::= TOKEN_WORD ((Punct|Space) TOKEN_WORD)* | TOKEN_PATH
 
 //Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
 Step ::=  (StepWhen|StepGiven|StepThen|StepAnd|StepComment)
-StepWhen ::=  TOKEN_WHEN StepArgument {pin=1 recoverWhile=RecoverStep}
-StepGiven ::=  TOKEN_GIVEN StepArgument {pin=1 recoverWhile=RecoverStep}
-StepThen ::=  TOKEN_THEN StepArgument {pin=1 recoverWhile=RecoverStep}
-StepAnd ::=  TOKEN_AND StepArgument {pin=1 recoverWhile=RecoverStep}
+StepWhen ::=  TOKEN_WHEN SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
+StepGiven ::=  TOKEN_GIVEN SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
+StepThen ::=  TOKEN_THEN SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
+StepAnd ::=  TOKEN_AND SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
 
 StepComment ::= TOKEN_COMMENT (TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|LineEx|Line)* Newline
 
-StepArgument ::=  StepLine StepPostParameter? Newline?
-StepLine ::= Line
+StepArgument ::=  StepLine (SpaceStar StepPostParameter)? Newline?
+StepLine ::= Word (SpacePlus Word|PUNCT)* TOKEN_COLON?
 StepPostParameter ::=  Newline Table| StoryPath
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)

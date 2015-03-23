@@ -1,8 +1,9 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
+import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.formatter.common.AbstractBlock;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryBlock extends AbstractBlock {
+public class StoryBlock extends StoryIgnoreBlock {
 
     protected StoryBlock(ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
@@ -23,7 +24,12 @@ public class StoryBlock extends AbstractBlock {
         ASTNode firstChildNode = myNode.getFirstChildNode();
         ASTNode node = firstChildNode.getFirstChildNode();
         while (node != null) {
-            retVal.add(new StoryIgnoreBlock(node, null, null));
+            IElementType elementType = node.getElementType();
+            if (elementType != IStoryPegElementType.STORY_TOKEN_NEWLINE && elementType != IStoryPegElementType.STORY_TOKEN_SPACE) {
+                if (elementType == IStoryPegElementType.STORY_SCENARIO) {
+                    retVal.add(new StoryScenarioBlock(node, null, null));
+                } else retVal.add(new StoryBlockBlock(node, null, null));
+            }
             node = node.getTreeNext();
         }
         return retVal;
@@ -32,11 +38,15 @@ public class StoryBlock extends AbstractBlock {
     @Nullable
     @Override
     public Spacing getSpacing(Block child1, Block child2) {
-        if(child1==null){
-            return Spacing.createSpacing(0, 0, 0, true, 0);
+        if (child1 == null) {
+            return Spacing.createSpacing(0, 0, 0, true, 1);
         }
-        return  Spacing.createSpacing(0, 0, 0, true, 1);
+        if (child1 instanceof StoryScenarioBlock && child2 instanceof StoryScenarioBlock) {
+            return Spacing.createSpacing(0, 0, 2, true, 1);
+        }
+        return Spacing.createSpacing(0, 0, 0, true, 1);
     }
+
     @Override
     public Indent getIndent() {
         return Indent.getNoneIndent();

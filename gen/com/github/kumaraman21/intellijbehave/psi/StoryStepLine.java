@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface StoryStepLine extends PsiElement {
 
   @NotNull
-  StoryLine getLine();
+  List<StoryWord> getWordList();
+
+  @Nullable
+  PsiElement getTokenColon();
 
 }

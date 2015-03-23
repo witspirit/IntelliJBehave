@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
 import static com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class StoryPegParser implements PsiParser {
@@ -456,7 +456,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_META (Space MetaElement)? Newline (MetaElement Newline)*
+  // TOKEN_META (Space MetaElement)? (TOKEN_NEWLINE|<<eof>>) (MetaElement (TOKEN_NEWLINE|<<eof>>))*
   public static boolean MetaStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_META)) return false;
@@ -465,7 +465,7 @@ public class StoryPegParser implements PsiParser {
     r = consumeToken(b, STORY_TOKEN_META);
     p = r; // pin = 1
     r = r && report_error_(b, MetaStatement_1(b, l + 1));
-    r = p && report_error_(b, Newline(b, l + 1)) && r;
+    r = p && report_error_(b, MetaStatement_2(b, l + 1)) && r;
     r = p && MetaStatement_3(b, l + 1) && r;
     exit_section_(b, l, m, STORY_META_STATEMENT, r, p, null);
     return r || p;
@@ -489,7 +489,18 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // (MetaElement Newline)*
+  // TOKEN_NEWLINE|<<eof>>
+  private static boolean MetaStatement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MetaStatement_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, STORY_TOKEN_NEWLINE);
+    if (!r) r = eof(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (MetaElement (TOKEN_NEWLINE|<<eof>>))*
   private static boolean MetaStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3")) return false;
     int c = current_position_(b);
@@ -501,13 +512,24 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // MetaElement Newline
+  // MetaElement (TOKEN_NEWLINE|<<eof>>)
   private static boolean MetaStatement_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = MetaElement(b, l + 1);
-    r = r && Newline(b, l + 1);
+    r = r && MetaStatement_3_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // TOKEN_NEWLINE|<<eof>>
+  private static boolean MetaStatement_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MetaStatement_3_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, STORY_TOKEN_NEWLINE);
+    if (!r) r = eof(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -855,20 +877,21 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_AND StepArgument
+  // TOKEN_AND SpaceStar StepArgument
   public static boolean StepAnd(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepAnd")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<step and>");
     r = consumeToken(b, STORY_TOKEN_AND);
     p = r; // pin = 1
-    r = r && StepArgument(b, l + 1);
+    r = r && report_error_(b, SpaceStar(b, l + 1));
+    r = p && StepArgument(b, l + 1) && r;
     exit_section_(b, l, m, STORY_STEP_AND, r, p, RecoverStep_parser_);
     return r || p;
   }
 
   /* ********************************************************** */
-  // StepLine StepPostParameter? Newline?
+  // StepLine (SpaceStar StepPostParameter)? Newline?
   public static boolean StepArgument(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepArgument")) return false;
     boolean r;
@@ -880,11 +903,22 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // StepPostParameter?
+  // (SpaceStar StepPostParameter)?
   private static boolean StepArgument_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepArgument_1")) return false;
-    StepPostParameter(b, l + 1);
+    StepArgument_1_0(b, l + 1);
     return true;
+  }
+
+  // SpaceStar StepPostParameter
+  private static boolean StepArgument_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepArgument_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = SpaceStar(b, l + 1);
+    r = r && StepPostParameter(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // Newline?
@@ -937,27 +971,71 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_GIVEN StepArgument
+  // TOKEN_GIVEN SpaceStar StepArgument
   public static boolean StepGiven(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepGiven")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<step given>");
     r = consumeToken(b, STORY_TOKEN_GIVEN);
     p = r; // pin = 1
-    r = r && StepArgument(b, l + 1);
+    r = r && report_error_(b, SpaceStar(b, l + 1));
+    r = p && StepArgument(b, l + 1) && r;
     exit_section_(b, l, m, STORY_STEP_GIVEN, r, p, RecoverStep_parser_);
     return r || p;
   }
 
   /* ********************************************************** */
-  // Line
+  // Word (SpacePlus Word|PUNCT)* TOKEN_COLON?
   public static boolean StepLine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepLine")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<step line>");
-    r = Line(b, l + 1);
+    r = Word(b, l + 1);
+    r = r && StepLine_1(b, l + 1);
+    r = r && StepLine_2(b, l + 1);
     exit_section_(b, l, m, STORY_STEP_LINE, r, false, null);
     return r;
+  }
+
+  // (SpacePlus Word|PUNCT)*
+  private static boolean StepLine_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepLine_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!StepLine_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "StepLine_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // SpacePlus Word|PUNCT
+  private static boolean StepLine_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepLine_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = StepLine_1_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, STORY_PUNCT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // SpacePlus Word
+  private static boolean StepLine_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepLine_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = SpacePlus(b, l + 1);
+    r = r && Word(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // TOKEN_COLON?
+  private static boolean StepLine_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepLine_2")) return false;
+    consumeToken(b, STORY_TOKEN_COLON);
+    return true;
   }
 
   /* ********************************************************** */
@@ -984,27 +1062,29 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_THEN StepArgument
+  // TOKEN_THEN SpaceStar StepArgument
   public static boolean StepThen(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepThen")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<step then>");
     r = consumeToken(b, STORY_TOKEN_THEN);
     p = r; // pin = 1
-    r = r && StepArgument(b, l + 1);
+    r = r && report_error_(b, SpaceStar(b, l + 1));
+    r = p && StepArgument(b, l + 1) && r;
     exit_section_(b, l, m, STORY_STEP_THEN, r, p, RecoverStep_parser_);
     return r || p;
   }
 
   /* ********************************************************** */
-  // TOKEN_WHEN StepArgument
+  // TOKEN_WHEN SpaceStar StepArgument
   public static boolean StepWhen(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepWhen")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<step when>");
     r = consumeToken(b, STORY_TOKEN_WHEN);
     p = r; // pin = 1
-    r = r && StepArgument(b, l + 1);
+    r = r && report_error_(b, SpaceStar(b, l + 1));
+    r = p && StepArgument(b, l + 1) && r;
     exit_section_(b, l, m, STORY_STEP_WHEN, r, p, RecoverStep_parser_);
     return r || p;
   }
@@ -1420,14 +1500,14 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !<<eof>> Story
+  // !<<eof>> (Story|Table)
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, null);
     r = root_0(b, l + 1);
     p = r; // pin = 1
-    r = r && Story(b, l + 1);
+    r = r && root_1(b, l + 1);
     exit_section_(b, l, m, null, r, p, null);
     return r || p;
   }
@@ -1439,6 +1519,17 @@ public class StoryPegParser implements PsiParser {
     Marker m = enter_section_(b, l, _NOT_, null);
     r = !eof(b, l + 1);
     exit_section_(b, l, m, null, r, false, null);
+    return r;
+  }
+
+  // Story|Table
+  private static boolean root_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "root_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = Story(b, l + 1);
+    if (!r) r = Table(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 

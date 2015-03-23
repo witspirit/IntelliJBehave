@@ -58,4 +58,10 @@ public class StoryScenarioImpl extends ASTWrapperPsiElement implements StoryScen
     return findChildByType(STORY_TOKEN_NEWLINE);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTokenScenario() {
+    return findNotNullChildByType(STORY_TOKEN_SCENARIO);
+  }
+
 }

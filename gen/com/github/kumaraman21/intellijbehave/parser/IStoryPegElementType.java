@@ -1,12 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.PsiElement;
+import com.intellij.lang.ASTNode;
 import com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType;
 import com.github.kumaraman21.intellijbehave.highlighter.StoryPegTokenType;
 import com.github.kumaraman21.intellijbehave.psi.impl.*;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 
 public interface IStoryPegElementType {
 
@@ -51,13 +51,14 @@ public interface IStoryPegElementType {
   IElementType STORY_USER_INJECT = new StoryPegElementType("STORY_USER_INJECT");
   IElementType STORY_WORD = new StoryPegElementType("STORY_WORD");
 
+  IElementType STORY_PUNCT = new StoryPegTokenType("PUNCT");
   IElementType STORY_TOKEN_AFTER = new StoryPegTokenType("After:");
   IElementType STORY_TOKEN_AND = new StoryPegTokenType("And");
   IElementType STORY_TOKEN_AT = new StoryPegTokenType("@");
   IElementType STORY_TOKEN_BEFORE = new StoryPegTokenType("Before:");
   IElementType STORY_TOKEN_BRACKET_CLOSE = new StoryPegTokenType(">");
   IElementType STORY_TOKEN_BRACKET_OPEN = new StoryPegTokenType("<");
-  IElementType STORY_TOKEN_COLON = new StoryPegTokenType(":");
+  IElementType STORY_TOKEN_COLON = new StoryPegTokenType("TOKEN_COLON");
   IElementType STORY_TOKEN_COMMA = new StoryPegTokenType(",");
   IElementType STORY_TOKEN_COMMENT = new StoryPegTokenType("!--");
   IElementType STORY_TOKEN_DBRACKET_CLOSE = new StoryPegTokenType(">>");
@@ -73,7 +74,7 @@ public interface IStoryPegElementType {
   IElementType STORY_TOKEN_PATH = new StoryPegTokenType("TOKEN_PATH");
   IElementType STORY_TOKEN_PIPE = new StoryPegTokenType("|");
   IElementType STORY_TOKEN_PUNCT = new StoryPegTokenType("TOKEN_PUNCT");
-  IElementType STORY_TOKEN_SCENARIO = new StoryPegTokenType("Scenario:");
+  IElementType STORY_TOKEN_SCENARIO = new StoryPegTokenType("TOKEN_SCENARIO");
   IElementType STORY_TOKEN_SPACE = new StoryPegTokenType("TOKEN_SPACE");
   IElementType STORY_TOKEN_THEN = new StoryPegTokenType("Then");
   IElementType STORY_TOKEN_WHEN = new StoryPegTokenType("When");

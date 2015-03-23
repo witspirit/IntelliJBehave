@@ -6,7 +6,6 @@ import com.github.kumaraman21.intellijbehave.psi.StoryTableRow;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +14,7 @@ import java.util.*;
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryTableBlock extends AbstractBlock {
+public class StoryTableBlock extends StoryIgnoreBlock {
     protected StoryTableBlock(ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
     }
