@@ -22,15 +22,21 @@ public class StoryBlock extends StoryIgnoreBlock {
     protected List<Block> buildChildren() {
         List<Block> retVal = new ArrayList<Block>();
         ASTNode firstChildNode = myNode.getFirstChildNode();
-        ASTNode node = firstChildNode.getFirstChildNode();
-        while (node != null) {
-            IElementType elementType = node.getElementType();
-            if (elementType != IStoryPegElementType.STORY_TOKEN_NEWLINE && elementType != IStoryPegElementType.STORY_TOKEN_SPACE) {
-                if (elementType == IStoryPegElementType.STORY_SCENARIO) {
-                    retVal.add(new StoryScenarioBlock(node, null, null));
-                } else retVal.add(new StoryBlockBlock(node, null, null));
+        if (firstChildNode.getElementType() == IStoryPegElementType.STORY_TABLE) {
+            retVal.add(new StoryTableBlock(firstChildNode, null, null));
+        } else {
+            ASTNode node = firstChildNode.getFirstChildNode();
+            while (node != null) {
+                IElementType elementType = node.getElementType();
+                if (elementType != IStoryPegElementType.STORY_TOKEN_NEWLINE && elementType != IStoryPegElementType.STORY_TOKEN_SPACE) {
+                    if (elementType == IStoryPegElementType.STORY_SCENARIO) {
+                        retVal.add(new StoryScenarioBlock(node, null, null));
+                    } else if (elementType == IStoryPegElementType.STORY_TABLE) {
+                        retVal.add(new StoryTableBlock(node, null, null));
+                    } else retVal.add(new StoryBlockBlock(node, null, null));
+                }
+                node = node.getTreeNext();
             }
-            node = node.getTreeNext();
         }
         return retVal;
     }
