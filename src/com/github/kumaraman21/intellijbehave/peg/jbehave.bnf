@@ -1,34 +1,14 @@
-/*
-  parserClass="com.simpleplugin.parser.SimpleParser"
-
-  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
-
-  psiClassPrefix="Simple"
-  psiImplClassSuffix="Impl"
-  psiPackage="com.simpleplugin.psi"
-  psiImplPackage="com.simpleplugin.psi.impl"
-
-  elementTypeHolderClass="com.simpleplugin.psi.SimpleTypes"
-  elementTypeClass="com.simpleplugin.psi.SimpleElementType"
-  tokenTypeClass="com.simpleplugin.psi.SimpleTokenType"
-*/
-
 {
-    parserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParser"
+  parserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParser"
   parserUtilClass="com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil"
-    //stubParserClass="com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil"
-    //implements="com.github.kumaraman21.intellijbehave.psi.StoryPegCompositeElement"
-    //extends="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegCompositeElementImpl"
-    //extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
-    elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType"
-    elementTypePrefix="STORY_"
-    elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType"
-    tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegTokenType"
-    psiClassPrefix="Story"
-    psiImplClassSuffix="Impl"
-    psiPackage="com.github.kumaraman21.intellijbehave.psi"
-    psiImplPackage="com.github.kumaraman21.intellijbehave.psi.impl"
-    //psiImplUtilClass="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegPsiImplUtil"
+  elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType"
+  elementTypePrefix="STORY_"
+  elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType"
+  tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegTokenType"
+  psiClassPrefix="Story"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.github.kumaraman21.intellijbehave.psi"
+  psiImplPackage="com.github.kumaraman21.intellijbehave.psi.impl"
 
   tokens=[
     TOKEN_META = 'Meta:'
@@ -68,56 +48,27 @@
   extends("ScenarioTitle|TableCell")=" com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
-// The story describes a feature via description, narrative and a set of scenarios
 Story ::= Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
-// JBehave Grammar expressed in EBNF (http://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form)
-
-// The Description is expressed by any sequence of words that must not contain any keywords at start of lines.
 Description ::= MultiTextLine
-
-// The meta is identified by keyword "Meta:" (or equivalent in I18n-ed locale),
-// It is followed by any number of meta elements
-MetaStatement ::= TOKEN_META (Space MetaElement)? (TOKEN_NEWLINE|<<eof>>) (MetaElement (TOKEN_NEWLINE|<<eof>>))* {pin=1 }
-// The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
-// It is followed by a name-value pair, where the value can be empty or have multiple words
+MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement (TOKEN_NEWLINE|<<eof>>))* {pin=1 }
 MetaElement::= TOKEN_AT MetaKey Space MetaValue
 MetaKey::= TOKEN_AT TOKEN_WORD
 MetaValue::=TOKEN_WORD
-// The narrative is identified by keyword "Narrative:" (or equivalent in I18n-ed locale),
-// It is followed by the narrative elements
+
 Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
 NarrativeText ::= MultiTextLine
 
-// The comma-separated list of story resources that specify the stories to be run before a story or a scenario
 GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1 }
 StoryPaths ::= StoryPath (TOKEN_COMMA StoryPath)*
 StoryPath ::= TOKEN_PATH
 
-// The lifecycle is identified by keyword "Lifecycle:" (or equivalent in I18n-ed locale),
-// It is followed by the lifecycle elements
 Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter?
-
-// The before lifecyle element identified by keyword "Before:" (or equivalent in I18n-ed locale),
-// followed by one or more steps
 LifecycleBefore::= TOKEN_BEFORE Step+ {pin=2}
-
-// The after lifecyle element identified by keyword "After:" (or equivalent in I18n-ed locale),
-// followed by one or more steps
 LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
 
-// The scenario is identified by keyword "Scenario:" (or equivalent in I18n-ed locale),
-// which is optional in the case of a single scenario.
-// It can optionally be followed by a title, which is expressed by any sequence of words
-// that must not contain any keywords at start of lines.
-// It is followed by one or more Steps.
-// Finally the optional Examples table, which if present will execute the scenario for as many table rows present
 Scenario ::= TOKEN_SCENARIO SpaceStar (ScenarioTitle Newline)? MetaStatement? GivenStories? Step+ Examples? {pin=1}
-// The free-text description
 ScenarioTitle ::= TOKEN_WORD ((Punct|Space) TOKEN_WORD)* | TOKEN_PATH
 
-// The scenario step is a step starting work followed by any number of characters
-
-//Step ::= StepTypeGiven | StepTypeWhen | StepTypeThen | StepTypeAnd
 Step ::=  (StepWhen|StepGiven|StepThen|StepAnd|StepComment)
 StepWhen ::=  TOKEN_WHEN SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
 StepGiven ::=  TOKEN_GIVEN SpaceStar StepArgument {pin=1 recoverWhile=RecoverStep}
@@ -132,20 +83,15 @@ StepPostParameter ::=  Newline Table| StoryPath
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
-// The examples table
 Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 
-// The examples table comprises of a header row and data rows
 Table ::= TableRow+
-
-// The examples table row contains the column values, separated by TOKEN_PIPE
 TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
 TableCell ::= (Word|Punct)+ (SpacePlus (Word|Punct)+)*
 TableCellEmpty ::= SpaceStar
 
 Line ::= (Word|Space|Punct)+
 LineEx ::= (Word|Space|Punct)+ TOKEN_COLON
-//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|Punct)+ Newline)+
 MultiTextLine ::= ((Word|Space|TOKEN_COLON|Punct)+ Newline)+
 
 Word ::= IpAddress|Uri|Alnum|Inject|UserInject
