@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
+import com.intellij.psi.tree.IElementType;
+
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
 import static com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class StoryPegParser implements PsiParser {
@@ -456,7 +456,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_META (Space MetaElement)? (TOKEN_NEWLINE|<<eof>>) (MetaElement (TOKEN_NEWLINE|<<eof>>))*
+  // TOKEN_META (Space MetaElement)? Newline (MetaElement (Newline))*
   public static boolean MetaStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_META)) return false;
@@ -465,7 +465,7 @@ public class StoryPegParser implements PsiParser {
     r = consumeToken(b, STORY_TOKEN_META);
     p = r; // pin = 1
     r = r && report_error_(b, MetaStatement_1(b, l + 1));
-    r = p && report_error_(b, MetaStatement_2(b, l + 1)) && r;
+    r = p && report_error_(b, Newline(b, l + 1)) && r;
     r = p && MetaStatement_3(b, l + 1) && r;
     exit_section_(b, l, m, STORY_META_STATEMENT, r, p, null);
     return r || p;
@@ -489,18 +489,7 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // TOKEN_NEWLINE|<<eof>>
-  private static boolean MetaStatement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "MetaStatement_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_NEWLINE);
-    if (!r) r = eof(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (MetaElement (TOKEN_NEWLINE|<<eof>>))*
+  // (MetaElement (Newline))*
   private static boolean MetaStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3")) return false;
     int c = current_position_(b);
@@ -512,7 +501,7 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // MetaElement (TOKEN_NEWLINE|<<eof>>)
+  // MetaElement (Newline)
   private static boolean MetaStatement_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3_0")) return false;
     boolean r;
@@ -523,13 +512,12 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // TOKEN_NEWLINE|<<eof>>
+  // (Newline)
   private static boolean MetaStatement_3_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_NEWLINE);
-    if (!r) r = eof(b, l + 1);
+    r = Newline(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1090,7 +1078,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
+  // (Space|Newline)* Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
   public static boolean Story(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story")) return false;
     boolean r;
@@ -1101,55 +1089,79 @@ public class StoryPegParser implements PsiParser {
     r = r && Story_3(b, l + 1);
     r = r && Story_4(b, l + 1);
     r = r && Story_5(b, l + 1);
+    r = r && Story_6(b, l + 1);
     exit_section_(b, l, m, STORY_STORY, r, false, null);
     return r;
   }
 
-  // Description?
+  // (Space|Newline)*
   private static boolean Story_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!Story_0_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // Space|Newline
+  private static boolean Story_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = Space(b, l + 1);
+    if (!r) r = Newline(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // Description?
+  private static boolean Story_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_1")) return false;
     Description(b, l + 1);
     return true;
   }
 
   // MetaStatement?
-  private static boolean Story_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_1")) return false;
+  private static boolean Story_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_2")) return false;
     MetaStatement(b, l + 1);
     return true;
   }
 
   // Narrative?
-  private static boolean Story_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_2")) return false;
+  private static boolean Story_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_3")) return false;
     Narrative(b, l + 1);
     return true;
   }
 
   // GivenStories?
-  private static boolean Story_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_3")) return false;
+  private static boolean Story_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_4")) return false;
     GivenStories(b, l + 1);
     return true;
   }
 
   // Lifecycle?
-  private static boolean Story_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_4")) return false;
+  private static boolean Story_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_5")) return false;
     Lifecycle(b, l + 1);
     return true;
   }
 
   // Scenario+
-  private static boolean Story_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_5")) return false;
+  private static boolean Story_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_6")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Scenario(b, l + 1);
     int c = current_position_(b);
     while (r) {
       if (!Scenario(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "Story_5", c)) break;
+      if (!empty_element_parsed_guard_(b, "Story_6", c)) break;
       c = current_position_(b);
     }
     exit_section_(b, m, null, r);

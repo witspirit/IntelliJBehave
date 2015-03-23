@@ -48,9 +48,9 @@
   extends("ScenarioTitle|TableCell")=" com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
-Story ::= Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
+Story ::= (Space|Newline)* Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
 Description ::= MultiTextLine
-MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement (TOKEN_NEWLINE|<<eof>>))* {pin=1 }
+MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement (Newline))* {pin=1 }
 MetaElement::= TOKEN_AT MetaKey Space MetaValue
 MetaKey::= TOKEN_AT TOKEN_WORD
 MetaValue::=TOKEN_WORD
