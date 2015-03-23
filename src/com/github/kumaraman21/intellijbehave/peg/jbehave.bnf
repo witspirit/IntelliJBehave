@@ -31,28 +31,28 @@
     //psiImplUtilClass="com.github.kumaraman21.intellijbehave.psi.impl.StoryPegPsiImplUtil"
 
   tokens=[
-    TOKEN_META = 'Meta:'
-    TOKEN_NARRATIVE = 'Narrative:'
-    TOKEN_SCENARIO = 'Scenario:'
-    TOKEN_GIVEN_STORIES= 'GivenStories:'
-    TOKEN_GIVEN = 'Given'
-    TOKEN_WHEN='When'
-    TOKEN_THEN='Then'
-    TOKEN_AND='And'
-    TOKEN_EXAMPLES='Examples:'
-    TOKEN_COMMENT="!--"
-    TOKEN_COLON=":"
-    TOKEN_AT="@"
-    TOKEN_COMMA=","
+    TOKEN_META = 'regexp:Meta:'
+    TOKEN_NARRATIVE = 'regexp:Narrative:'
+    TOKEN_SCENARIO = 'regexp:Scenario:'
+    TOKEN_GIVEN_STORIES= 'regexp:GivenStories:'
+    TOKEN_GIVEN = 'regexp:Given'
+    TOKEN_WHEN='regexp:When'
+    TOKEN_THEN='regexp:Then'
+    TOKEN_AND='regexp:And'
+    TOKEN_EXAMPLES='regexp:Examples:'
+    TOKEN_COMMENT="regexp:!--"
+    TOKEN_COLON="regexp::"
+    TOKEN_AT="regexp:@"
+    TOKEN_COMMA="regexp:,"
     //TOKEN_DOT="."
-    TOKEN_DBRACKET_OPEN = "<<"
-    TOKEN_DBRACKET_CLOSE = ">>"
-    TOKEN_BRACKET_OPEN = "<"
-    TOKEN_BRACKET_CLOSE = ">"
-    TOKEN_LIFECYCLE="Lifecycle:"
-    TOKEN_BEFORE="Before:"
-    TOKEN_AFTER="After:"
-    TOKEN_PIPE='|'
+    TOKEN_DBRACKET_OPEN = "regexp:<<"
+    TOKEN_DBRACKET_CLOSE = "regexp:>>"
+    TOKEN_BRACKET_OPEN = "regexp:<"
+    TOKEN_BRACKET_CLOSE = "regexp:>"
+    TOKEN_LIFECYCLE="regexp:Lifecycle:"
+    TOKEN_BEFORE="regexp:Before:"
+    TOKEN_AFTER="regexp:After:"
+    TOKEN_PIPE='regexp:\|'
 
     TOKEN_PATH = 'regexp:[a-zA-Z_0-9._@-]+(/[a-zA-Z_0-9._@-]+)+'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
@@ -67,7 +67,7 @@
   extends("StepGiven|StepThen|StepWhen|StepAnd")=" com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
   extends("ScenarioTitle|TableCell")=" com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
 }
-root ::= !<<eof>> Story {pin=1}
+root ::= !<<eof>> (Story|Table) {pin=1}
 // The story describes a feature via description, narrative and a set of scenarios
 Story ::= Description? MetaStatement? Narrative? GivenStories? Lifecycle? Scenario+
 // JBehave Grammar expressed in EBNF (http://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form)
@@ -77,7 +77,7 @@ Description ::= MultiTextLine
 
 // The meta is identified by keyword "Meta:" (or equivalent in I18n-ed locale),
 // It is followed by any number of meta elements
-MetaStatement ::= TOKEN_META (Space MetaElement)? Newline (MetaElement Newline)* {pin=1 }
+MetaStatement ::= TOKEN_META (Space MetaElement)?  (MetaElement )* {pin=1 }
 // The meta element is identified by keyword "@" (or equivalent in I18n-ed locale),
 // It is followed by a name-value pair, where the value can be empty or have multiple words
 MetaElement::= TOKEN_AT MetaKey Space MetaValue
@@ -85,11 +85,11 @@ MetaKey::= TOKEN_AT TOKEN_WORD
 MetaValue::=TOKEN_WORD
 // The narrative is identified by keyword "Narrative:" (or equivalent in I18n-ed locale),
 // It is followed by the narrative elements
-Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
+Narrative ::= TOKEN_NARRATIVE  NarrativeText {pin=1 }
 NarrativeText ::= MultiTextLine
 
 // The comma-separated list of story resources that specify the stories to be run before a story or a scenario
-GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1 }
+GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths  {pin=1 }
 StoryPaths ::= StoryPath (TOKEN_COMMA StoryPath)*
 StoryPath ::= TOKEN_PATH
 
@@ -111,7 +111,7 @@ LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
 // that must not contain any keywords at start of lines.
 // It is followed by one or more Steps.
 // Finally the optional Examples table, which if present will execute the scenario for as many table rows present
-Scenario ::= TOKEN_SCENARIO SpaceStar (ScenarioTitle Newline)? MetaStatement? GivenStories? Step+ Examples? {pin=1}
+Scenario ::= TOKEN_SCENARIO SpaceStar (ScenarioTitle )? MetaStatement? GivenStories? Step+ Examples? {pin=1}
 // The free-text description
 ScenarioTitle ::= TOKEN_WORD ((Punct|Space) TOKEN_WORD)* | TOKEN_PATH
 
@@ -124,11 +124,11 @@ StepGiven ::=  TOKEN_GIVEN StepArgument {pin=1 recoverWhile=RecoverStep}
 StepThen ::=  TOKEN_THEN StepArgument {pin=1 recoverWhile=RecoverStep}
 StepAnd ::=  TOKEN_AND StepArgument {pin=1 recoverWhile=RecoverStep}
 
-StepComment ::= TOKEN_COMMENT (TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|LineEx|Line)* Newline
+StepComment ::= TOKEN_COMMENT (TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|LineEx|Line)*
 
-StepArgument ::=  StepLine StepPostParameter? Newline?
+StepArgument ::=  StepLine SpacePlus StepPostParameter | StepLine  StepPostParameter | StepLine
 StepLine ::= Line
-StepPostParameter ::=  Newline Table| StoryPath
+StepPostParameter ::=  Table| StoryPath
 
 RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
@@ -139,14 +139,14 @@ Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 Table ::= TableRow+
 
 // The examples table row contains the column values, separated by TOKEN_PIPE
-TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
+TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
 TableCell ::= (Word|Punct)+ (SpacePlus (Word|Punct)+)*
 TableCellEmpty ::= SpaceStar
 
-Line ::= (Word|Space|Punct)+
+Line ::= (Word|Space)+ TOKEN_COLON?
 LineEx ::= (Word|Space|Punct)+ TOKEN_COLON
-//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|Punct)+ Newline)+
-MultiTextLine ::= ((Word|Space|TOKEN_COLON|Punct)+ Newline)+
+//MultiTextLine ::= ((Word  SpaceStar TOKEN_COLON|Word |Space|Punct)+ )+
+MultiTextLine ::= ((Word|Space|TOKEN_COLON|Punct)+ )+
 
 Word ::= IpAddress|Uri|Alnum|Inject|UserInject
 UserInject ::= TOKEN_DBRACKET_OPEN (IpAddress|Uri|Alnum|Space|TOKEN_PIPE|Punct)+ TOKEN_DBRACKET_CLOSE
@@ -155,7 +155,7 @@ Uri::= TOKEN_WORD TOKEN_COLON TOKEN_WORD TOKEN_AT IpAddress (TOKEN_COLON TOKEN_W
 IpAddress ::= TOKEN_IP
 Alnum::=TOKEN_WORD
 
-private Newline ::= TOKEN_NEWLINE|<<eof>>
+//private Newline ::= TOKEN_NEWLINE|<<eof>>
 private Space ::= TOKEN_SPACE
 private SpacePlus ::= TOKEN_SPACE+
 private SpaceStar ::= TOKEN_SPACE*
