@@ -46,6 +46,8 @@
     The plugin provides the following features:
     </p>
     <ul>
+    <li> Reformat of stories </li>
+    <li> Rename refactoring of steps </li>
     <li> Basic syntax highlighting for JBehave story files</li>
     <li> Jump to step definition in Java or Groovy</li>
     <li> Error Highlighting in story if step was not defined</li>
@@ -68,6 +70,14 @@
 
     <h2>Release notes:</h2>
     <p>
+        New in version 2.00:
+    </p>
+    <ul>
+        <li> New parser </li>
+        <li> Reformat of stories </li>
+        <li> Rename refactoring of steps </li>
+    </ul>
+    <p>
         New in version 1.5:
     </p>
     <ul>
@@ -76,7 +86,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>1.56</version>
+    <version>2.00</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
