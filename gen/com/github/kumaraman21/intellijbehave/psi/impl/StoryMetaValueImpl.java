@@ -24,8 +24,32 @@ public class StoryMetaValueImpl extends ASTWrapperPsiElement implements StoryMet
 
   @Override
   @NotNull
-  public PsiElement getTokenWord() {
-    return findNotNullChildByType(STORY_TOKEN_WORD);
+  public List<StoryInject> getInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUserInject> getUserInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

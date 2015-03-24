@@ -23,9 +23,9 @@ public class StoryIpAddressImpl extends ASTWrapperPsiElement implements StoryIpA
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getTokenIp() {
-    return findNotNullChildByType(STORY_TOKEN_IP);
+    return findChildByType(STORY_TOKEN_IP);
   }
 
 }

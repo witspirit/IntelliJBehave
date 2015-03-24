@@ -24,8 +24,38 @@ public class StoryUriImpl extends ASTWrapperPsiElement implements StoryUri {
 
   @Override
   @NotNull
-  public StoryIpAddress getIpAddress() {
-    return findNotNullChildByClass(StoryIpAddress.class);
+  public List<StoryInject> getInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
+  }
+
+  @Override
+  @NotNull
+  public StoryUriIdentifier getUriIdentifier() {
+    return findNotNullChildByClass(StoryUriIdentifier.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUserInject> getUserInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

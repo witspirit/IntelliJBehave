@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import  com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class StoryStepImpl extends ASTWrapperPsiElement implements StoryStep {
+public class StoryStepImpl extends JBehaveStep implements StoryStep {
 
   public StoryStepImpl(ASTNode node) {
     super(node);
@@ -24,32 +24,14 @@ public class StoryStepImpl extends ASTWrapperPsiElement implements StoryStep {
 
   @Override
   @Nullable
-  public StoryStepAnd getStepAnd() {
-    return findChildByClass(StoryStepAnd.class);
+  public StoryStepArgument getStepArgument() {
+    return findChildByClass(StoryStepArgument.class);
   }
 
   @Override
-  @Nullable
-  public StoryStepComment getStepComment() {
-    return findChildByClass(StoryStepComment.class);
-  }
-
-  @Override
-  @Nullable
-  public StoryStepGiven getStepGiven() {
-    return findChildByClass(StoryStepGiven.class);
-  }
-
-  @Override
-  @Nullable
-  public StoryStepThen getStepThen() {
-    return findChildByClass(StoryStepThen.class);
-  }
-
-  @Override
-  @Nullable
-  public StoryStepWhen getStepWhen() {
-    return findChildByClass(StoryStepWhen.class);
+  @NotNull
+  public StoryStepPar getStepPar() {
+    return findNotNullChildByClass(StoryStepPar.class);
   }
 
 }

@@ -24,20 +24,8 @@ public class StoryInjectImpl extends ASTWrapperPsiElement implements StoryInject
 
   @Override
   @NotNull
-  public List<StoryAlnum> getAlnumList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryAlnum.class);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryIpAddress> getIpAddressList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryUri> getUriList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
+  public List<StoryInjectIdentifier> getInjectIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInjectIdentifier.class);
   }
 
 }

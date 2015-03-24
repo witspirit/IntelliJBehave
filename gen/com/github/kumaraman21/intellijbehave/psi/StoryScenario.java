@@ -22,10 +22,10 @@ public interface StoryScenario extends PsiElement {
   @NotNull
   List<StoryStep> getStepList();
 
+  @NotNull
+  List<StoryStepComment> getStepCommentList();
+
   @Nullable
   PsiElement getTokenNewline();
-
-  @NotNull
-  PsiElement getTokenScenario();
 
 }

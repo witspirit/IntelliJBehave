@@ -8,18 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface StoryStep extends PsiElement {
 
   @Nullable
-  StoryStepAnd getStepAnd();
+  StoryStepArgument getStepArgument();
 
-  @Nullable
-  StoryStepComment getStepComment();
-
-  @Nullable
-  StoryStepGiven getStepGiven();
-
-  @Nullable
-  StoryStepThen getStepThen();
-
-  @Nullable
-  StoryStepWhen getStepWhen();
+  @NotNull
+  StoryStepPar getStepPar();
 
 }

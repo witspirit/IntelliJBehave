@@ -8,6 +8,18 @@ import com.intellij.psi.PsiElement;
 public interface StoryMetaValue extends PsiElement {
 
   @NotNull
-  PsiElement getTokenWord();
+  List<StoryInject> getInjectList();
+
+  @NotNull
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
+
+  @NotNull
+  List<StoryUserInject> getUserInjectList();
 
 }

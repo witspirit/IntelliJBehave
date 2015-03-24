@@ -24,14 +24,26 @@ public class StoryStepLineImpl extends ASTWrapperPsiElement implements StoryStep
 
   @Override
   @NotNull
-  public List<StoryWord> getWordList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryWord.class);
+  public List<StoryInject> getInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
   }
 
   @Override
-  @Nullable
-  public PsiElement getTokenColon() {
-    return findChildByType(STORY_TOKEN_COLON);
+  @NotNull
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUserInject> getUserInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

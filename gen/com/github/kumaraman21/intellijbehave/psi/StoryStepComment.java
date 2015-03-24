@@ -8,13 +8,19 @@ import com.intellij.psi.PsiElement;
 public interface StoryStepComment extends PsiElement {
 
   @NotNull
-  List<StoryLine> getLineList();
+  List<StoryInject> getInjectList();
 
   @NotNull
-  List<StoryLineEx> getLineExList();
+  List<StoryIpAddress> getIpAddressList();
 
   @NotNull
   List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
+
+  @NotNull
+  List<StoryUserInject> getUserInjectList();
 
   @Nullable
   PsiElement getTokenNewline();

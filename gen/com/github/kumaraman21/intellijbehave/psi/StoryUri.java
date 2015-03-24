@@ -8,6 +8,21 @@ import com.intellij.psi.PsiElement;
 public interface StoryUri extends PsiElement {
 
   @NotNull
-  StoryIpAddress getIpAddress();
+  List<StoryInject> getInjectList();
+
+  @NotNull
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
+
+  @NotNull
+  StoryUriIdentifier getUriIdentifier();
+
+  @NotNull
+  List<StoryUserInject> getUserInjectList();
 
 }

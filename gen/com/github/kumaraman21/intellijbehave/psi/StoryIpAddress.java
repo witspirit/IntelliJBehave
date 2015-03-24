@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface StoryIpAddress extends PsiElement {
 
-  @NotNull
+  @Nullable
   PsiElement getTokenIp();
 
 }

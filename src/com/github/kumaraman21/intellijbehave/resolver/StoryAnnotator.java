@@ -19,6 +19,7 @@ import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
 import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
@@ -55,7 +56,7 @@ public class StoryAnnotator implements Annotator {
             } else {
                 annotateParameters(step, definition, annotationHolder);
             }
-        } else if (psiElement instanceof StoryStoryPath) {
+        } else if (psiElement instanceof StoryStoryPath && psiElement.getParent() != null && psiElement.getParent() instanceof StoryStepPostParameter) {
             StoryStoryPath storyPath = (StoryStoryPath) psiElement;
             PsiReference[] references = storyPath.getReferences();
             if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {

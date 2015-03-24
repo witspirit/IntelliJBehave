@@ -7,7 +7,19 @@ import com.intellij.psi.PsiElement;
 
 public interface StoryScenarioTitle extends PsiElement {
 
-  @Nullable
-  PsiElement getTokenPath();
+  @NotNull
+  List<StoryInject> getInjectList();
+
+  @NotNull
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
+
+  @NotNull
+  List<StoryUserInject> getUserInjectList();
 
 }

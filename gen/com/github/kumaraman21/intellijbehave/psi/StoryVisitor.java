@@ -7,10 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public class StoryVisitor extends PsiElementVisitor {
 
-  public void visitAlnum(@NotNull StoryAlnum o) {
-    visitPsiElement(o);
-  }
-
   public void visitDescription(@NotNull StoryDescription o) {
     visitPsiElement(o);
   }
@@ -27,6 +23,14 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitInjectIdentifier(@NotNull StoryInjectIdentifier o) {
+    visitPsiElement(o);
+  }
+
+  public void visitInjectSeparator(@NotNull StoryInjectSeparator o) {
+    visitPsiElement(o);
+  }
+
   public void visitIpAddress(@NotNull StoryIpAddress o) {
     visitPsiElement(o);
   }
@@ -40,14 +44,6 @@ public class StoryVisitor extends PsiElementVisitor {
   }
 
   public void visitLifecycleBefore(@NotNull StoryLifecycleBefore o) {
-    visitPsiElement(o);
-  }
-
-  public void visitLine(@NotNull StoryLine o) {
-    visitPsiElement(o);
-  }
-
-  public void visitLineEx(@NotNull StoryLineEx o) {
     visitPsiElement(o);
   }
 
@@ -95,10 +91,6 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitStepAnd(@NotNull StoryStepAnd o) {
-    visitPsiElement(o);
-  }
-
   public void visitStepArgument(@NotNull StoryStepArgument o) {
     visitPsiElement(o);
   }
@@ -107,23 +99,15 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitStepGiven(@NotNull StoryStepGiven o) {
-    visitPsiElement(o);
-  }
-
   public void visitStepLine(@NotNull StoryStepLine o) {
     visitPsiElement(o);
   }
 
+  public void visitStepPar(@NotNull StoryStepPar o) {
+    visitPsiElement(o);
+  }
+
   public void visitStepPostParameter(@NotNull StoryStepPostParameter o) {
-    visitPsiElement(o);
-  }
-
-  public void visitStepThen(@NotNull StoryStepThen o) {
-    visitPsiElement(o);
-  }
-
-  public void visitStepWhen(@NotNull StoryStepWhen o) {
     visitPsiElement(o);
   }
 
@@ -159,11 +143,15 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitUserInject(@NotNull StoryUserInject o) {
+  public void visitUriIdentifier(@NotNull StoryUriIdentifier o) {
     visitPsiElement(o);
   }
 
-  public void visitWord(@NotNull StoryWord o) {
+  public void visitUriWord(@NotNull StoryUriWord o) {
+    visitPsiElement(o);
+  }
+
+  public void visitUserInject(@NotNull StoryUserInject o) {
     visitPsiElement(o);
   }
 

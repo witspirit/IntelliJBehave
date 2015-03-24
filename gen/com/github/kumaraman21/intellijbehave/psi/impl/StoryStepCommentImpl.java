@@ -24,20 +24,32 @@ public class StoryStepCommentImpl extends ASTWrapperPsiElement implements StoryS
 
   @Override
   @NotNull
-  public List<StoryLine> getLineList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryLine.class);
+  public List<StoryInject> getInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
   }
 
   @Override
   @NotNull
-  public List<StoryLineEx> getLineExList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryLineEx.class);
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
   }
 
   @Override
   @NotNull
   public List<StoryStoryPath> getStoryPathList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUserInject> getUserInjectList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
   @Override

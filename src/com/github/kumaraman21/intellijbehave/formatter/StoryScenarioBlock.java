@@ -24,8 +24,6 @@ public class StoryScenarioBlock extends StoryIgnoreBlock {
     private static TokenSet ignore = TokenSet.create(IStoryPegElementType.STORY_TOKEN_NEWLINE,
             IStoryPegElementType.STORY_TOKEN_SPACE);
     private static TokenSet compounds = TokenSet.create(IStoryPegElementType.STORY_STEP,
-            IStoryPegElementType.STORY_STEP_GIVEN, IStoryPegElementType.STORY_STEP_AND,
-            IStoryPegElementType.STORY_STEP_WHEN, IStoryPegElementType.STORY_STEP_THEN,
             IStoryPegElementType.STORY_STEP_ARGUMENT, IStoryPegElementType.STORY_STEP_POST_PARAMETER);
 
     @Override

@@ -152,4 +152,9 @@ public class JavaStepDefinition {
 
         return Objects.equal(stepType, annotationType);
     }
+
+    @Override
+    public String toString() {
+        return  myElementPointer.getElement().getText();
+    }
 }

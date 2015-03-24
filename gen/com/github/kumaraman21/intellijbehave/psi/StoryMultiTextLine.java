@@ -8,6 +8,18 @@ import com.intellij.psi.PsiElement;
 public interface StoryMultiTextLine extends PsiElement {
 
   @NotNull
-  List<StoryWord> getWordList();
+  List<StoryInject> getInjectList();
+
+  @NotNull
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
+
+  @NotNull
+  List<StoryUserInject> getUserInjectList();
 
 }
