@@ -32,15 +32,21 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
+    public Collection<JavaStepDefinition> findAllStepDefinitionsByType(@NotNull JBehaveStep step) {
         Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
         if (module == null) {
             return emptyList();
         }
 
+        return loadStepsFor(module);
+    }
+
+    @NotNull
+    public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
+        Collection<JavaStepDefinition> stepDefinitions = findAllStepDefinitionsByType(step);
+        if (stepDefinitions.isEmpty()) return emptyList();
         Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
-        List<JavaStepDefinition> stepDefinitions = loadStepsFor(module);
 
         String stepText = getTableOffset(step).trim();
 

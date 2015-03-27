@@ -93,7 +93,7 @@ public class JavaStepDefinition {
     }
 
     @NotNull
-    private Set<String> getAnnotationTexts() {
+    public Set<String> getAnnotationTexts() {
         PsiAnnotation element = getAnnotation();
 
         if (element == null) {

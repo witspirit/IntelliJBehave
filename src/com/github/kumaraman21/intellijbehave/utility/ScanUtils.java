@@ -15,34 +15,23 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
+import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.psi.PsiElement;
 
-import java.util.HashSet;
+import java.util.Collection;
 
 public class ScanUtils {
 
-    public static boolean iterateInContextOf(PsiElement storyRef, ContentIterator iterator) {
-        Module module = ModuleUtil.findModuleForPsiElement(storyRef);
-
-        boolean shouldContinue = (module != null) && ModuleRootManager.getInstance(module).getFileIndex().iterateContent(iterator);
-
-        if (shouldContinue) {
-            HashSet<Module> dependencies = new HashSet<Module>();
-            ModuleUtil.getDependencies(module, dependencies);
-
-            for (Module dependency : dependencies) {
-                shouldContinue = ModuleRootManager.getInstance(dependency).getFileIndex().iterateContent(iterator);
-                if (!shouldContinue) {
-                    break;
-                }
-            }
+    public static boolean iterateInContextOf(PsiElement storyRef, StepDefinitionIterator iterator) {
+        Collection<JavaStepDefinition> stepDefinitions = JBehaveStepsIndex.getInstance(
+                storyRef.getProject()).findAllStepDefinitionsByType((JBehaveStep) storyRef);
+        for (JavaStepDefinition stepDefinition : stepDefinitions) {
+            iterator.processStepDefinition(stepDefinition);
         }
-
-        return shouldContinue;
+        return true;
     }
 
 

@@ -15,6 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.google.common.base.Objects;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
@@ -57,7 +58,8 @@ public abstract class StepDefinitionIterator implements ContentIterator {
                     Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(annotations);
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
-                        if (stepType == null || Objects.equal(stepType, stepDefinitionAnnotation.getStepType())) {
+                        StepType stepType1 = stepDefinitionAnnotation.getStepType();
+                        if (stepType == null || Objects.equal(stepType, stepType1)) {
 
                             boolean shouldContinue = processStepDefinition(stepDefinitionAnnotation);
                             if (!shouldContinue) {
@@ -74,4 +76,5 @@ public abstract class StepDefinitionIterator implements ContentIterator {
 
     public abstract boolean processStepDefinition(StepDefinitionAnnotation stepDefinitionAnnotation);
 
+    public abstract boolean processStepDefinition(JavaStepDefinition stepDefinitionAnnotation);
 }

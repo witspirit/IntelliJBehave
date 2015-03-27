@@ -5,6 +5,7 @@ import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionAnnotation;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
 import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.github.kumaraman21.intellijbehave.utility.ScanUtils;
@@ -21,6 +22,8 @@ import org.jbehave.core.i18n.LocalizedKeywords;
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -29,7 +32,8 @@ public class StoryCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet _result) {
+    public void fillCompletionVariants(@NotNull CompletionParameters parameters,
+                                       @NotNull final CompletionResultSet _result) {
         if (parameters.getCompletionType() == CompletionType.BASIC) {
             String prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(parameters);
             CompletionResultSet result = _result.withPrefixMatcher(prefix);
@@ -165,6 +169,31 @@ public class StoryCompletionContributor extends CompletionContributor {
             } else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, adjustedAnnotationText));
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean processStepDefinition(JavaStepDefinition stepDefinitionAnnotation) {
+            StepType annotationStepType = stepDefinitionAnnotation.getAnnotationType();
+            if (annotationStepType != getStepType()) {
+                return true;
+            }
+            Set<String> annotationTexts = stepDefinitionAnnotation.getAnnotationTexts();
+            for (String annotationText : annotationTexts) {
+                String adjustedAnnotationText = actualStepPrefix + " " + annotationText;
+
+                ParametrizedString pString = new ParametrizedString(adjustedAnnotationText);
+                String complete = pString.complete(textBeforeCaret);
+                if (StringUtil.isNotEmpty(complete)) {
+                    PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
+                    consumer.consume(LookupElementBuilder.create(matchingAnnotation, complete));
+                } else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
+                    PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
+                    consumer.consume(LookupElementBuilder.create(matchingAnnotation, adjustedAnnotationText));
+                }
+
             }
 
             return true;
