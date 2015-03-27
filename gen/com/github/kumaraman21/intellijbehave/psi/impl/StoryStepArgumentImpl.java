@@ -1,15 +1,18 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepArgument;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
+import com.github.kumaraman21.intellijbehave.psi.StoryVisitor;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.github.kumaraman21.intellijbehave.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.STORY_TOKEN_SPACE;
 
 public class StoryStepArgumentImpl extends ASTWrapperPsiElement implements StoryStepArgument {
 
@@ -36,8 +39,8 @@ public class StoryStepArgumentImpl extends ASTWrapperPsiElement implements Story
 
   @Override
   @Nullable
-  public PsiElement getTokenNewline() {
-    return findChildByType(STORY_TOKEN_NEWLINE);
+  public PsiElement getTokenSpace() {
+    return findChildByType(STORY_TOKEN_SPACE);
   }
 
 }

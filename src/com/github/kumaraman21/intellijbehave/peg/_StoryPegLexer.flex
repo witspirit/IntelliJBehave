@@ -18,12 +18,12 @@ import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.
 %type IElementType
 %unicode
 
-TOKEN_PATH=[a-zA-Z0-9._@-]+("/"[a-zA-Z0-9._@-]+)+
+TOKEN_NEWLINE=([ \t\f]*(\r|\n|\r\n))+
+TOKEN_PATH=[a-zA-Z0-9._@-]+("/"[a-zA-Z0-9._@-]+)+.[a-zA-Z0-9._@-]+
 TOKEN_NUMBER=[0-9]+
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
 TOKEN_PUNCT=[!\"#$%&'()*+,-./;=?\[\\\]\^_`{}~]
-TOKEN_NEWLINE=(\r|\n|\r\n)+
-TOKEN_SPACE=[ \t\f]
+TOKEN_SPACE=[ \t\f]+
 TOKEN_WORD=[a-zA-Z_0-9]+
 
 %%
@@ -52,11 +52,11 @@ TOKEN_WORD=[a-zA-Z_0-9]+
   "|"                  { return STORY_TOKEN_PIPE; }
   "TOKEN_DOT"          { return STORY_TOKEN_DOT; }
 
+  {TOKEN_NEWLINE}      { return STORY_TOKEN_NEWLINE; }
   {TOKEN_PATH}         { return STORY_TOKEN_PATH; }
   {TOKEN_NUMBER}       { return STORY_TOKEN_NUMBER; }
   {TOKEN_IP}           { return STORY_TOKEN_IP; }
   {TOKEN_PUNCT}        { return STORY_TOKEN_PUNCT; }
-  {TOKEN_NEWLINE}      { return STORY_TOKEN_NEWLINE; }
   {TOKEN_SPACE}        { return STORY_TOKEN_SPACE; }
   {TOKEN_WORD}         { return STORY_TOKEN_WORD; }
 

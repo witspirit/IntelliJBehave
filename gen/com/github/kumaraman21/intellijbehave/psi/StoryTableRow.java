@@ -1,9 +1,10 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface StoryTableRow extends PsiElement {
 
@@ -12,8 +13,5 @@ public interface StoryTableRow extends PsiElement {
 
   @NotNull
   List<StoryTableCellEmpty> getTableCellEmptyList();
-
-  @Nullable
-  PsiElement getTokenNewline();
 
 }

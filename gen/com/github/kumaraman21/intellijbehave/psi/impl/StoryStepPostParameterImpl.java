@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
+import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
+import com.github.kumaraman21.intellijbehave.psi.StoryTable;
+import com.github.kumaraman21.intellijbehave.psi.StoryVisitor;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.github.kumaraman21.intellijbehave.psi.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class StoryStepPostParameterImpl extends ASTWrapperPsiElement implements StoryStepPostParameter {
 
@@ -32,12 +32,6 @@ public class StoryStepPostParameterImpl extends ASTWrapperPsiElement implements 
   @Nullable
   public StoryTable getTable() {
     return findChildByClass(StoryTable.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getTokenNewline() {
-    return findChildByType(STORY_TOKEN_NEWLINE);
   }
 
 }
