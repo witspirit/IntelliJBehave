@@ -96,8 +96,16 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
     }
 
     public String getStoryLine() {
+        ASTNode stepTypeAsNode = getStepTypeAsNode();
         StoryStepLine storyStepLine = getStoryStepLine();
-        return String.format("%s %s", getStepTypeAsNode().getText(), storyStepLine.getText());
+        if (stepTypeAsNode != null && storyStepLine != null)
+            return String.format("%s %s", stepTypeAsNode.getText(), storyStepLine.getText());
+        else {
+            if (stepTypeAsNode != null) {
+                return String.format("%s", stepTypeAsNode.getText());
+            }
+        }
+        return "";
     }
 
     @Nullable

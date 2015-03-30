@@ -3,7 +3,10 @@ package com.github.kumaraman21.intellijbehave.formatter;
 import com.github.kumaraman21.intellijbehave.psi.StoryTableCell;
 import com.github.kumaraman21.intellijbehave.psi.StoryTableCellEmpty;
 import com.github.kumaraman21.intellijbehave.psi.StoryTableRow;
-import com.intellij.formatting.*;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -49,11 +52,6 @@ public class StoryTableBlock extends StoryIgnoreBlock {
         }
 
         return retVal;
-    }
-
-    @Override
-    public Indent getIndent() {
-        return Indent.getNoneIndent();
     }
 
     @Nullable

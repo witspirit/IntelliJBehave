@@ -1,7 +1,10 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
 import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
-import com.intellij.formatting.*;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +18,7 @@ import java.util.List;
 public class StoryBlock extends StoryIgnoreBlock {
 
     protected StoryBlock(ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
-        super(node, wrap, alignment);
+        super(node, null, null);
     }
 
     @Override
@@ -51,11 +54,6 @@ public class StoryBlock extends StoryIgnoreBlock {
             return Spacing.createSpacing(0, 0, 2, true, 1);
         }
         return Spacing.createSpacing(0, 0, 0, true, 1);
-    }
-
-    @Override
-    public Indent getIndent() {
-        return Indent.getNoneIndent();
     }
 
     @Override

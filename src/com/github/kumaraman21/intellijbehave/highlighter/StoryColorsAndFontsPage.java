@@ -53,8 +53,8 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Line comment", StorySyntaxHighlighter.STORY_TOKEN_COMMENT),//
             //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
             new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.STORY_TOKEN_GIVEN_STORIES),//
-            new AttributesDescriptor("Story path", StorySyntaxHighlighter.STORY_STORY_PATH),//
-            new AttributesDescriptor("Story path2", StorySyntaxHighlighter.STORY_STORY_PATH),//
+            new AttributesDescriptor("Story path", StorySyntaxHighlighter.STORY_TOKEN_PATH),//
+            //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.STORY_STORY_PATH),//
             new AttributesDescriptor("System parameter inject", StorySyntaxHighlighter.STORY_TOKEN_INJECT),//
             new AttributesDescriptor("User parameter inject", StorySyntaxHighlighter.STORY_TOKEN_USERINJECT),//
             new AttributesDescriptor("IP", StorySyntaxHighlighter.STORY_IP_ADDRESS)//
@@ -82,7 +82,7 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
                 "As a player\n" + //
                 "I want to be able to create and manage my account\n</narrativeText>" + //
                 "\n" + //
-                "GivenStories: <storyPath>product/wire/ConfigStory.story</storyPath>\n\n" + //
+                "GivenStories: product/wire/ConfigStory.story\n\n" + //
                 "Scenario: <scenText>An unknown user cannot be logged</scenText>\n" + //
                 "\n" + //
                 "Meta:\n" + //
@@ -108,7 +108,7 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
         result.put("scenText", StorySyntaxHighlighter.STORY_SCENARIO_TITLE);
-        result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
+        //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
         result.put("stepText", StorySyntaxHighlighter.STORY_STEP_LINE);
         result.put("tableCell", StorySyntaxHighlighter.STORY_TABLE_CELL);
         result.put("description", StorySyntaxHighlighter.STORY_DESCRIPTION);

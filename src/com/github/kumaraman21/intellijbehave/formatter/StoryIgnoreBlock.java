@@ -32,7 +32,7 @@ public class StoryIgnoreBlock extends AbstractBlock {
 
     @Override
     public Indent getIndent() {
-        return Indent.getNoneIndent();
+        return Indent.getAbsoluteNoneIndent();
     }
 
     @Override

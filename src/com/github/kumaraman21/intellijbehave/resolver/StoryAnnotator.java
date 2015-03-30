@@ -42,24 +42,23 @@ import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.S
 public class StoryAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
-//        if (psiElement instanceof JBehaveStep) {
-//            JBehaveStep step = (JBehaveStep) psiElement;
-//            PsiReference[] references = step.getReferences();
-//
-//            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-//                return;
-//            }
-//
-//            StepPsiReference reference = (StepPsiReference) references[0];
-//            JavaStepDefinition definition = reference.resolveToDefinition();
-//
-//            if (definition == null) {
-//                annotationHolder.createErrorAnnotation(psiElement, "No definition found for the step");
-//            } else {
-//                annotateParameters(step, definition, annotationHolder);
-//            }
-//        } else
-        if (psiElement instanceof PegStoryPath /*&& psiElement.getParent() != null && psiElement.getParent() instanceof StoryStepPostParameter*/) {
+        if (psiElement instanceof JBehaveStep) {
+            JBehaveStep step = (JBehaveStep) psiElement;
+            PsiReference[] references = step.getReferences();
+
+            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
+                return;
+            }
+
+            StepPsiReference reference = (StepPsiReference) references[0];
+            JavaStepDefinition definition = reference.resolveToDefinition();
+
+            if (definition == null) {
+                annotationHolder.createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
+            } else {
+                annotateParameters(step, definition, annotationHolder);
+            }
+        } else if (psiElement instanceof PegStoryPath /*&& psiElement.getParent() != null && psiElement.getParent() instanceof StoryStepPostParameter*/) {
             StoryStoryPath storyPath = (StoryStoryPath) psiElement;
             PsiReference[] references = storyPath.getReferences();
             if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
@@ -69,9 +68,6 @@ public class StoryAnnotator implements Annotator {
 
             if (reference.multiResolve(false).length == 0) {
                 annotationHolder.createErrorAnnotation(psiElement, "File not found");
-            } else {
-//                Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, null);
-//                infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_STORY_PATH);
             }
         } else if (psiElement instanceof JBehaveRule) {
             Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, null);
@@ -134,7 +130,7 @@ public class StoryAnnotator implements Annotator {
                 PsiElement elementAt = step.getContainingFile().findElementAt(offset);
                 if (elementAt != null) {
                     ASTNode node = elementAt.getNode();
-                    if (node != null && node.getElementType() != IStoryPegElementType.STORY_TOKEN_INJECT && node.getElementType() != IStoryPegElementType.STORY_TOKEN_USER_INJECT) {
+                    if (node != null && node.getElementType() != IStoryPegElementType.STORY_TOKEN_INJECT && node.getElementType() != IStoryPegElementType.STORY_TOKEN_USER_INJECT && node.getElementType() != IStoryPegElementType.STORY_STORY_PATH && node.getElementType() != IStoryPegElementType.STORY_TOKEN_PATH) {
                         infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STEP_PARAMETER);
                     }
                 }

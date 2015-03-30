@@ -54,17 +54,17 @@ public class StoryPegParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public TokenSet getWhitespaceTokens() {
-//        return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
-        return TokenSet.EMPTY;
+        return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
+        //return TokenSet.EMPTY;
         //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE,IStoryPegElementType.STORY_TOKEN_NEWLINE);
     }
 
     @NotNull
     @Override
     public TokenSet getCommentTokens() {
-        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_COMMENT);
+        return TokenSet.create(IStoryPegElementType.STORY_TOKEN_COMMENT);
         //return TokenSet.create(IStoryPegElementType.STORY_STEP_COMMENT);
-        return TokenSet.EMPTY;
+        //return TokenSet.EMPTY;
     }
 
     @NotNull

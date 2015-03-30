@@ -106,6 +106,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String STORY_TOKEN_USER_INJECT_ID = "JBEHAVE.STORY_TOKEN_USER_INJECT";
     public static final String STORY_TOKEN_COMMENT_ID = "JBEHAVE.STORY_COMMENT_ID";
     public static final String STEP_PARAMETER_ID = "JBEHAVE.STEP_PARAMETER";
+    public static final String STORY_TOKEN_PATH_ID = "JBEHAVE.STORY_TOKEN_PATH";
 
 
     // Registering TextAttributes
@@ -124,7 +125,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(STORY_SCENARIO_TITLE_ID, CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
         createKey(STORY_STEP_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
         createKey(STORY_STEP_LINE_ID, HighlighterColors.TEXT);
-        createKey(STORY_STORY_PATH_ID, DefaultLanguageHighlighterColors.STRING);
+        //createKey(STORY_STORY_PATH_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(STORY_TABLE_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(STORY_TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(STORY_URI_ID, DefaultLanguageHighlighterColors.STRING);
@@ -147,6 +148,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(STORY_TOKEN_PIPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_INJECT_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_USER_INJECT_ID, DefaultLanguageHighlighterColors.KEYWORD);
+        createKey(STORY_TOKEN_PATH_ID, DefaultLanguageHighlighterColors.STRING);
     }
 
     public static TextAttributesKey STORY_DESCRIPTION = createTextAttributesKey(STORY_DESCRIPTION_ID);
@@ -172,7 +174,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
 //    public static TextAttributesKey STORY_STEP_PAR = createTextAttributesKey(STORY_STEP_PAR_ID);
     public static TextAttributesKey STORY_STEP_POST_PARAMETER = createTextAttributesKey(STORY_STEP_POST_PARAMETER_ID);
     public static TextAttributesKey STORY_STORY = createTextAttributesKey(STORY_STORY_ID);
-    public static TextAttributesKey STORY_STORY_PATH = createTextAttributesKey(STORY_STORY_PATH_ID);
+    //public static TextAttributesKey STORY_TOKEN_PATH = createTextAttributesKey(STORY_STORY_PATH_ID);
 //    public static TextAttributesKey STORY_STORY_PATHS = createTextAttributesKey(STORY_STORY_PATHS_ID);
     public static TextAttributesKey STORY_TABLE = createTextAttributesKey(STORY_TABLE_ID);
     public static TextAttributesKey STORY_TABLE_CELL = createTextAttributesKey(STORY_TABLE_CELL_ID);
@@ -199,6 +201,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey STORY_TOKEN_INJECT = createTextAttributesKey(STORY_TOKEN_INJECT_ID);
     public static TextAttributesKey STORY_TOKEN_USERINJECT = createTextAttributesKey(STORY_TOKEN_USER_INJECT_ID);
     public static TextAttributesKey STORY_TOKEN_COMMENT = createTextAttributesKey(STORY_TOKEN_COMMENT_ID);
+    public static TextAttributesKey STORY_TOKEN_PATH = createTextAttributesKey(STORY_TOKEN_PATH_ID);
 
     static {
         ATTRIBUTES.put(IStoryPegElementType.STORY_DESCRIPTION, STORY_DESCRIPTION);
@@ -227,8 +230,6 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_PAR, STORY_STEP_PAR);
         ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_POST_PARAMETER, STORY_STEP_POST_PARAMETER);
         ATTRIBUTES.put(IStoryPegElementType.STORY_STORY, STORY_STORY);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_STORY_PATH, STORY_STORY_PATH);
-//        ATTRIBUTES.put(IStoryPegElementType.STORY_STORY_PATHS, STORY_STORY_PATHS);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE, STORY_TABLE);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE_CELL, STORY_TABLE_CELL);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE_CELL_EMPTY, STORY_TABLE_CELL_EMPTY);
@@ -254,6 +255,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_INJECT, STORY_TOKEN_INJECT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_USER_INJECT, STORY_TOKEN_USERINJECT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_COMMENT, STORY_TOKEN_COMMENT);
+        ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_PATH, STORY_TOKEN_PATH);
 
     }
 

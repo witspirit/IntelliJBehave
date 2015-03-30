@@ -163,5 +163,7 @@
         <elementDescriptionProvider
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
         <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder" language="Story"/>
+        <codeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
     </extensions>
 </idea-plugin>

@@ -1,8 +1,10 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.formatter.common.AbstractBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryTableDelimiterBlock extends AbstractBlock {
+public class StoryTableDelimiterBlock extends StoryIgnoreBlock {
     private int columnNr;
     protected StoryTableDelimiterBlock(int columnNr,ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
@@ -30,10 +32,6 @@ public class StoryTableDelimiterBlock extends AbstractBlock {
     @Override
     public Spacing getSpacing(Block child1, Block child2) {
         return null;
-    }
-    @Override
-    public Indent getIndent() {
-        return Indent.getNoneIndent();
     }
 
     @Override

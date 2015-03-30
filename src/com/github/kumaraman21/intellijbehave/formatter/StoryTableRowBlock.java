@@ -1,9 +1,11 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
 import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
-import com.intellij.formatting.*;
+import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Spacing;
+import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +16,7 @@ import java.util.List;
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryTableRowBlock extends AbstractBlock {
+public class StoryTableRowBlock extends StoryIgnoreBlock {
     private int[] columnWidths;
 
     protected StoryTableRowBlock(int[] columnWidths, ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
@@ -69,10 +71,6 @@ public class StoryTableRowBlock extends AbstractBlock {
             return Spacing.createSpacing(diff, diff, 0, true, 0);
         }
         return null;
-    }
-    @Override
-    public Indent getIndent() {
-        return Indent.getNoneIndent();
     }
 
     @Override
