@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
 import static com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class StoryPegParser implements PsiParser {
@@ -30,15 +30,6 @@ public class StoryPegParser implements PsiParser {
     }
     else if (t == STORY_GIVEN_STORIES) {
       r = GivenStories(b, 0);
-    }
-    else if (t == STORY_INJECT) {
-      r = Inject(b, 0);
-    }
-    else if (t == STORY_INJECT_IDENTIFIER) {
-      r = InjectIdentifier(b, 0);
-    }
-    else if (t == STORY_INJECT_SEPARATOR) {
-      r = InjectSeparator(b, 0);
     }
     else if (t == STORY_IP_ADDRESS) {
       r = IpAddress(b, 0);
@@ -106,9 +97,6 @@ public class StoryPegParser implements PsiParser {
     else if (t == STORY_STORY_PATH) {
       r = StoryPath(b, 0);
     }
-    else if (t == STORY_STORY_PATHS) {
-      r = StoryPaths(b, 0);
-    }
     else if (t == STORY_TABLE) {
       r = Table(b, 0);
     }
@@ -130,9 +118,6 @@ public class StoryPegParser implements PsiParser {
     else if (t == STORY_URI_WORD) {
       r = UriWord(b, 0);
     }
-    else if (t == STORY_USER_INJECT) {
-      r = UserInject(b, 0);
-    }
     else {
       r = parse_root_(t, b, 0);
     }
@@ -152,25 +137,6 @@ public class StoryPegParser implements PsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, STORY_TOKEN_WORD);
     if (!r) r = consumeToken(b, STORY_TOKEN_NUMBER);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|Line|TOKEN_PIPE|Punct|Space
-  static boolean Anything(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Anything")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_WHEN);
-    if (!r) r = consumeToken(b, STORY_TOKEN_THEN);
-    if (!r) r = consumeToken(b, STORY_TOKEN_GIVEN);
-    if (!r) r = consumeToken(b, STORY_TOKEN_AND);
-    if (!r) r = StoryPath(b, l + 1);
-    if (!r) r = Line(b, l + 1);
-    if (!r) r = consumeToken(b, STORY_TOKEN_PIPE);
-    if (!r) r = Punct(b, l + 1);
-    if (!r) r = Space(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -225,144 +191,6 @@ public class StoryPegParser implements PsiParser {
     r = p && Newline(b, l + 1) && r;
     exit_section_(b, l, m, STORY_GIVEN_STORIES, r, p, null);
     return r || p;
-  }
-
-  /* ********************************************************** */
-  // TOKEN_BRACKET_OPEN SpaceStar InjectIdentifier SpaceStar [TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar] TOKEN_BRACKET_CLOSE
-  public static boolean Inject(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Inject")) return false;
-    if (!nextTokenIs(b, STORY_TOKEN_BRACKET_OPEN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_BRACKET_OPEN);
-    r = r && SpaceStar(b, l + 1);
-    r = r && InjectIdentifier(b, l + 1);
-    r = r && SpaceStar(b, l + 1);
-    r = r && Inject_4(b, l + 1);
-    r = r && consumeToken(b, STORY_TOKEN_BRACKET_CLOSE);
-    exit_section_(b, m, STORY_INJECT, r);
-    return r;
-  }
-
-  // [TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar]
-  private static boolean Inject_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Inject_4")) return false;
-    Inject_4_0(b, l + 1);
-    return true;
-  }
-
-  // TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar
-  private static boolean Inject_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Inject_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_PIPE);
-    r = r && SpaceStar(b, l + 1);
-    r = r && InjectIdentifier(b, l + 1);
-    r = r && SpaceStar(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // Word ((InjectSeparator|Space)+ Word)* InjectSeparator?
-  public static boolean InjectIdentifier(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<inject identifier>");
-    r = Word(b, l + 1);
-    r = r && InjectIdentifier_1(b, l + 1);
-    r = r && InjectIdentifier_2(b, l + 1);
-    exit_section_(b, l, m, STORY_INJECT_IDENTIFIER, r, false, null);
-    return r;
-  }
-
-  // ((InjectSeparator|Space)+ Word)*
-  private static boolean InjectIdentifier_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!InjectIdentifier_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "InjectIdentifier_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // (InjectSeparator|Space)+ Word
-  private static boolean InjectIdentifier_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = InjectIdentifier_1_0_0(b, l + 1);
-    r = r && Word(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (InjectSeparator|Space)+
-  private static boolean InjectIdentifier_1_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier_1_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = InjectIdentifier_1_0_0_0(b, l + 1);
-    int c = current_position_(b);
-    while (r) {
-      if (!InjectIdentifier_1_0_0_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "InjectIdentifier_1_0_0", c)) break;
-      c = current_position_(b);
-    }
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // InjectSeparator|Space
-  private static boolean InjectIdentifier_1_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier_1_0_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = InjectSeparator(b, l + 1);
-    if (!r) r = Space(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // InjectSeparator?
-  private static boolean InjectIdentifier_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectIdentifier_2")) return false;
-    InjectSeparator(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // (TOKEN_COMMA|TOKEN_COLON|TOKEN_AMPERSAND|TOKEN_PUNCT|TOKEN_DOT)+
-  public static boolean InjectSeparator(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectSeparator")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<inject separator>");
-    r = InjectSeparator_0(b, l + 1);
-    int c = current_position_(b);
-    while (r) {
-      if (!InjectSeparator_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "InjectSeparator", c)) break;
-      c = current_position_(b);
-    }
-    exit_section_(b, l, m, STORY_INJECT_SEPARATOR, r, false, null);
-    return r;
-  }
-
-  // TOKEN_COMMA|TOKEN_COLON|TOKEN_AMPERSAND|TOKEN_PUNCT|TOKEN_DOT
-  private static boolean InjectSeparator_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "InjectSeparator_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_COMMA);
-    if (!r) r = consumeToken(b, STORY_TOKEN_COLON);
-    if (!r) r = consumeToken(b, STORY_TOKEN_AMPERSAND);
-    if (!r) r = consumeToken(b, STORY_TOKEN_PUNCT);
-    if (!r) r = consumeToken(b, STORY_TOKEN_DOT);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -502,14 +330,13 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Word (WordSeparator Word)* Punct?
+  // Word (WordSeparator Word)*
   static boolean Line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Line")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Word(b, l + 1);
     r = r && Line_1(b, l + 1);
-    r = r && Line_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -537,13 +364,6 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // Punct?
-  private static boolean Line_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Line_2")) return false;
-    Punct(b, l + 1);
-    return true;
-  }
-
   /* ********************************************************** */
   // TOKEN_AT MetaKey Space MetaValue
   public static boolean MetaElement(PsiBuilder b, int l) {
@@ -560,19 +380,27 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_WORD TOKEN_COLON
+  // TOKEN_WORD TOKEN_COLON?
   public static boolean MetaKey(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaKey")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_WORD)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, STORY_TOKEN_WORD, STORY_TOKEN_COLON);
+    r = consumeToken(b, STORY_TOKEN_WORD);
+    r = r && MetaKey_1(b, l + 1);
     exit_section_(b, m, STORY_META_KEY, r);
     return r;
   }
 
+  // TOKEN_COLON?
+  private static boolean MetaKey_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MetaKey_1")) return false;
+    consumeToken(b, STORY_TOKEN_COLON);
+    return true;
+  }
+
   /* ********************************************************** */
-  // TOKEN_META (Space MetaElement)? Newline (MetaElement (Newline))*
+  // TOKEN_META (Space? MetaElement)? Newline (MetaElement Newline?)*
   public static boolean MetaStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_META)) return false;
@@ -587,25 +415,32 @@ public class StoryPegParser implements PsiParser {
     return r || p;
   }
 
-  // (Space MetaElement)?
+  // (Space? MetaElement)?
   private static boolean MetaStatement_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_1")) return false;
     MetaStatement_1_0(b, l + 1);
     return true;
   }
 
-  // Space MetaElement
+  // Space? MetaElement
   private static boolean MetaStatement_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Space(b, l + 1);
+    r = MetaStatement_1_0_0(b, l + 1);
     r = r && MetaElement(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // (MetaElement (Newline))*
+  // Space?
+  private static boolean MetaStatement_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MetaStatement_1_0_0")) return false;
+    Space(b, l + 1);
+    return true;
+  }
+
+  // (MetaElement Newline?)*
   private static boolean MetaStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3")) return false;
     int c = current_position_(b);
@@ -617,7 +452,7 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // MetaElement (Newline)
+  // MetaElement Newline?
   private static boolean MetaStatement_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3_0")) return false;
     boolean r;
@@ -628,18 +463,15 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // (Newline)
+  // Newline?
   private static boolean MetaStatement_3_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_3_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = Newline(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    Newline(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
-  // (Punct|Word)+
+  // (Punct|Word|Space)+
   public static boolean MetaValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaValue")) return false;
     boolean r;
@@ -655,19 +487,20 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // Punct|Word
+  // Punct|Word|Space
   private static boolean MetaValue_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaValue_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = Punct(b, l + 1);
     if (!r) r = Word(b, l + 1);
+    if (!r) r = Space(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // (SpaceStar Line SpaceStar Newline)+
+  // (SpaceStar Line Newline)+
   public static boolean MultiTextLine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MultiTextLine")) return false;
     boolean r;
@@ -683,21 +516,20 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // SpaceStar Line SpaceStar Newline
+  // SpaceStar Line Newline
   private static boolean MultiTextLine_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MultiTextLine_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
     r = r && Line(b, l + 1);
-    r = r && SpaceStar(b, l + 1);
     r = r && Newline(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // TOKEN_NARRATIVE Newline? NarrativeText
+  // TOKEN_NARRATIVE Newline* NarrativeText
   public static boolean Narrative(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Narrative")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_NARRATIVE)) return false;
@@ -711,10 +543,15 @@ public class StoryPegParser implements PsiParser {
     return r || p;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Narrative_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Narrative_1")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Narrative_1", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -730,15 +567,9 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_NEWLINE | <<eof>>
+  // TOKEN_NEWLINE
   static boolean Newline(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Newline")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_NEWLINE);
-    if (!r) r = eof(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    return consumeToken(b, STORY_TOKEN_NEWLINE);
   }
 
   /* ********************************************************** */
@@ -905,7 +736,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Uri|IpAddress|Alnum|UserInject|Inject|StoryPath
+  // Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|StoryPath|Punct
   static boolean SimpleWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "SimpleWord")) return false;
     boolean r;
@@ -913,9 +744,10 @@ public class StoryPegParser implements PsiParser {
     r = Uri(b, l + 1);
     if (!r) r = IpAddress(b, l + 1);
     if (!r) r = Alnum(b, l + 1);
-    if (!r) r = UserInject(b, l + 1);
-    if (!r) r = Inject(b, l + 1);
+    if (!r) r = consumeToken(b, STORY_TOKEN_USER_INJECT);
+    if (!r) r = consumeToken(b, STORY_TOKEN_INJECT);
     if (!r) r = StoryPath(b, l + 1);
+    if (!r) r = Punct(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -940,7 +772,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // StepPar SpaceStar (StepArgument)?
+  // StepPar SpaceStar StepArgument Newline*
   public static boolean Step(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Step")) return false;
     boolean r, p;
@@ -948,76 +780,50 @@ public class StoryPegParser implements PsiParser {
     r = StepPar(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, SpaceStar(b, l + 1));
-    r = p && Step_2(b, l + 1) && r;
+    r = p && report_error_(b, StepArgument(b, l + 1)) && r;
+    r = p && Step_3(b, l + 1) && r;
     exit_section_(b, l, m, STORY_STEP, r, p, RecoverStep_parser_);
     return r || p;
   }
 
-  // (StepArgument)?
-  private static boolean Step_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Step_2")) return false;
-    Step_2_0(b, l + 1);
+  // Newline*
+  private static boolean Step_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Step_3")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Step_3", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
-  // (StepArgument)
-  private static boolean Step_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Step_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = StepArgument(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
   /* ********************************************************** */
-  // StepLine (Newline|Space)? StepPostParameter? Newline?
+  // StepLine SpaceStar StepPostParameter | StepLine
   public static boolean StepArgument(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepArgument")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<step argument>");
-    r = StepLine(b, l + 1);
-    r = r && StepArgument_1(b, l + 1);
-    r = r && StepArgument_2(b, l + 1);
-    r = r && StepArgument_3(b, l + 1);
+    r = StepArgument_0(b, l + 1);
+    if (!r) r = StepLine(b, l + 1);
     exit_section_(b, l, m, STORY_STEP_ARGUMENT, r, false, null);
     return r;
   }
 
-  // (Newline|Space)?
-  private static boolean StepArgument_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StepArgument_1")) return false;
-    StepArgument_1_0(b, l + 1);
-    return true;
-  }
-
-  // Newline|Space
-  private static boolean StepArgument_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StepArgument_1_0")) return false;
+  // StepLine SpaceStar StepPostParameter
+  private static boolean StepArgument_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepArgument_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Newline(b, l + 1);
-    if (!r) r = Space(b, l + 1);
+    r = StepLine(b, l + 1);
+    r = r && SpaceStar(b, l + 1);
+    r = r && StepPostParameter(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // StepPostParameter?
-  private static boolean StepArgument_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StepArgument_2")) return false;
-    StepPostParameter(b, l + 1);
-    return true;
-  }
-
-  // Newline?
-  private static boolean StepArgument_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "StepArgument_3")) return false;
-    Newline(b, l + 1);
-    return true;
-  }
-
   /* ********************************************************** */
-  // TOKEN_COMMENT Anything* Newline
+  // TOKEN_COMMENT Newline+
   public static boolean StepComment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepComment")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_COMMENT)) return false;
@@ -1025,21 +831,24 @@ public class StoryPegParser implements PsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, STORY_TOKEN_COMMENT);
     r = r && StepComment_1(b, l + 1);
-    r = r && Newline(b, l + 1);
     exit_section_(b, m, STORY_STEP_COMMENT, r);
     return r;
   }
 
-  // Anything*
+  // Newline+
   private static boolean StepComment_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepComment_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = Newline(b, l + 1);
     int c = current_position_(b);
-    while (true) {
-      if (!Anything(b, l + 1)) break;
+    while (r) {
+      if (!Newline(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "StepComment_1", c)) break;
       c = current_position_(b);
     }
-    return true;
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1100,19 +909,42 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Table| StoryPath
+  // Newline* Table| StoryPaths
   public static boolean StepPostParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepPostParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<step post parameter>");
-    r = Table(b, l + 1);
-    if (!r) r = StoryPath(b, l + 1);
+    r = StepPostParameter_0(b, l + 1);
+    if (!r) r = StoryPaths(b, l + 1);
     exit_section_(b, l, m, STORY_STEP_POST_PARAMETER, r, false, null);
     return r;
   }
 
+  // Newline* Table
+  private static boolean StepPostParameter_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepPostParameter_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = StepPostParameter_0_0(b, l + 1);
+    r = r && Table(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // Newline*
+  private static boolean StepPostParameter_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StepPostParameter_0_0")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "StepPostParameter_0_0", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
   /* ********************************************************** */
-  // Uri|IpAddress|Alnum|UserInject|Inject
+  // Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
   static boolean StepSimpleWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepSimpleWord")) return false;
     boolean r;
@@ -1120,8 +952,8 @@ public class StoryPegParser implements PsiParser {
     r = Uri(b, l + 1);
     if (!r) r = IpAddress(b, l + 1);
     if (!r) r = Alnum(b, l + 1);
-    if (!r) r = UserInject(b, l + 1);
-    if (!r) r = Inject(b, l + 1);
+    if (!r) r = consumeToken(b, STORY_TOKEN_USER_INJECT);
+    if (!r) r = consumeToken(b, STORY_TOKEN_INJECT);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1144,7 +976,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Newline? Description? Newline? MetaStatement? Newline? Narrative? Newline? GivenStories? Newline? Lifecycle? Newline? Scenario+ Newline?
+  // Newline* Description? Newline* MetaStatement? Newline* Narrative? Newline* GivenStories? Newline* Lifecycle? Newline* Scenario+ Newline*
   public static boolean Story(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story")) return false;
     boolean r;
@@ -1166,10 +998,15 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_0")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_0", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1180,10 +1017,15 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_2")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_2", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1194,10 +1036,15 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_4")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_4", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1208,10 +1055,15 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_6(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_6")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_6", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1222,10 +1074,15 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_8(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_8")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_8", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1236,10 +1093,15 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_10(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_10")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_10", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1259,10 +1121,15 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // Newline?
+  // Newline*
   private static boolean Story_12(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_12")) return false;
-    Newline(b, l + 1);
+    int c = current_position_(b);
+    while (true) {
+      if (!Newline(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_12", c)) break;
+      c = current_position_(b);
+    }
     return true;
   }
 
@@ -1279,19 +1146,19 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // StoryPath (TOKEN_COMMA StoryPath)*
-  public static boolean StoryPaths(PsiBuilder b, int l) {
+  // StoryPath ( SpaceStar Newline? TOKEN_COMMA Newline? SpaceStar StoryPath)*
+  static boolean StoryPaths(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StoryPaths")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_PATH)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = StoryPath(b, l + 1);
     r = r && StoryPaths_1(b, l + 1);
-    exit_section_(b, m, STORY_STORY_PATHS, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
-  // (TOKEN_COMMA StoryPath)*
+  // ( SpaceStar Newline? TOKEN_COMMA Newline? SpaceStar StoryPath)*
   private static boolean StoryPaths_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StoryPaths_1")) return false;
     int c = current_position_(b);
@@ -1303,19 +1170,37 @@ public class StoryPegParser implements PsiParser {
     return true;
   }
 
-  // TOKEN_COMMA StoryPath
+  // SpaceStar Newline? TOKEN_COMMA Newline? SpaceStar StoryPath
   private static boolean StoryPaths_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StoryPaths_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_COMMA);
+    r = SpaceStar(b, l + 1);
+    r = r && StoryPaths_1_0_1(b, l + 1);
+    r = r && consumeToken(b, STORY_TOKEN_COMMA);
+    r = r && StoryPaths_1_0_3(b, l + 1);
+    r = r && SpaceStar(b, l + 1);
     r = r && StoryPath(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // Newline?
+  private static boolean StoryPaths_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StoryPaths_1_0_1")) return false;
+    Newline(b, l + 1);
+    return true;
+  }
+
+  // Newline?
+  private static boolean StoryPaths_1_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "StoryPaths_1_0_3")) return false;
+    Newline(b, l + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // (SpaceStar TableRow Newline)+
+  // (SpaceStar TableRow)+
   public static boolean Table(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Table")) return false;
     if (!nextTokenIs(b, "<table>", STORY_TOKEN_PIPE, STORY_TOKEN_SPACE)) return false;
@@ -1332,14 +1217,13 @@ public class StoryPegParser implements PsiParser {
     return r;
   }
 
-  // SpaceStar TableRow Newline
+  // SpaceStar TableRow
   private static boolean Table_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Table_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
     r = r && TableRow(b, l + 1);
-    r = r && Newline(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1367,7 +1251,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
+  // TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
   public static boolean TableRow(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableRow")) return false;
     if (!nextTokenIs(b, STORY_TOKEN_PIPE)) return false;
@@ -1377,6 +1261,7 @@ public class StoryPegParser implements PsiParser {
     r = r && TableRow_1(b, l + 1);
     r = r && consumeToken(b, STORY_TOKEN_PIPE);
     r = r && TableRow_3(b, l + 1);
+    r = r && Newline(b, l + 1);
     exit_section_(b, m, STORY_TABLE_ROW, r);
     return r;
   }
@@ -1526,52 +1411,15 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Alnum|UserInject|Inject
+  // Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
   public static boolean UriWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "UriWord")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<uri word>");
     r = Alnum(b, l + 1);
-    if (!r) r = UserInject(b, l + 1);
-    if (!r) r = Inject(b, l + 1);
+    if (!r) r = consumeToken(b, STORY_TOKEN_USER_INJECT);
+    if (!r) r = consumeToken(b, STORY_TOKEN_INJECT);
     exit_section_(b, l, m, STORY_URI_WORD, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // TOKEN_DBRACKET_OPEN SpaceStar InjectIdentifier SpaceStar [TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar] TOKEN_DBRACKET_CLOSE
-  public static boolean UserInject(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "UserInject")) return false;
-    if (!nextTokenIs(b, STORY_TOKEN_DBRACKET_OPEN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_DBRACKET_OPEN);
-    r = r && SpaceStar(b, l + 1);
-    r = r && InjectIdentifier(b, l + 1);
-    r = r && SpaceStar(b, l + 1);
-    r = r && UserInject_4(b, l + 1);
-    r = r && consumeToken(b, STORY_TOKEN_DBRACKET_CLOSE);
-    exit_section_(b, m, STORY_USER_INJECT, r);
-    return r;
-  }
-
-  // [TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar]
-  private static boolean UserInject_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "UserInject_4")) return false;
-    UserInject_4_0(b, l + 1);
-    return true;
-  }
-
-  // TOKEN_PIPE SpaceStar InjectIdentifier SpaceStar
-  private static boolean UserInject_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "UserInject_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, STORY_TOKEN_PIPE);
-    r = r && SpaceStar(b, l + 1);
-    r = r && InjectIdentifier(b, l + 1);
-    r = r && SpaceStar(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 

@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
-import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
-import com.github.kumaraman21.intellijbehave.psi.StoryTable;
-import com.github.kumaraman21.intellijbehave.psi.StoryVisitor;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.util.PsiTreeUtil;
+import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class StoryStepPostParameterImpl extends ASTWrapperPsiElement implements StoryStepPostParameter {
 
@@ -23,9 +23,9 @@ public class StoryStepPostParameterImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @Nullable
-  public StoryStoryPath getStoryPath() {
-    return findChildByClass(StoryStoryPath.class);
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
   }
 
   @Override

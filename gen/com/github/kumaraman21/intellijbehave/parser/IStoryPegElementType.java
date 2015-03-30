@@ -13,9 +13,6 @@ public interface IStoryPegElementType {
   IElementType STORY_DESCRIPTION = new StoryPegElementType("STORY_DESCRIPTION");
   IElementType STORY_EXAMPLES = new StoryPegElementType("STORY_EXAMPLES");
   IElementType STORY_GIVEN_STORIES = new StoryPegElementType("STORY_GIVEN_STORIES");
-  IElementType STORY_INJECT = new StoryPegElementType("STORY_INJECT");
-  IElementType STORY_INJECT_IDENTIFIER = new StoryPegElementType("STORY_INJECT_IDENTIFIER");
-  IElementType STORY_INJECT_SEPARATOR = new StoryPegElementType("STORY_INJECT_SEPARATOR");
   IElementType STORY_IP_ADDRESS = new StoryPegElementType("STORY_IP_ADDRESS");
   IElementType STORY_LIFECYCLE = new StoryPegElementType("STORY_LIFECYCLE");
   IElementType STORY_LIFECYCLE_AFTER = new StoryPegElementType("STORY_LIFECYCLE_AFTER");
@@ -38,7 +35,6 @@ public interface IStoryPegElementType {
   IElementType STORY_STEP_POST_PARAMETER = new StoryPegElementType("STORY_STEP_POST_PARAMETER");
   IElementType STORY_STORY = new StoryPegElementType("STORY_STORY");
   IElementType STORY_STORY_PATH = new StoryPegElementType("STORY_STORY_PATH");
-  IElementType STORY_STORY_PATHS = new StoryPegElementType("STORY_STORY_PATHS");
   IElementType STORY_TABLE = new StoryPegElementType("STORY_TABLE");
   IElementType STORY_TABLE_CELL = new StoryPegElementType("STORY_TABLE_CELL");
   IElementType STORY_TABLE_CELL_EMPTY = new StoryPegElementType("STORY_TABLE_CELL_EMPTY");
@@ -46,7 +42,6 @@ public interface IStoryPegElementType {
   IElementType STORY_URI = new StoryPegElementType("STORY_URI");
   IElementType STORY_URI_IDENTIFIER = new StoryPegElementType("STORY_URI_IDENTIFIER");
   IElementType STORY_URI_WORD = new StoryPegElementType("STORY_URI_WORD");
-  IElementType STORY_USER_INJECT = new StoryPegElementType("STORY_USER_INJECT");
 
   IElementType STORY_TOKEN_AFTER = new StoryPegTokenType("After:");
   IElementType STORY_TOKEN_AMPERSAND = new StoryPegTokenType("&");
@@ -57,13 +52,14 @@ public interface IStoryPegElementType {
   IElementType STORY_TOKEN_BRACKET_OPEN = new StoryPegTokenType("<");
   IElementType STORY_TOKEN_COLON = new StoryPegTokenType(":");
   IElementType STORY_TOKEN_COMMA = new StoryPegTokenType(",");
-  IElementType STORY_TOKEN_COMMENT = new StoryPegTokenType("!--");
+  IElementType STORY_TOKEN_COMMENT = new StoryPegTokenType("TOKEN_COMMENT");
   IElementType STORY_TOKEN_DBRACKET_CLOSE = new StoryPegTokenType(">>");
   IElementType STORY_TOKEN_DBRACKET_OPEN = new StoryPegTokenType("<<");
   IElementType STORY_TOKEN_DOT = new StoryPegTokenType("TOKEN_DOT");
   IElementType STORY_TOKEN_EXAMPLES = new StoryPegTokenType("Examples:");
   IElementType STORY_TOKEN_GIVEN = new StoryPegTokenType("Given");
   IElementType STORY_TOKEN_GIVEN_STORIES = new StoryPegTokenType("GivenStories:");
+  IElementType STORY_TOKEN_INJECT = new StoryPegTokenType("TOKEN_INJECT");
   IElementType STORY_TOKEN_IP = new StoryPegTokenType("TOKEN_IP");
   IElementType STORY_TOKEN_LIFECYCLE = new StoryPegTokenType("Lifecycle:");
   IElementType STORY_TOKEN_META = new StoryPegTokenType("Meta:");
@@ -76,6 +72,7 @@ public interface IStoryPegElementType {
   IElementType STORY_TOKEN_SCENARIO = new StoryPegTokenType("Scenario:");
   IElementType STORY_TOKEN_SPACE = new StoryPegTokenType("TOKEN_SPACE");
   IElementType STORY_TOKEN_THEN = new StoryPegTokenType("Then");
+  IElementType STORY_TOKEN_USER_INJECT = new StoryPegTokenType("TOKEN_USER_INJECT");
   IElementType STORY_TOKEN_WHEN = new StoryPegTokenType("When");
   IElementType STORY_TOKEN_WORD = new StoryPegTokenType("TOKEN_WORD");
 
@@ -90,15 +87,6 @@ public interface IStoryPegElementType {
       }
       else if (type == STORY_GIVEN_STORIES) {
         return new StoryGivenStoriesImpl(node);
-      }
-      else if (type == STORY_INJECT) {
-        return new StoryInjectImpl(node);
-      }
-      else if (type == STORY_INJECT_IDENTIFIER) {
-        return new StoryInjectIdentifierImpl(node);
-      }
-      else if (type == STORY_INJECT_SEPARATOR) {
-        return new StoryInjectSeparatorImpl(node);
       }
       else if (type == STORY_IP_ADDRESS) {
         return new StoryIpAddressImpl(node);
@@ -166,9 +154,6 @@ public interface IStoryPegElementType {
       else if (type == STORY_STORY_PATH) {
         return new StoryStoryPathImpl(node);
       }
-      else if (type == STORY_STORY_PATHS) {
-        return new StoryStoryPathsImpl(node);
-      }
       else if (type == STORY_TABLE) {
         return new StoryTableImpl(node);
       }
@@ -189,9 +174,6 @@ public interface IStoryPegElementType {
       }
       else if (type == STORY_URI_WORD) {
         return new StoryUriWordImpl(node);
-      }
-      else if (type == STORY_USER_INJECT) {
-        return new StoryUserInjectImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

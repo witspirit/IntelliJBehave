@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface StoryTableCell extends PsiElement {
 
   @NotNull
-  List<StoryInject> getInjectList();
-
-  @NotNull
   List<StoryIpAddress> getIpAddressList();
 
   @NotNull
@@ -18,8 +15,5 @@ public interface StoryTableCell extends PsiElement {
 
   @NotNull
   List<StoryUri> getUriList();
-
-  @NotNull
-  List<StoryUserInject> getUserInjectList();
 
 }

@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class StoryStepLineImpl extends ASTWrapperPsiElement implements StoryStepLine {
+public class StoryStepLineImpl extends JBehaveRule implements StoryStepLine {
 
   public StoryStepLineImpl(ASTNode node) {
     super(node);
@@ -24,12 +24,6 @@ public class StoryStepLineImpl extends ASTWrapperPsiElement implements StoryStep
 
   @Override
   @NotNull
-  public List<StoryInject> getInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
-  }
-
-  @Override
-  @NotNull
   public List<StoryIpAddress> getIpAddressList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
   }
@@ -38,12 +32,6 @@ public class StoryStepLineImpl extends ASTWrapperPsiElement implements StoryStep
   @NotNull
   public List<StoryUri> getUriList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryUserInject> getUserInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

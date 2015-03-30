@@ -26,8 +26,10 @@ import java.util.Collection;
 public class ScanUtils {
 
     public static boolean iterateInContextOf(PsiElement storyRef, StepDefinitionIterator iterator) {
-        Collection<JavaStepDefinition> stepDefinitions = JBehaveStepsIndex.getInstance(
+        TokenMap allStepDefinitionsByType = JBehaveStepsIndex.getInstance(
                 storyRef.getProject()).findAllStepDefinitionsByType((JBehaveStep) storyRef);
+        String text = storyRef.getText();
+        Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.getConcerned(text);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             iterator.processStepDefinition(stepDefinition);
         }

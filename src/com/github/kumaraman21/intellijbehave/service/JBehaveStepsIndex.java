@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave.service;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
 import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
+import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -24,19 +25,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 
 public class JBehaveStepsIndex {
+
+    private static final TreeSet<JavaStepDefinition> emptyTreeSet = new TreeSet<JavaStepDefinition>();
+
     public static JBehaveStepsIndex getInstance(Project project) {
         return ServiceManager.getService(project, JBehaveStepsIndex.class);
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> findAllStepDefinitionsByType(@NotNull JBehaveStep step) {
+    public TokenMap findAllStepDefinitionsByType(@NotNull JBehaveStep step) {
         Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
         if (module == null) {
-            return emptyList();
+            return new TokenMap();
         }
 
         return loadStepsFor(module);
@@ -44,11 +47,13 @@ public class JBehaveStepsIndex {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        Collection<JavaStepDefinition> stepDefinitions = findAllStepDefinitionsByType(step);
-        if (stepDefinitions.isEmpty()) return emptyList();
-        Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
+        final TokenMap tokenMap = findAllStepDefinitionsByType(step);
+        if (tokenMap.isEmpty()) return Collections.emptyList();
+        final Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
 
-        String stepText = getTableOffset(step).trim();
+        final String stepText = getTableOffset(step).trim();
+
+        Collection<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(stepText);
 
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
@@ -61,7 +66,6 @@ public class JBehaveStepsIndex {
                 }
             }
         }
-
         return definitionsByClass.values();
     }
 
@@ -89,7 +93,7 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    public List<JavaStepDefinition> loadStepsFor(@NotNull Module module) {
+    public TokenMap loadStepsFor(@NotNull Module module) {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
         PsiClass givenAnnotationClass = findStepAnnotation(Given.class.getName(), module, dependenciesScope);
@@ -97,17 +101,16 @@ public class JBehaveStepsIndex {
         PsiClass thenAnnotationClass = findStepAnnotation(Then.class.getName(), module, dependenciesScope);
 
         if (givenAnnotationClass == null || whenAnnotationClass == null || thenAnnotationClass == null) {
-            return emptyList();
+            return new TokenMap();
         }
 
-        List<JavaStepDefinition> result = new ArrayList<JavaStepDefinition>();
-
+        TokenMap result = new TokenMap();
         List<PsiClass> stepAnnotations = asList(givenAnnotationClass, whenAnnotationClass, thenAnnotationClass);
         for (PsiClass stepAnnotation : stepAnnotations) {
             Collection<PsiAnnotation> allStepAnnotations = getAllStepAnnotations(stepAnnotation, dependenciesScope);
 
             for (PsiAnnotation stepDefAnnotation : allStepAnnotations) {
-                result.add(new JavaStepDefinition(stepDefAnnotation));
+                result.put(new JavaStepDefinition(stepDefAnnotation));
             }
         }
 

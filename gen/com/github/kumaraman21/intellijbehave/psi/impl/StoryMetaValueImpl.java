@@ -24,12 +24,6 @@ public class StoryMetaValueImpl extends ASTWrapperPsiElement implements StoryMet
 
   @Override
   @NotNull
-  public List<StoryInject> getInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
-  }
-
-  @Override
-  @NotNull
   public List<StoryIpAddress> getIpAddressList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
   }
@@ -44,12 +38,6 @@ public class StoryMetaValueImpl extends ASTWrapperPsiElement implements StoryMet
   @NotNull
   public List<StoryUri> getUriList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryUserInject> getUserInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

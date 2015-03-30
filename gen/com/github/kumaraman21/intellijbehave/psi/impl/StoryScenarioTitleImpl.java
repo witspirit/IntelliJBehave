@@ -1,14 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
-import com.github.kumaraman21.intellijbehave.psi.*;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
+import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class StoryScenarioTitleImpl extends JBehaveRule implements StoryScenarioTitle {
 
@@ -19,12 +20,6 @@ public class StoryScenarioTitleImpl extends JBehaveRule implements StoryScenario
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof StoryVisitor) ((StoryVisitor)visitor).visitScenarioTitle(this);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryInject> getInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryInject.class);
   }
 
   @Override
@@ -43,12 +38,6 @@ public class StoryScenarioTitleImpl extends JBehaveRule implements StoryScenario
   @NotNull
   public List<StoryUri> getUriList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
-  }
-
-  @Override
-  @NotNull
-  public List<StoryUserInject> getUserInjectList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUserInject.class);
   }
 
 }

@@ -56,21 +56,22 @@ public class StoryPegParserDefinition implements ParserDefinition {
     public TokenSet getWhitespaceTokens() {
 //        return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
         return TokenSet.EMPTY;
-        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
+        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE,IStoryPegElementType.STORY_TOKEN_NEWLINE);
     }
 
     @NotNull
     @Override
     public TokenSet getCommentTokens() {
-        return TokenSet.EMPTY;
+        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_COMMENT);
         //return TokenSet.create(IStoryPegElementType.STORY_STEP_COMMENT);
+        return TokenSet.EMPTY;
     }
 
     @NotNull
     @Override
     public TokenSet getStringLiteralElements() {
         return TokenSet.EMPTY;
-        //return TokenSet.create(IStoryPegElementType.STORY_WORD);
+        //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_WORD);
     }
 
     public static final TokenSet STEP_TYPES = TokenSet.create(IStoryPegElementType.STORY_TOKEN_AND,
@@ -90,6 +91,6 @@ public class StoryPegParserDefinition implements ParserDefinition {
 
     @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-        return SpaceRequirements.MUST;
+        return SpaceRequirements.MAY;
     }
 }

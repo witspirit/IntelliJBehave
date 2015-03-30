@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface StoryGivenStories extends PsiElement {
 
-  @Nullable
-  StoryStoryPaths getStoryPaths();
-
-  @Nullable
-  PsiElement getTokenNewline();
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
 
 }

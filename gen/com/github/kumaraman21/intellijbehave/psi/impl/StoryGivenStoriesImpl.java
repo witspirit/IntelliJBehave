@@ -23,15 +23,9 @@ public class StoryGivenStoriesImpl extends ASTWrapperPsiElement implements Story
   }
 
   @Override
-  @Nullable
-  public StoryStoryPaths getStoryPaths() {
-    return findChildByClass(StoryStoryPaths.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getTokenNewline() {
-    return findChildByType(STORY_TOKEN_NEWLINE);
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
   }
 
 }

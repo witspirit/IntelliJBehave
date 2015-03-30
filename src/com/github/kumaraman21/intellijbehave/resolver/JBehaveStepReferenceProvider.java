@@ -16,18 +16,25 @@ public class JBehaveStepReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         if (element instanceof JBehaveStep) {
             final JBehaveStep step = (JBehaveStep) element;
-
-            return new PsiReference[]{new StepPsiReference(step, TextRange.from(0, element.getTextLength()))};
+            String text = step.getStepText();
+            String stepLineText = step.getStepLineText();
+            int stepTextOffset = step.getStepTextOffset();
+            String storyLine = step.getStoryLine();
+            return new PsiReference[]{new StepPsiReference(step, TextRange.from(0, storyLine.length()))};
         }
-//        if (element instanceof JBehaveGivenStories) {
-//            final JBehaveGivenStories step = (JBehaveGivenStories) element;
-//
-//            return new PsiReference[]{new GivenStoriesPsiReference(step, TextRange.from(0, element.getTextLength()))};
-//        }
+////        if (element instanceof JBehaveGivenStories) {
+////            final JBehaveGivenStories step = (JBehaveGivenStories) element;
+////
+////            return new PsiReference[]{new GivenStoriesPsiReference(step, TextRange.from(0, element.getTextLength()))};
+////        }
         if (element instanceof PegStoryPath) {
             final PegStoryPath step = (PegStoryPath) element;
 
-            return new PsiReference[]{new StoryPathPsiReference(step, TextRange.from(0, element.getTextLength()))};
+            int textLength = element.getTextLength();
+            String text = element.getText();
+            TextRange textRange = element.getTextRange();
+            int startOffsetInParent = element.getStartOffsetInParent();
+            return new PsiReference[]{new StoryPathPsiReference(step, TextRange.from(0, textLength))};
         }
 
         return PsiReference.EMPTY_ARRAY;

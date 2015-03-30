@@ -27,17 +27,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class StoryPathPsiReference implements PsiPolyVariantReference {
-    private final PegStoryPath myGivenStory;
+    private final PegStoryPath myElement;
     private final TextRange myRange;
 
-    public StoryPathPsiReference(PegStoryPath element, TextRange range) {
-        myGivenStory = element;
+    public StoryPathPsiReference(@NotNull PegStoryPath element,@NotNull TextRange range) {
+        myElement = element;
         myRange = range;
     }
 
     @Override
     public PegStoryPath getElement() {
-        return myGivenStory;
+        return myElement;
     }
 
     @Override
@@ -54,17 +54,17 @@ public class StoryPathPsiReference implements PsiPolyVariantReference {
     @NotNull
     @Override
     public String getCanonicalText() {
-        return myGivenStory.getText();
+        return myElement.getText();
     }
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        return myGivenStory;
+        return myElement;
     }
 
     @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-        return myGivenStory;
+        return myElement;
     }
 
     @Override
@@ -92,13 +92,13 @@ public class StoryPathPsiReference implements PsiPolyVariantReference {
     @NotNull
     @Override
     public Object[] getVariants() {
-        PsiFile file = myGivenStory.getContainingFile();
+        PsiFile file = myElement.getContainingFile();
 
         final List<PsiFile> storyFiles = new ArrayList<PsiFile>();
-        final PsiDirectory storyRootDir = myGivenStory.getStoriesRootDirectories(file);
+        final PsiDirectory storyRootDir = myElement.getStoriesRootDirectories(file);
         if (storyRootDir != null) {
             storyFiles.addAll(getAllFiles(storyRootDir));
-            final String matcher = myGivenStory.getValue().replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
+            final String matcher = myElement.getValue().replace(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, "");
             final String storyRoot = String.format("%s/", storyRootDir.getVirtualFile().getCanonicalPath());
             final List<String> variants = new ArrayList<String>(storyFiles.size());
             for (PsiFile psiFile : storyFiles) {
@@ -125,7 +125,7 @@ public class StoryPathPsiReference implements PsiPolyVariantReference {
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         List<ResolveResult> result = new ArrayList<ResolveResult>();
-        for (final PsiFile psiFile : myGivenStory.getFiles()) {
+        for (final PsiFile psiFile : myElement.getFiles()) {
             result.add(new ResolveResult() {
                 public PsiElement getElement() {
                     return psiFile;

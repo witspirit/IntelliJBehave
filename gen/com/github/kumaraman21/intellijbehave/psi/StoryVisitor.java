@@ -19,18 +19,6 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitInject(@NotNull StoryInject o) {
-    visitPsiElement(o);
-  }
-
-  public void visitInjectIdentifier(@NotNull StoryInjectIdentifier o) {
-    visitPsiElement(o);
-  }
-
-  public void visitInjectSeparator(@NotNull StoryInjectSeparator o) {
-    visitPsiElement(o);
-  }
-
   public void visitIpAddress(@NotNull StoryIpAddress o) {
     visitPsiElement(o);
   }
@@ -119,10 +107,6 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitStoryPaths(@NotNull StoryStoryPaths o) {
-    visitPsiElement(o);
-  }
-
   public void visitTable(@NotNull StoryTable o) {
     visitPsiElement(o);
   }
@@ -148,10 +132,6 @@ public class StoryVisitor extends PsiElementVisitor {
   }
 
   public void visitUriWord(@NotNull StoryUriWord o) {
-    visitPsiElement(o);
-  }
-
-  public void visitUserInject(@NotNull StoryUserInject o) {
     visitPsiElement(o);
   }
 

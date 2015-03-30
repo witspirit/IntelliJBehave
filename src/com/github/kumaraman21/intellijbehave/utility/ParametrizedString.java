@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave.utility;
 
 import com.intellij.openapi.util.Pair;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -11,13 +12,14 @@ import java.util.regex.Pattern;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class ParametrizedString {
+public class ParametrizedString implements Comparable<ParametrizedString> {
 
     private static Pattern compileParameterPattern(String parameterPrefix) {
         return Pattern.compile("(\\" + parameterPrefix + "\\w*)(\\W|\\Z)", Pattern.DOTALL);
     }
 
     private List<Token> tokens = new ArrayList<Token>();
+    private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
     private final String content;
     private final String parameterPrefix;
 
@@ -76,6 +78,23 @@ public class ParametrizedString {
 
     private void add(Token token) {
         tokens.add(token);
+        if (!token.isIdentifier) {
+            tokensWithoutIdentifier.add(token);
+        }
+    }
+
+    public String toStringWithoutIdentifiers() {
+        List<String> result = new ArrayList<String>();
+        for (Token token : tokensWithoutIdentifier) {
+            result.add(token.value().trim());
+        }
+
+        return StringUtils.join(result, " ");
+    }
+
+    @Override
+    public int compareTo(@NotNull ParametrizedString other) {
+        return toStringWithoutIdentifiers().compareTo(other.toStringWithoutIdentifiers());
     }
 
     public class Token {

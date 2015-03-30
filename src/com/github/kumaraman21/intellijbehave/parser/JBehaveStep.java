@@ -82,13 +82,22 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     public String getStepText() {
         int offset = getStepTextOffset();
-        final String text = String.format("%s %s", getFirstChild().getText(), getLastChild().getFirstChild().getText());
-
-        if (offset <= 0 || offset >= text.length()) {
-            return trim(text);
-        } else {
-            return trim(text.substring(offset));
+        PsiElement firstChild = PsiTreeUtil.getChildOfType(this, StoryStepPar.class);
+        PsiElement firstChild1 = PsiTreeUtil.getChildOfType(this, StoryStepArgument.class);
+        if (firstChild != null && firstChild1 != null) {
+            final String text = String.format("%s %s", firstChild.getText(), firstChild1.getText());
+            if (offset <= 0 || offset >= text.length()) {
+                return trim(text);
+            } else {
+                return trim(text.substring(offset));
+            }
         }
+        return "";
+    }
+
+    public String getStoryLine() {
+        StoryStepLine storyStepLine = getStoryStepLine();
+        return String.format("%s %s", getStepTypeAsNode().getText(), storyStepLine.getText());
     }
 
     @Nullable
@@ -152,9 +161,11 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
                                 if (havePostParameters) {
                                     Iterator<StoryStepPostParameter> it = getStoryStepPostParameters().iterator();
                                     StoryStepPostParameter postParameter = it.next();
-                                    StoryStoryPath storyPath = postParameter.getStoryPath();
+                                    Collection<StoryStoryPath> storyPaths = PsiTreeUtil.findChildrenOfType(this,
+                                            StoryStoryPath.class);
+                                    //StoryStoryPaths storyPath = postParameter.getStoryPaths();
                                     StoryTable table = postParameter.getTable();
-                                    if (storyPath != null && table == null) {
+                                    if (!storyPaths.isEmpty() && table == null) {
                                         printWriter.print(" ");
                                         printWriter.print("dummy/story/story.story");
                                     } else {
@@ -181,7 +192,7 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         return this;
     }
 
-    private String getStepLineText() {
+    public String getStepLineText() {
         return getNode().getText();
     }
 

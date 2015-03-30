@@ -28,10 +28,4 @@ public class StoryNarrativeImpl extends ASTWrapperPsiElement implements StoryNar
     return findChildByClass(StoryNarrativeText.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getTokenNewline() {
-    return findChildByType(STORY_TOKEN_NEWLINE);
-  }
-
 }

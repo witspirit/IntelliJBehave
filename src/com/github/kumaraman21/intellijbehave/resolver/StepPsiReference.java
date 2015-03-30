@@ -16,11 +16,13 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
 import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -32,20 +34,34 @@ public class StepPsiReference implements PsiPolyVariantReference {
     private final JBehaveStep myStep;
     private TextRange myRange = null;
 
-    public StepPsiReference(JBehaveStep element, TextRange range) {
+    public StepPsiReference(@NotNull JBehaveStep element, @NotNull TextRange range) {
         myStep = element;
-        if (element != null) {
-            ASTNode node = element.getNode();
-            final int startOffset = node.getStartOffset();
-            ASTNode lastChildNode = node.getLastChildNode();
-            if (lastChildNode != null) {
-                ASTNode firstChildNode = lastChildNode.getFirstChildNode();
-                if (firstChildNode != null) {
-                    myRange = new TextRange(range.getStartOffset(),
-                            firstChildNode.getTextRange().getEndOffset() - startOffset);
-                }
-            }
+        ASTNode node = element.getNode();
+        final int startOffset = node.getStartOffset();
+//        ASTNode lastChildNode = node.getLastChildNode();
+        Iterator<StoryStepLine> it = PsiTreeUtil.findChildrenOfType(myStep, StoryStepLine.class).iterator();
+        if (it.hasNext()) {
+            StoryStepLine next = it.next();
+            ASTNode nextNode = next.getNode();
+            myRange = new TextRange(range.getStartOffset(), nextNode.getTextRange().getEndOffset() - startOffset);
         }
+        else{
+            myRange = new TextRange(range.getStartOffset(), node.getTextRange().getEndOffset() - startOffset);
+        }
+
+//        if (lastChildNode != null) {
+//            ASTNode firstChildNode = lastChildNode.getFirstChildNode();
+//            if (firstChildNode != null) {
+//                myRange = new TextRange(range.getStartOffset(),
+//                        firstChildNode.getTextRange().getEndOffset() - startOffset);
+//            }
+//            else{
+//                String r="";
+//            }
+//        }
+//        else{
+//            String r="";
+//        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -19,12 +20,14 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
 import static com.google.common.collect.FluentIterable.from;
 
-public class JavaStepDefinition {
+public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
     private final SmartPsiElementPointer<PsiAnnotation> myElementPointer;
     private final StepPatternParser stepPatternParser = new RegexPrefixCapturingPatternParser();
 
@@ -155,6 +158,39 @@ public class JavaStepDefinition {
 
     @Override
     public String toString() {
-        return  myElementPointer.getElement().getText();
+        return myElementPointer.getElement().getText();
+    }
+
+    public Set<ParametrizedString> toPString() {
+        Set<ParametrizedString> result = new HashSet<ParametrizedString>();
+        for (String text : getAnnotationTexts()) {
+            result.add(new ParametrizedString(text));
+        }
+        return result;
+    }
+
+    @Override
+    public int compareTo(JavaStepDefinition other) {
+        StepType myType = getAnnotationType();
+        StepType otherType = other.getAnnotationType();
+        if (myType != otherType && myType != StepType.IGNORABLE && otherType != StepType.IGNORABLE) {
+            if (myType == StepType.GIVEN) return -1;
+            if (otherType == StepType.GIVEN) return 1;
+            if (myType == StepType.WHEN) return -1;
+            if (otherType == StepType.WHEN) return 1;
+        }
+        Set<ParametrizedString> myPstrings = toPString();
+        Set<ParametrizedString> otherPstrings = other.toPString();
+        int cmp = myPstrings.size() - otherPstrings.size();
+        if (cmp == 0) {
+            Iterator<ParametrizedString> otherIt = otherPstrings.iterator();
+            for (ParametrizedString myPstring : myPstrings) {
+                ParametrizedString otherPstring = otherIt.next();
+                cmp = myPstring.compareTo(otherPstring);
+                if (cmp != 0) break;
+            }
+
+        }
+        return cmp;
     }
 }
