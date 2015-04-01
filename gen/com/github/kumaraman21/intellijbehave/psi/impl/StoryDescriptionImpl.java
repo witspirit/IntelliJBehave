@@ -24,8 +24,20 @@ public class StoryDescriptionImpl extends JBehaveRule implements StoryDescriptio
 
   @Override
   @NotNull
-  public StoryMultiTextLine getMultiTextLine() {
-    return findNotNullChildByClass(StoryMultiTextLine.class);
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
   }
 
 }

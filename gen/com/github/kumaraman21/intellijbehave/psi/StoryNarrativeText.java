@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface StoryNarrativeText extends PsiElement {
 
   @NotNull
-  StoryMultiTextLine getMultiTextLine();
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
 
 }

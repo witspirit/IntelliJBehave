@@ -51,19 +51,11 @@ public class StoryVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMultiTextLine(@NotNull StoryMultiTextLine o) {
-    visitPsiElement(o);
-  }
-
   public void visitNarrative(@NotNull StoryNarrative o) {
     visitPsiElement(o);
   }
 
   public void visitNarrativeText(@NotNull StoryNarrativeText o) {
-    visitPsiElement(o);
-  }
-
-  public void visitRecoverStep(@NotNull StoryRecoverStep o) {
     visitPsiElement(o);
   }
 
@@ -80,10 +72,6 @@ public class StoryVisitor extends PsiElementVisitor {
   }
 
   public void visitStepArgument(@NotNull StoryStepArgument o) {
-    visitPsiElement(o);
-  }
-
-  public void visitStepComment(@NotNull StoryStepComment o) {
     visitPsiElement(o);
   }
 
@@ -104,6 +92,10 @@ public class StoryVisitor extends PsiElementVisitor {
   }
 
   public void visitStoryPath(@NotNull StoryStoryPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStoryPaths(@NotNull StoryStoryPaths o) {
     visitPsiElement(o);
   }
 

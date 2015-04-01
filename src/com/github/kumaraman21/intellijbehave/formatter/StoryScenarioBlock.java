@@ -38,6 +38,8 @@ public class StoryScenarioBlock extends StoryIgnoreBlock {
                     retVal.add(new StoryScenarioBlock(node, null, null));
                 } else if (elementType == IStoryPegElementType.STORY_TABLE) {
                     retVal.add(new StoryTableBlock(node, null, null));
+                } else if (elementType == IStoryPegElementType.STORY_TOKEN_COMMENT) {
+                    retVal.add(new StoryCommentBlock(node, null, null));
                 } else retVal.add(new StoryScenarioLeafBlock(node, null, null));
             }
             node = node.getTreeNext();
@@ -48,6 +50,9 @@ public class StoryScenarioBlock extends StoryIgnoreBlock {
     @Nullable
     @Override
     public Spacing getSpacing(Block child1, Block child2) {
+        if (child1  instanceof StoryCommentBlock || child2  instanceof StoryCommentBlock ) {
+            return Spacing.createSpacing(0, 0, 0, true, 0);
+        }
         if (child1 == null && child2 instanceof StoryScenarioLeafBlock) {
             return Spacing.createSpacing(0, 0, 0, false, 0);
         }

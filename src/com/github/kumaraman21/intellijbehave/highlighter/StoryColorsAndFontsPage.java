@@ -45,11 +45,12 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("When keyword", StorySyntaxHighlighter.STORY_TOKEN_WHEN),//
             new AttributesDescriptor("Given keyword", StorySyntaxHighlighter.STORY_TOKEN_GIVEN),//
             new AttributesDescriptor("Step text", StorySyntaxHighlighter.STORY_STEP_LINE), //
+            new AttributesDescriptor("Step parameter", StorySyntaxHighlighter.STORY_STEP_POST_PARAMETER), //
             new AttributesDescriptor("Table delimiter", StorySyntaxHighlighter.STORY_TOKEN_PIPE),//
             new AttributesDescriptor("Table cell", StorySyntaxHighlighter.STORY_TABLE_CELL),//
             new AttributesDescriptor("Meta keyword", StorySyntaxHighlighter.STORY_TOKEN_META),//
             new AttributesDescriptor("Meta key", StorySyntaxHighlighter.STORY_META_KEY),//
-            new AttributesDescriptor("Meta text", StorySyntaxHighlighter.STORY_META_VALUE), //
+            new AttributesDescriptor("Meta value", StorySyntaxHighlighter.STORY_META_VALUE), //
             new AttributesDescriptor("Line comment", StorySyntaxHighlighter.STORY_TOKEN_COMMENT),//
             //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
             new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.STORY_TOKEN_GIVEN_STORIES),//
@@ -57,7 +58,10 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
             //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.STORY_STORY_PATH),//
             new AttributesDescriptor("System parameter inject", StorySyntaxHighlighter.STORY_TOKEN_INJECT),//
             new AttributesDescriptor("User parameter inject", StorySyntaxHighlighter.STORY_TOKEN_USERINJECT),//
-            new AttributesDescriptor("IP", StorySyntaxHighlighter.STORY_IP_ADDRESS)//
+            new AttributesDescriptor("IP", StorySyntaxHighlighter.STORY_IP_ADDRESS),//
+            new AttributesDescriptor("File not found", StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND),//
+            new AttributesDescriptor("Stepdefinition not found", StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND)//
+
     };
 
     @NotNull
@@ -82,15 +86,15 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
                 "As a player\n" + //
                 "I want to be able to create and manage my account\n</narrativeText>" + //
                 "\n" + //
-                "GivenStories: product/wire/ConfigStory.story\n\n" + //
+                "GivenStories: product/wire/ConfigStory.story, <errorFile>product/wire/Unknown.story</errorFile>\n\n" + //
                 "Scenario: <scenText>An unknown user cannot be logged</scenText>\n" + //
                 "\n" + //
                 "Meta:\n" + //
-                "@author mccallum\n" + //
-                "@skip\n" + //
+                "<metaKey>@author</metaKey> <metaValue>mccallum</metaValue>\n" + //
+                "<metaKey>@skip</metaKey>\n" + //
                 "\n" + //
-                "Given <stepText>i am the user with nickname: <\"weird\"></stepText>\n" + //
-                "When <stepText>i try to login using the password <<\"soweird\">></stepText>\n" + //
+                "Given <stepText>i am the user with nickname: <weird></stepText>\n" + //
+                "When <stepText>i try to login using the password <<soweird>></stepText>\n" + //
                 "!-- TODO: Then i get an error message of type \"Wrong Credentials\"\n" + //
                 "\n" + //
                 "\n" + //
@@ -99,8 +103,8 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
                 "Given <stepText>the following existing users:</stepText>\n" + //
                 "| <tableCell>nickname</tableCell> | <tableCell>password</tableCell> |\n" + //
                 "|  <tableCell>Travis</tableCell>  |  <tableCell>PacMan</tableCell>  |\n" + //
-                "Given <stepText>i am the user with nickname: \"Travis\"</stepText>\n" + //
-                "When <stepText>i try to login using the password \"McCallum\"</stepText>\n" + //
+                "Given <errorDef>i am the user with nickname: \"Travis\"</errorDef>\n" + //
+                "When <stepText>i try to login using the password <stepParameter>McCallum</stepParameter></stepText>\n" + //
                 "Then <stepText>i get an error message of type \"Wrong Credentials\"</stepText>";
     }
 
@@ -110,10 +114,15 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
         result.put("scenText", StorySyntaxHighlighter.STORY_SCENARIO_TITLE);
         //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
         result.put("stepText", StorySyntaxHighlighter.STORY_STEP_LINE);
+        result.put("stepParameter", StorySyntaxHighlighter.STORY_STEP_POST_PARAMETER);
         result.put("tableCell", StorySyntaxHighlighter.STORY_TABLE_CELL);
         result.put("description", StorySyntaxHighlighter.STORY_DESCRIPTION);
         result.put("narrativeText", StorySyntaxHighlighter.STORY_NARRATIVE_TEXT);
         result.put("ipAdress", StorySyntaxHighlighter.STORY_IP_ADDRESS);
+        result.put("metaKey", StorySyntaxHighlighter.STORY_META_KEY);
+        result.put("metaValue", StorySyntaxHighlighter.STORY_META_VALUE);
+        result.put("errorDef", StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND);
+        result.put("errorFile", StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND);
         return result;
     }
 }

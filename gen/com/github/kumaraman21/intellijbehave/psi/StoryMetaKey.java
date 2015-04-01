@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface StoryMetaKey extends PsiElement {
 
   @NotNull
-  PsiElement getTokenWord();
+  List<StoryIpAddress> getIpAddressList();
+
+  @NotNull
+  List<StoryStoryPath> getStoryPathList();
+
+  @NotNull
+  List<StoryUri> getUriList();
 
 }

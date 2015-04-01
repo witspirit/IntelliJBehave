@@ -23,9 +23,9 @@ public class StoryStepPostParameterImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
-  public List<StoryStoryPath> getStoryPathList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  @Nullable
+  public StoryStoryPaths getStoryPaths() {
+    return findChildByClass(StoryStoryPaths.class);
   }
 
   @Override

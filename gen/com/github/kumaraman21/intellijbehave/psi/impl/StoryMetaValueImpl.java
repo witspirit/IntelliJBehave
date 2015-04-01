@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class StoryMetaValueImpl extends ASTWrapperPsiElement implements StoryMetaValue {
+public class StoryMetaValueImpl extends JBehaveRule implements StoryMetaValue {
 
   public StoryMetaValueImpl(ASTNode node) {
     super(node);

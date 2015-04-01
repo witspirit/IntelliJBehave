@@ -11,6 +11,9 @@ public interface StoryMetaStatement extends PsiElement {
   List<StoryMetaElement> getMetaElementList();
 
   @Nullable
+  PsiElement getTokenNewline();
+
+  @Nullable
   PsiElement getTokenSpace();
 
 }

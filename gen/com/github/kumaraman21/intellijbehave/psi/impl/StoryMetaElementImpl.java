@@ -29,15 +29,15 @@ public class StoryMetaElementImpl extends ASTWrapperPsiElement implements StoryM
   }
 
   @Override
-  @NotNull
+  @Nullable
   public StoryMetaValue getMetaValue() {
-    return findNotNullChildByClass(StoryMetaValue.class);
+    return findChildByClass(StoryMetaValue.class);
   }
 
   @Override
-  @NotNull
-  public PsiElement getTokenSpace() {
-    return findNotNullChildByType(STORY_TOKEN_SPACE);
+  @Nullable
+  public PsiElement getTokenNewline() {
+    return findChildByType(STORY_TOKEN_NEWLINE);
   }
 
 }

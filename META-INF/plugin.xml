@@ -77,6 +77,7 @@
         <li> Reformat of stories </li>
         <li> Rename refactoring of steps </li>
         <li> Working and useful completion </li>
+        <li> Find usages of step definitions </li>
     </ul>
     <p>
         New in version 1.5:
@@ -87,7 +88,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>2.00</version>
+    <version>2.01</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>

@@ -53,41 +53,44 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     @NonNls
     public static final String STORY_DESCRIPTION_ID = "JBEHAVE.STORY_DESCRIPTION";
     public static final String STORY_EXAMPLES_ID = "JBEHAVE.STORY_EXAMPLES";
-    public static final String STORY_GIVEN_STORIES_ID = "JBEHAVE.STORY_GIVEN_STORIES";
+    //public static final String STORY_GIVEN_STORIES_ID = "JBEHAVE.STORY_GIVEN_STORIES";
     public static final String STORY_INJECT_ID = "JBEHAVE.STORY_INJECT";
-    public static final String STORY_INJECT_IDENTIFIER_ID = "JBEHAVE.STORY_INJECT_IDENTIFIER";
-    public static final String STORY_INJECT_SEPARATOR_ID = "JBEHAVE.STORY_INJECT_SEPARATOR";
+    //public static final String STORY_INJECT_IDENTIFIER_ID = "JBEHAVE.STORY_INJECT_IDENTIFIER";
+    //public static final String STORY_INJECT_SEPARATOR_ID = "JBEHAVE.STORY_INJECT_SEPARATOR";
     public static final String STORY_IP_ADDRESS_ID = "JBEHAVE.STORY_IP_ADDRESS";
-    public static final String STORY_LIFECYCLE_ID = "JBEHAVE.STORY_LIFECYCLE";
+    //public static final String STORY_LIFECYCLE_ID = "JBEHAVE.STORY_LIFECYCLE";
     public static final String STORY_LIFECYCLE_AFTER_ID = "JBEHAVE.STORY_LIFECYCLE_AFTER";
     public static final String STORY_LIFECYCLE_BEFORE_ID = "JBEHAVE.STORY_LIFECYCLE_BEFORE";
-    public static final String STORY_META_ELEMENT_ID = "JBEHAVE.STORY_META_ELEMENT";
+    //public static final String STORY_META_ELEMENT_ID = "JBEHAVE.STORY_META_ELEMENT";
     public static final String STORY_META_KEY_ID = "JBEHAVE.STORY_META_KEY";
-    public static final String STORY_META_STATEMENT_ID = "JBEHAVE.STORY_META_STATEMENT";
+    //public static final String STORY_META_STATEMENT_ID = "JBEHAVE.STORY_META_STATEMENT";
     public static final String STORY_META_VALUE_ID = "JBEHAVE.STORY_META_VALUE";
-    public static final String STORY_MULTI_TEXT_LINE_ID = "JBEHAVE.STORY_MULTI_TEXT";
-    public static final String STORY_NARRATIVE_ID = "JBEHAVE.STORY_NARRATIVE";
+    //public static final String STORY_MULTI_TEXT_LINE_ID = "JBEHAVE.STORY_MULTI_TEXT";
+    //public static final String STORY_NARRATIVE_ID = "JBEHAVE.STORY_NARRATIVE";
     public static final String STORY_NARRATIVE_TEXT_ID = "JBEHAVE.STORY_NARRATIVE_TEXT";
-    public static final String STORY_RECOVER_STEP_ID = "JBEHAVE.STORY_RECOVER_STEP";
-    public static final String STORY_SCENARIO_ID = "JBEHAVE.STORY_SCENARIO";
+    //public static final String STORY_RECOVER_STEP_ID = "JBEHAVE.STORY_RECOVER_STEP";
+    //public static final String STORY_SCENARIO_ID = "JBEHAVE.STORY_SCENARIO";
     public static final String STORY_SCENARIO_TITLE_ID = "JBEHAVE.STORY_SCENARIO_TITLE";
-    public static final String STORY_STEP_ID = "JBEHAVE.STORY_STEP";
-    public static final String STORY_STEP_ARGUMENT_ID = "JBEHAVE.STORY_STEP_ARGUMENT";
-    public static final String STORY_STEP_COMMENT_ID = "JBEHAVE.STORY_STEP_COMMENT";
+    //public static final String STORY_STEP_ID = "JBEHAVE.STORY_STEP";
+    //public static final String STORY_STEP_ARGUMENT_ID = "JBEHAVE.STORY_STEP_ARGUMENT";
+    //public static final String STORY_STEP_COMMENT_ID = "JBEHAVE.STORY_STEP_COMMENT";
     public static final String STORY_STEP_LINE_ID = "JBEHAVE.STORY_STEP_LINE";
-    public static final String STORY_STEP_PAR_ID = "JBEHAVE.STORY_STEP_PAR";
+    //public static final String STORY_STEP_PAR_ID = "JBEHAVE.STORY_STEP_PAR";
     public static final String STORY_STEP_POST_PARAMETER_ID = "JBEHAVE.STORY_STEP_POST";
     public static final String STORY_STORY_ID = "JBEHAVE.STORY_STORY";
-    public static final String STORY_STORY_PATH_ID = "JBEHAVE.STORY_STORY_PATH";
-    public static final String STORY_STORY_PATHS_ID = "JBEHAVE.STORY_STORY_PATHS";
+    //public static final String STORY_STORY_PATH_ID = "JBEHAVE.STORY_STORY_PATH";
+    //public static final String STORY_STORY_PATHS_ID = "JBEHAVE.STORY_STORY_PATHS";
     public static final String STORY_TABLE_ID = "JBEHAVE.STORY_TABLE";
-    public static final String STORY_TABLE_CELL_EMPTY_ID = "JBEHAVE.STORY_TABLE_CELL_EMPTY";
+    //public static final String STORY_TABLE_CELL_EMPTY_ID = "JBEHAVE.STORY_TABLE_CELL_EMPTY";
     public static final String STORY_TABLE_CELL_ID = "JBEHAVE.STORY_TABLE_CELL";
-    public static final String STORY_TABLE_ROW_ID = "JBEHAVE.STORY_TABLE_ROW";
+    //public static final String STORY_TABLE_ROW_ID = "JBEHAVE.STORY_TABLE_ROW";
     public static final String STORY_URI_ID = "JBEHAVE.STORY_URI";
-    public static final String STORY_URI_IDENTIFIER_ID = "JBEHAVE.STORY_URI_IDENTIFIER";
-    public static final String STORY_URI_WORD_ID = "JBEHAVE.STORY_URI_WORD";
+    //public static final String STORY_URI_IDENTIFIER_ID = "JBEHAVE.STORY_URI_IDENTIFIER";
+    //public static final String STORY_URI_WORD_ID = "JBEHAVE.STORY_URI_WORD";
     public static final String STORY_USER_INJECT_ID = "JBEHAVE.STORY_USER_INJECT";
+
+    public static final String STORY_ERROR_NO_DEF_FOUND_ID = "JBEHAVE.ERROR_NO_DEF_FOUND";
+    public static final String STORY_ERROR_FILE_NOT_FOUND_ID = "JBEHAVE.FILE_NOT_FOUND_ID";
 
     public static final String STORY_TOKEN_AFTER_ID = "JBEHAVE.STORY_TOKEN_AFTER";
     public static final String STORY_TOKEN_AND_ID = "JBEHAVE.STORY_TOKEN_AND";
@@ -112,28 +115,29 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     // Registering TextAttributes
     static {
         createKey(STORY_DESCRIPTION_ID, HighlighterColors.TEXT);
-        createKey(STORY_INJECT_ID, DefaultLanguageHighlighterColors.FUNCTION_CALL);
-        createKey(STORY_IP_ADDRESS_ID, DefaultLanguageHighlighterColors.KEYWORD);
+        createKey(STORY_IP_ADDRESS_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(STORY_LIFECYCLE_AFTER_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_LIFECYCLE_BEFORE_ID, DefaultLanguageHighlighterColors.KEYWORD);
-        createKey(STORY_META_ELEMENT_ID, HighlighterColors.TEXT);
-        createKey(STORY_META_KEY_ID, HighlighterColors.TEXT);
-        createKey(STORY_META_STATEMENT_ID, HighlighterColors.TEXT);
+     //   createKey(STORY_META_ELEMENT_ID, HighlighterColors.TEXT);
+        createKey(STORY_META_KEY_ID, DefaultLanguageHighlighterColors.IDENTIFIER);
+    //    createKey(STORY_META_STATEMENT_ID, HighlighterColors.TEXT);
         createKey(STORY_META_VALUE_ID, HighlighterColors.TEXT);
-        createKey(STORY_MULTI_TEXT_LINE_ID, HighlighterColors.TEXT);
+   //     createKey(STORY_MULTI_TEXT_LINE_ID, HighlighterColors.TEXT);
         createKey(STORY_NARRATIVE_TEXT_ID, HighlighterColors.TEXT);
         createKey(STORY_SCENARIO_TITLE_ID, CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
-        createKey(STORY_STEP_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
+    //    createKey(STORY_STEP_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
         createKey(STORY_STEP_LINE_ID, HighlighterColors.TEXT);
+        //
+        createKey(STORY_ERROR_NO_DEF_FOUND_ID, CodeInsightColors.ERRORS_ATTRIBUTES);
+        createKey(STORY_ERROR_FILE_NOT_FOUND_ID, CodeInsightColors.ERRORS_ATTRIBUTES);
         //createKey(STORY_STORY_PATH_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(STORY_TABLE_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(STORY_TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
-        createKey(STORY_URI_ID, DefaultLanguageHighlighterColors.STRING);
-        createKey(STORY_USER_INJECT_ID, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+        createKey(STORY_URI_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(STEP_PARAMETER_ID, DefaultLanguageHighlighterColors.STRING);
 
 
-        createKey(STORY_TOKEN_AFTER_ID, DefaultLanguageHighlighterColors.NUMBER);
+        createKey(STORY_TOKEN_AFTER_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_AND_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_BEFORE_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_EXAMPLES_ID, DefaultLanguageHighlighterColors.KEYWORD);
@@ -146,42 +150,43 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(STORY_TOKEN_THEN_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_WHEN_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(STORY_TOKEN_PIPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
-        createKey(STORY_TOKEN_INJECT_ID, DefaultLanguageHighlighterColors.KEYWORD);
-        createKey(STORY_TOKEN_USER_INJECT_ID, DefaultLanguageHighlighterColors.KEYWORD);
+        createKey(STORY_TOKEN_INJECT_ID, DefaultLanguageHighlighterColors.LABEL);
+        createKey(STORY_TOKEN_USER_INJECT_ID, DefaultLanguageHighlighterColors.LABEL);
         createKey(STORY_TOKEN_PATH_ID, DefaultLanguageHighlighterColors.STRING);
+        createKey(STORY_TOKEN_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
     }
 
     public static TextAttributesKey STORY_DESCRIPTION = createTextAttributesKey(STORY_DESCRIPTION_ID);
     public static TextAttributesKey STORY_EXAMPLES = createTextAttributesKey(STORY_EXAMPLES_ID);
-    public static TextAttributesKey STORY_GIVEN_STORIES = createTextAttributesKey(STORY_GIVEN_STORIES_ID);
+    //public static TextAttributesKey STORY_GIVEN_STORIES = createTextAttributesKey(STORY_GIVEN_STORIES_ID);
     public static TextAttributesKey STORY_IP_ADDRESS = createTextAttributesKey(STORY_IP_ADDRESS_ID);
-    public static TextAttributesKey STORY_LIFECYCLE = createTextAttributesKey(STORY_LIFECYCLE_ID);
+   // public static TextAttributesKey STORY_LIFECYCLE = createTextAttributesKey(STORY_LIFECYCLE_ID);
     public static TextAttributesKey STORY_LIFECYCLE_AFTER = createTextAttributesKey(STORY_LIFECYCLE_AFTER_ID);
     public static TextAttributesKey STORY_LIFECYCLE_BEFORE = createTextAttributesKey(STORY_LIFECYCLE_BEFORE_ID);
-    public static TextAttributesKey STORY_META_ELEMENT = createTextAttributesKey(STORY_META_ELEMENT_ID);
+   // public static TextAttributesKey STORY_META_ELEMENT = createTextAttributesKey(STORY_META_ELEMENT_ID);
     public static TextAttributesKey STORY_META_KEY = createTextAttributesKey(STORY_META_KEY_ID);
-    public static TextAttributesKey STORY_META_STATEMENT = createTextAttributesKey(STORY_META_STATEMENT_ID);
+   // public static TextAttributesKey STORY_META_STATEMENT = createTextAttributesKey(STORY_META_STATEMENT_ID);
     public static TextAttributesKey STORY_META_VALUE = createTextAttributesKey(STORY_META_VALUE_ID);
     //public static TextAttributesKey STORY_MULTI_TEXT_LINE = createTextAttributesKey(STORY_MULTI_TEXT_LINE_ID);
-    public static TextAttributesKey STORY_NARRATIVE = createTextAttributesKey(STORY_NARRATIVE_ID);
+   // public static TextAttributesKey STORY_NARRATIVE = createTextAttributesKey(STORY_NARRATIVE_ID);
     public static TextAttributesKey STORY_NARRATIVE_TEXT = createTextAttributesKey(STORY_NARRATIVE_TEXT_ID);
-    public static TextAttributesKey STORY_RECOVER_STEP = createTextAttributesKey(STORY_RECOVER_STEP_ID);
-//    public static TextAttributesKey STORY_SCENARIO = createTextAttributesKey(STORY_SCENARIO_ID);
+  //  public static TextAttributesKey STORY_RECOVER_STEP = createTextAttributesKey(STORY_RECOVER_STEP_ID);
+    //    public static TextAttributesKey STORY_SCENARIO = createTextAttributesKey(STORY_SCENARIO_ID);
     public static TextAttributesKey STORY_SCENARIO_TITLE = createTextAttributesKey(STORY_SCENARIO_TITLE_ID);
-//    public static TextAttributesKey STORY_STEP = createTextAttributesKey(STORY_STEP_ID);
+    //    public static TextAttributesKey STORY_STEP = createTextAttributesKey(STORY_STEP_ID);
 //    public static TextAttributesKey STORY_STEP_ARGUMENT = createTextAttributesKey(STORY_STEP_ARGUMENT_ID);
     public static TextAttributesKey STORY_STEP_LINE = createTextAttributesKey(STORY_STEP_LINE_ID);
-//    public static TextAttributesKey STORY_STEP_PAR = createTextAttributesKey(STORY_STEP_PAR_ID);
+    //    public static TextAttributesKey STORY_STEP_PAR = createTextAttributesKey(STORY_STEP_PAR_ID);
     public static TextAttributesKey STORY_STEP_POST_PARAMETER = createTextAttributesKey(STORY_STEP_POST_PARAMETER_ID);
     public static TextAttributesKey STORY_STORY = createTextAttributesKey(STORY_STORY_ID);
     //public static TextAttributesKey STORY_TOKEN_PATH = createTextAttributesKey(STORY_STORY_PATH_ID);
 //    public static TextAttributesKey STORY_STORY_PATHS = createTextAttributesKey(STORY_STORY_PATHS_ID);
     public static TextAttributesKey STORY_TABLE = createTextAttributesKey(STORY_TABLE_ID);
     public static TextAttributesKey STORY_TABLE_CELL = createTextAttributesKey(STORY_TABLE_CELL_ID);
-//    public static TextAttributesKey STORY_TABLE_CELL_EMPTY = createTextAttributesKey(STORY_TABLE_CELL_EMPTY_ID);
+    //    public static TextAttributesKey STORY_TABLE_CELL_EMPTY = createTextAttributesKey(STORY_TABLE_CELL_EMPTY_ID);
 //    public static TextAttributesKey STORY_TABLE_ROW = createTextAttributesKey(STORY_TABLE_ROW_ID);
     public static TextAttributesKey STORY_URI = createTextAttributesKey(STORY_URI_ID);
-//    public static TextAttributesKey STORY_URI_IDENTIFIER = createTextAttributesKey(STORY_URI_IDENTIFIER_ID);
+    //    public static TextAttributesKey STORY_URI_IDENTIFIER = createTextAttributesKey(STORY_URI_IDENTIFIER_ID);
 //    public static TextAttributesKey STORY_URI_WORD = createTextAttributesKey(STORY_URI_WORD_ID);
     public static TextAttributesKey STEP_PARAMETER = createTextAttributesKey(STEP_PARAMETER_ID);
 
@@ -203,25 +208,28 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey STORY_TOKEN_COMMENT = createTextAttributesKey(STORY_TOKEN_COMMENT_ID);
     public static TextAttributesKey STORY_TOKEN_PATH = createTextAttributesKey(STORY_TOKEN_PATH_ID);
 
+    public static TextAttributesKey STORY_ERROR_NO_DEF_FOUND= createTextAttributesKey(STORY_ERROR_NO_DEF_FOUND_ID);
+    public static TextAttributesKey STORY_ERROR_FILE_NOT_FOUND= createTextAttributesKey(STORY_ERROR_FILE_NOT_FOUND_ID);
+
     static {
         ATTRIBUTES.put(IStoryPegElementType.STORY_DESCRIPTION, STORY_DESCRIPTION);
         ATTRIBUTES.put(IStoryPegElementType.STORY_EXAMPLES, STORY_EXAMPLES);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_GIVEN_STORIES, STORY_GIVEN_STORIES);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_GIVEN_STORIES, STORY_GIVEN_STORIES);
         //ATTRIBUTES.put(IStoryPegElementType.STORY_INJECT, STORY_INJECT);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_INJECT_IDENTIFIER, STORY_INJECT_IDENTIFIER);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_INJECT_SEPARATOR, STORY_INJECT_SEPARATOR);
         ATTRIBUTES.put(IStoryPegElementType.STORY_IP_ADDRESS, STORY_IP_ADDRESS);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_LIFECYCLE, STORY_LIFECYCLE);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_LIFECYCLE, STORY_LIFECYCLE);
         ATTRIBUTES.put(IStoryPegElementType.STORY_LIFECYCLE_AFTER, STORY_LIFECYCLE_AFTER);
         ATTRIBUTES.put(IStoryPegElementType.STORY_LIFECYCLE_BEFORE, STORY_LIFECYCLE_BEFORE);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_META_ELEMENT, STORY_META_ELEMENT);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_META_ELEMENT, STORY_META_ELEMENT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_META_KEY, STORY_META_KEY);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_META_STATEMENT, STORY_META_STATEMENT);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_META_STATEMENT, STORY_META_STATEMENT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_META_VALUE, STORY_META_VALUE);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_MULTI_TEXT_LINE, STORY_MULTI_TEXT_LINE);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_NARRATIVE, STORY_NARRATIVE);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_NARRATIVE, STORY_NARRATIVE);
         ATTRIBUTES.put(IStoryPegElementType.STORY_NARRATIVE_TEXT, STORY_NARRATIVE_TEXT);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_RECOVER_STEP, STORY_RECOVER_STEP);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_RECOVER_STEP, STORY_RECOVER_STEP);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_SCENARIO, STORY_SCENARIO);
         ATTRIBUTES.put(IStoryPegElementType.STORY_SCENARIO_TITLE, STORY_SCENARIO_TITLE);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_STEP, STORY_STEP);
@@ -229,7 +237,7 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_LINE, STORY_STEP_LINE);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_PAR, STORY_STEP_PAR);
         ATTRIBUTES.put(IStoryPegElementType.STORY_STEP_POST_PARAMETER, STORY_STEP_POST_PARAMETER);
-        ATTRIBUTES.put(IStoryPegElementType.STORY_STORY, STORY_STORY);
+        //ATTRIBUTES.put(IStoryPegElementType.STORY_STORY, STORY_STORY);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE, STORY_TABLE);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE_CELL, STORY_TABLE_CELL);
 //        ATTRIBUTES.put(IStoryPegElementType.STORY_TABLE_CELL_EMPTY, STORY_TABLE_CELL_EMPTY);
@@ -256,7 +264,6 @@ public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_USER_INJECT, STORY_TOKEN_USERINJECT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_COMMENT, STORY_TOKEN_COMMENT);
         ATTRIBUTES.put(IStoryPegElementType.STORY_TOKEN_PATH, STORY_TOKEN_PATH);
-
     }
 
     static public TextAttributesKey getTextAttribute(IElementType elementType) {

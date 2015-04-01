@@ -21,6 +21,7 @@ import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
 import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
+import com.github.kumaraman21.intellijbehave.psi.StoryScenarioTitle;
 import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
@@ -54,27 +55,35 @@ public class StoryAnnotator implements Annotator {
             JavaStepDefinition definition = reference.resolveToDefinition();
 
             if (definition == null) {
-                annotationHolder.createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
+                Annotation errorAnnotation = annotationHolder.createErrorAnnotation(step.getStoryStepLine(),
+                        "No definition found for the step");
+                errorAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND);
             } else {
                 annotateParameters(step, definition, annotationHolder);
             }
-        } else if (psiElement instanceof PegStoryPath /*&& psiElement.getParent() != null && psiElement.getParent() instanceof StoryStepPostParameter*/) {
-            StoryStoryPath storyPath = (StoryStoryPath) psiElement;
-            PsiReference[] references = storyPath.getReferences();
-            if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
-                return;
-            }
-            StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
+        } else if (psiElement instanceof PegStoryPath) {
+            PsiElement parent = psiElement.getParent();
+            if (parent != null && !(parent instanceof StoryScenarioTitle)) {
+                StoryStoryPath storyPath = (StoryStoryPath) psiElement;
+                PsiReference[] references = storyPath.getReferences();
+                if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
+                    return;
+                }
+                StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
 
-            if (reference.multiResolve(false).length == 0) {
-                annotationHolder.createErrorAnnotation(psiElement, "File not found");
+                if (reference.multiResolve(false).length == 0) {
+                    Annotation errorAnnotation = annotationHolder.createErrorAnnotation(psiElement, "File not found");
+                    errorAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND);
+                }
             }
         } else if (psiElement instanceof JBehaveRule) {
-            Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, null);
-            IElementType elementType = psiElement.getNode().getElementType();
+            ASTNode node = psiElement.getNode();
+            IElementType elementType = node.getElementType();
             if (elementType != null) {
                 TextAttributesKey textAttribute = StorySyntaxHighlighter.getTextAttribute(elementType);
-                if (textAttribute != null) infoAnnotation.setTextAttributes(textAttribute);
+                if (textAttribute != null) {
+                    annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(textAttribute);
+                }
             }
         }
 
@@ -130,8 +139,11 @@ public class StoryAnnotator implements Annotator {
                 PsiElement elementAt = step.getContainingFile().findElementAt(offset);
                 if (elementAt != null) {
                     ASTNode node = elementAt.getNode();
-                    if (node != null && node.getElementType() != IStoryPegElementType.STORY_TOKEN_INJECT && node.getElementType() != IStoryPegElementType.STORY_TOKEN_USER_INJECT && node.getElementType() != IStoryPegElementType.STORY_STORY_PATH && node.getElementType() != IStoryPegElementType.STORY_TOKEN_PATH) {
-                        infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STEP_PARAMETER);
+                    if (node != null) {
+                        IElementType elementType = node.getElementType();
+                        if (elementType == IStoryPegElementType.STORY_TOKEN_WORD) {
+                            infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STEP_PARAMETER);
+                        }
                     }
                 }
             }

@@ -30,6 +30,12 @@ public class StoryMetaStatementImpl extends ASTWrapperPsiElement implements Stor
 
   @Override
   @Nullable
+  public PsiElement getTokenNewline() {
+    return findChildByType(STORY_TOKEN_NEWLINE);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getTokenSpace() {
     return findChildByType(STORY_TOKEN_SPACE);
   }

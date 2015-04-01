@@ -10,10 +10,10 @@ public interface StoryMetaElement extends PsiElement {
   @NotNull
   StoryMetaKey getMetaKey();
 
-  @NotNull
+  @Nullable
   StoryMetaValue getMetaValue();
 
-  @NotNull
-  PsiElement getTokenSpace();
+  @Nullable
+  PsiElement getTokenNewline();
 
 }

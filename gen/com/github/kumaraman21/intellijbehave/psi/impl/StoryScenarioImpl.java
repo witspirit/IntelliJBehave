@@ -52,16 +52,4 @@ public class StoryScenarioImpl extends ASTWrapperPsiElement implements StoryScen
     return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStep.class);
   }
 
-  @Override
-  @NotNull
-  public List<StoryStepComment> getStepCommentList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStepComment.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getTokenNewline() {
-    return findChildByType(STORY_TOKEN_NEWLINE);
-  }
-
 }

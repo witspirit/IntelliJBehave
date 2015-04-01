@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class StoryMetaKeyImpl extends ASTWrapperPsiElement implements StoryMetaKey {
+public class StoryMetaKeyImpl extends JBehaveRule implements StoryMetaKey {
 
   public StoryMetaKeyImpl(ASTNode node) {
     super(node);
@@ -24,8 +24,20 @@ public class StoryMetaKeyImpl extends ASTWrapperPsiElement implements StoryMetaK
 
   @Override
   @NotNull
-  public PsiElement getTokenWord() {
-    return findNotNullChildByType(STORY_TOKEN_WORD);
+  public List<StoryIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryIpAddress.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryStoryPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<StoryUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, StoryUri.class);
   }
 
 }

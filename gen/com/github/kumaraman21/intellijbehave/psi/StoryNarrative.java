@@ -10,4 +10,7 @@ public interface StoryNarrative extends PsiElement {
   @Nullable
   StoryNarrativeText getNarrativeText();
 
+  @Nullable
+  PsiElement getTokenNewline();
+
 }

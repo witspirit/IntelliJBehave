@@ -20,17 +20,15 @@
     TOKEN_THEN='Then'
     TOKEN_AND='And'
     TOKEN_EXAMPLES='Examples:'
+    TOKEN_LIFECYCLE="Lifecycle:"
+    TOKEN_BEFORE="Before:"
+    TOKEN_AFTER="After:"
     TOKEN_COLON=":"
     TOKEN_AT="@"
-    TOKEN_COMMA=","
-    TOKEN_AMPERSAND="&"
     TOKEN_DBRACKET_OPEN = "<<"
     TOKEN_DBRACKET_CLOSE = ">>"
     TOKEN_BRACKET_OPEN = "<"
     TOKEN_BRACKET_CLOSE = ">"
-    TOKEN_LIFECYCLE="Lifecycle:"
-    TOKEN_BEFORE="Before:"
-    TOKEN_AFTER="After:"
     TOKEN_PIPE='|'
     TOKEN_NEWLINE = "regexp:[ \t\f]*(\r|\n|\r\n|\Z)"
     TOKEN_SPACE='regexp:[ \t\f]+'
@@ -39,53 +37,53 @@
     TOKEN_USER_INJECT = 'regexp:<<\S+>>'
     TOKEN_INJECT = 'regexp:<\S+>'
     TOKEN_PATH = 'regexp:([a-zA-Z0-9]|_|@|\.|-)+(/([a-zA-Z0-9]|_|@|\.|-)+)+'
-    TOKEN_NUMBER = 'regexp:[0-9]+'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-    TOKEN_PUNCT = "regexp:[!\"#$%&'()*+,-./;=?\[\\\]\^_`{}~]"
-
-    TOKEN_WORD = 'regexp:[a-zA-Z_0-9]+'
+    TOKEN_WORD = "regexp:([a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.peg.PegStoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
-  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress")="com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
+  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
-Story ::= Newline* Description? Newline* MetaStatement? Newline* Narrative? Newline* GivenStories? Newline* Lifecycle? Newline* Scenario+ Newline*
+Story ::= Newline* Description? Newline? MetaStatement? Newline? Narrative? Newline? GivenStories? Newline? Lifecycle? Newline? Scenario+ Newline?
 Description ::= MultiTextLine
-MetaStatement ::= TOKEN_META (Space? MetaElement)? Newline (MetaElement Newline?)* {pin=1 }
-MetaElement::= TOKEN_AT MetaKey Space MetaValue
-MetaKey::= TOKEN_WORD TOKEN_COLON?
-MetaValue::= (Punct|Word|Space)+
+MetaStatement ::= TOKEN_META (Newline|Space)? (MetaElement)* {pin=1 recoverWhile=RecoverMeta}
+MetaElement::= MetaKey Space MetaValue (Space|Newline) {pin=1 }
+MetaKey::= TOKEN_AT (Word|TOKEN_COLON)+ {pin=1 }
+MetaValue::= (Word|TOKEN_COLON)+
 
-Narrative ::= TOKEN_NARRATIVE Newline* NarrativeText {pin=1 }
+private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
+
+Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
 NarrativeText ::= MultiTextLine
 
-GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1 }
-private StoryPaths ::= StoryPath ( SpaceStar Newline? TOKEN_COMMA Newline? SpaceStar StoryPath)*
-StoryPath ::= TOKEN_PATH
+GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1}
+StoryPaths ::= StoryPath ( SpaceStar Newline? ',' Newline? SpaceStar StoryPath)* {pin=1}
+StoryPath ::= TOKEN_PATH {pin=1}
 
-Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter?
+Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter? {pin=1 recoverWhile=RecoverMeta}
 LifecycleBefore::= TOKEN_BEFORE Step+ {pin=2}
 LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
+//private RecoverLife ::= !TOKEN_SCENARIO
 
-Scenario ::= TOKEN_SCENARIO SpaceStar (ScenarioTitle Newline)? MetaStatement? GivenStories? ((Step |StepComment)+ Examples?)* {pin=1}
+Scenario ::= TOKEN_SCENARIO SpaceStar ScenarioTitle? Newline? MetaStatement? Newline? GivenStories? Newline? ((Step |StepComment)+ Examples?)* {pin=1 recoverWhile=RecoverMeta}
 ScenarioTitle ::= Line
 
-Step ::=  StepPar SpaceStar StepArgument Newline* {pin=1 recoverWhile=RecoverStep}
+Step ::=  StepPar SpaceStar StepArgument Newline* {pin=1 recoverWhile=RecoverMeta}
 StepPar ::= TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND
 
-StepComment ::= TOKEN_COMMENT Newline+//Anything* Newline
-//private Anything ::= TOKEN_WHEN|TOKEN_THEN|TOKEN_GIVEN|TOKEN_AND|StoryPath|Line|TOKEN_PIPE|Punct|Space
+private StepComment ::= TOKEN_COMMENT Newline+
+
 StepArgument ::=  StepLine SpaceStar StepPostParameter | StepLine
 
 private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
 private StepWord ::= StepSimpleWord+
-StepLine ::= StepWord (WordSeparator StepWord)* Punct?
+StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 
 StepPostParameter ::= Newline* Table| StoryPaths
 
-RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
+//private RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
 
 Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 
@@ -94,20 +92,20 @@ TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_P
 TableCell ::= Line
 TableCellEmpty ::= SpaceStar
 
-MultiTextLine ::= (SpaceStar Line Newline)+
+private MultiTextLine ::= (SpaceStar Line Newline)+
 
-private SimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|StoryPath|Punct
+private SimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|StoryPath|TOKEN_COLON|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
 private Word ::= SimpleWord+
-private WordSeparator ::= (Punct|Space)+
+private WordSeparator ::= Space+
 private Line ::= Word (WordSeparator Word)*
 
 UriWord ::= Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
-UriIdentifier ::= IpAddress| (UriWord|TOKEN_DOT)+
+UriIdentifier ::= IpAddress| (UriWord|'.')+
 Uri::= Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)? {pin=5}
-IpAddress ::= TOKEN_IP | Alnum (TOKEN_DOT Alnum)+
-private Alnum::=TOKEN_WORD|TOKEN_NUMBER
+IpAddress ::= TOKEN_IP | Alnum ('.' Alnum)+
+private Alnum::=TOKEN_WORD //|TOKEN_NUMBER
 
 private Newline ::= TOKEN_NEWLINE
 private Space ::= TOKEN_SPACE
 private SpaceStar ::= TOKEN_SPACE*
-private Punct ::= TOKEN_PUNCT | TOKEN_BRACKET_CLOSE|TOKEN_BRACKET_OPEN|TOKEN_COMMA|TOKEN_COLON|TOKEN_AMPERSAND
+//private Punct ::= TOKEN_PUNCT | TOKEN_BRACKET_CLOSE|TOKEN_BRACKET_OPEN|TOKEN_COMMA|TOKEN_COLON|TOKEN_AMPERSAND

@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface StoryStepPostParameter extends PsiElement {
 
-  @NotNull
-  List<StoryStoryPath> getStoryPathList();
+  @Nullable
+  StoryStoryPaths getStoryPaths();
 
   @Nullable
   StoryTable getTable();
