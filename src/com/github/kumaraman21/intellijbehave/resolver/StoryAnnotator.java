@@ -22,7 +22,6 @@ import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
 import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
 import com.github.kumaraman21.intellijbehave.psi.StoryScenarioTitle;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
 import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
@@ -40,7 +39,6 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -53,35 +51,19 @@ public class StoryAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
         if (psiElement instanceof JBehaveStep) {
             JBehaveStep step = (JBehaveStep) psiElement;
-//            PsiReference[] references = step.getReferences();
-//
-//            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-//                return;
-//            }
-//            TokenMap tokens = null;
+            JBehaveStepsIndex jBehaveStepsIndex = JBehaveStepsIndex.getInstance(step.getProject());
             if (tokens == null) {
-                tokens = JBehaveStepsIndex.getInstance(step.getProject()).findAllStepDefinitionsByType(step);
+                tokens = jBehaveStepsIndex.findAllStepDefinitionsByType(step);
             }
-            StoryStepLine storyStepLine = step.getStoryStepLine();
-            String text = storyStepLine.getText();
-            Collection<JavaStepDefinition> javaStepDefinitions = JBehaveStepsIndex.getInstance(
-                    step.getProject()).getJavaStepDefinitions(step, tokens);
-            Iterator<JavaStepDefinition> it = javaStepDefinitions.iterator();
-            JavaStepDefinition definition = null;
+            Iterator<JavaStepDefinition> it = jBehaveStepsIndex.getJavaStepDefinitions(step, tokens).iterator();
             if (it.hasNext()) {
-                definition = it.next();
-            }
-
-//            StepPsiReference reference = (StepPsiReference) references[0];
-//            JavaStepDefinition definition = reference.resolveToDefinition();
-
-            if (definition == null) {
+                annotateParameters(step, it.next(), annotationHolder);
+            } else {
                 Annotation errorAnnotation = annotationHolder.createErrorAnnotation(step.getStoryStepLine(),
                         "No definition found for the step");
                 errorAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND);
-            } else {
-                annotateParameters(step, definition, annotationHolder);
             }
+
         } else if (psiElement instanceof PegStoryPath) {
             PsiElement parent = psiElement.getParent();
             if (parent != null && !(parent instanceof StoryScenarioTitle)) {
@@ -121,27 +103,7 @@ public class StoryAnnotator implements Annotator {
         }
         ParametrizedString pString = new ParametrizedString(annotationText);
 
-//        Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
-//
-//        PsiReference[] references = step.getReferences();
-//        for (PsiReference reference : references) {
-//            PsiElement resolve = reference.resolve();
-//            if (resolve instanceof PsiMethod) {
-//                PsiMethod method = (PsiMethod) resolve;
-//                PsiParameterList parameterList = method.getParameterList();
-//                PsiParameter[] parameters = parameterList.getParameters();
-//                for (PsiParameter parameter : parameters) {
-//                    PsiTypeElement typeElement = parameter.getTypeElement();
-//                    if (typeElement != null) {
-//                        PsiType type = typeElement.getType();
-//                        mapNameToType.put(parameter.getName(), type);
-//                    }
-//                }
-//
-//            }
-//        }
-
-        Map<String, PsiType> mapNameToType =javaStepDefinition.mapNameToType();
+        Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
 
         int offset = step.getTextOffset() + step.getStepTextOffset();
         int i = 0;

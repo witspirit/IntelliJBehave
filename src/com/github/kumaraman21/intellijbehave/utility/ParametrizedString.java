@@ -355,30 +355,30 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
     public String complete(String input) {
         List<String> builder = new ArrayList<String>();
-        List<Pair<String, Boolean>> myTokens = new ArrayList<Pair<String, Boolean>>();
+        List<StringToken> myTokens = new ArrayList<StringToken>();
         ArrayList<String> inputTokens = new ArrayList<String>();
 
         putInWordTokens(myTokens);
 
         putInStringTokens(input, inputTokens);
 
-        Iterator<Pair<String, Boolean>> myTokenIt = myTokens.iterator();
+        Iterator<StringToken> myTokenIt = myTokens.iterator();
         Iterator<String> myInputIt = inputTokens.iterator();
         boolean match = false;
         while (myInputIt.hasNext()) {
-            Pair<String, Boolean> token = myTokenIt.next();
+            StringToken token = myTokenIt.next();
             String currentInput = myInputIt.next();
-            if (token.second) {
+            if (token.isIdentifier()) {
                 if (!myTokenIt.hasNext() || !myInputIt.hasNext()) {
                     builder.add(currentInput);
                     break;
                 }
                 //lookahead
-                Pair<String, Boolean> lookAheadToken = myTokenIt.next();
-                while (lookAheadToken.second && myTokenIt.hasNext()) {
+                StringToken lookAheadToken = myTokenIt.next();
+                while (lookAheadToken.isIdentifier() && myTokenIt.hasNext()) {
                     lookAheadToken = myTokenIt.next();
                 }
-                String value = lookAheadToken.first;
+                String value = lookAheadToken.getValue();
                 //find a matching input token
                 match = false;
                 List<String> subs = new ArrayList<String>();
@@ -398,30 +398,32 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 } while (myInputIt.hasNext());
                 if (!match) return "";
             } else {
-                match = (!myInputIt.hasNext() && token.first.startsWith(
-                        currentInput)) || (myInputIt.hasNext() && token.first.equals(currentInput));
+                String tokenValue = token.getValue();
+                match = (!myInputIt.hasNext() && tokenValue.startsWith(
+                        currentInput)) || (myInputIt.hasNext() && tokenValue.equals(currentInput));
                 if (!match) return "";
-                builder.add(token.first);
+                builder.add(tokenValue);
             }
         }
         if (!match) return "";
         while (myTokenIt.hasNext()) {
-            Pair<String, Boolean> token = myTokenIt.next();
-            builder.add(token.second ? "$" + token.first : token.first);
+            StringToken token = myTokenIt.next();
+            String tokenValue = token.getValue();
+            builder.add(token.isIdentifier() ? "$" + tokenValue : tokenValue);
         }
 
         return StringUtils.join(builder, " ");
     }
 
-    public void putInWordTokens(Collection<Pair<String, Boolean>> myTokens) {
+    public void putInWordTokens(Collection<StringToken> myTokens) {
         for (Token token : tokens) {
             String value = token.value();
             if (token.isIdentifier) {
-                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
+                myTokens.add(new StringToken(value.trim(), true));
             } else {
                 StringTokenizer tok = new StringTokenizer(value);
                 while (tok.hasMoreTokens()) {
-                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
+                    myTokens.add(new StringToken(tok.nextToken().trim(), false));
                 }
             }
         }
@@ -441,7 +443,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
      */
     public List<Pair<String, String>> getTokensOf(String input) {
         List<Pair<String, String>> retVal = new ArrayList<Pair<String, String>>();
-        Deque<Pair<String, Boolean>> myTokens = new ArrayDeque<Pair<String, Boolean>>();
+        Deque<StringToken> myTokens = new ArrayDeque<StringToken>();
 
         putInWordTokens(myTokens);
 
@@ -452,9 +454,9 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         boolean match = false;
         final List<String> subs = new ArrayList<String>();
         while (!inputTokens.isEmpty()) {
-            Pair<String, Boolean> token = myTokens.removeFirst();
+            StringToken token = myTokens.removeFirst();
             String currentInput = inputTokens.removeFirst();
-            if (token.second) {
+            if (token.isIdentifier()) {
                 if (!subs.isEmpty()) {
                     retVal.add(Pair.create(StringUtils.join(subs, " "), (String) null));
                     subs.clear();
@@ -465,7 +467,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                         currentInput = inputTokens.removeFirst();
                         subs.add(currentInput);
                     }
-                    retVal.add(Pair.create(StringUtils.join(subs, " "), token.first));
+                    retVal.add(Pair.create(StringUtils.join(subs, " "), token.getValue()));
                     subs.clear();
                     break;
                 }
@@ -473,11 +475,11 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                     return null;
                 }
                 //lookahead
-                Pair<String, Boolean> lookAheadToken = myTokens.removeFirst();
-                while (lookAheadToken.second && !myTokens.isEmpty()) {
+                StringToken lookAheadToken = myTokens.removeFirst();
+                while (lookAheadToken.isIdentifier() && !myTokens.isEmpty()) {
                     lookAheadToken = myTokens.removeFirst();
                 }
-                String value = lookAheadToken.first;
+                String value = lookAheadToken.getValue();
                 //find a matching input token
                 match = false;
                 do {
@@ -486,7 +488,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                     boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput);
                     boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput);
                     if (b1 || b2) {
-                        retVal.add(Pair.create(StringUtils.join(subs, " "), token.first));
+                        retVal.add(Pair.create(StringUtils.join(subs, " "), token.getValue()));
                         match = true;
                         myTokens.addFirst(lookAheadToken);
                         inputTokens.addFirst(currentInput);
@@ -497,8 +499,9 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 subs.clear();
                 if (!match) return null;
             } else {
-                match = (inputTokens.isEmpty() && token.first.startsWith(
-                        currentInput)) || (!inputTokens.isEmpty() && token.first.equals(currentInput));
+                String tokenValue = token.getValue();
+                match = (inputTokens.isEmpty() && tokenValue.startsWith(
+                        currentInput)) || (!inputTokens.isEmpty() && tokenValue.equals(currentInput));
                 if (!match) return null;
                 subs.add(currentInput);
             }

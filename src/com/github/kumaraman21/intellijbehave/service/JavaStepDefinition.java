@@ -116,6 +116,22 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
         return ANNOTATION_TO_STEP_TYPE_MAPPING.get(qualifiedName);
     }
 
+    private String toType(StepType type) {
+        switch (type) {
+            case GIVEN:
+                return "Given";
+            case WHEN:
+                return "When";
+            case THEN:
+                return "Then";
+        }
+        return "";
+    }
+
+    public String getAnnotationTypeAsString() {
+        return toType(getAnnotationType());
+    }
+
     @NotNull
     public Integer getAnnotationPriority() {
         PsiAnnotation element = getAnnotation();

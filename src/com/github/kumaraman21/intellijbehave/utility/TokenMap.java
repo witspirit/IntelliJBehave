@@ -1,7 +1,6 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
-import org.jbehave.core.steps.StepType;
 
 import java.util.*;
 
@@ -13,25 +12,12 @@ public class TokenMap {
     private JavaStepDefinition leafToken;// = new ArrayList<JavaStepDefinition>();
 
 
-    private String toType(StepType type) {
-        switch (type) {
-            case GIVEN:
-                return "Given";
-            case WHEN:
-                return "When";
-            case THEN:
-                return "Then";
-        }
-        return "";
-    }
-
     public void put(final JavaStepDefinition def) {
         final Set<ParametrizedString> parametrizedStrings = def.toPString();
         for (ParametrizedString parametrizedString : parametrizedStrings) {
-            final StepType annotationType = def.getAnnotationType();
             final String stringWithoutIdentifiers = parametrizedString.toStringWithoutIdentifiers();
-            final String[] split = String.format("%s %s", toType(annotationType), stringWithoutIdentifiers).split(
-                    "[ \t\f]+");
+            final String[] split = String.format("%s %s", def.getAnnotationTypeAsString(),
+                    stringWithoutIdentifiers).split("[ \t\f]+");
             put(split, 0, def);
         }
     }
@@ -51,12 +37,12 @@ public class TokenMap {
     }
 
     public List<JavaStepDefinition> getConcerned(String toFind, boolean strict) {
-        String reallyFing = toFind;
-        int rulezzz = reallyFing.indexOf("IntellijIdeaRulezzz");
+        String reallyFind = toFind;
+        int rulezzz = reallyFind.indexOf("IntellijIdeaRulezzz");
         if (rulezzz >= 0) {
-            reallyFing = reallyFing.substring(0, rulezzz);
+            reallyFind = reallyFind.substring(0, rulezzz);
         }
-        String[] split = reallyFing.split("[ \t\f]+");
+        String[] split = reallyFind.split("[ \t\f]+");
         return getConcerned(split, 0, strict);
     }
 
@@ -83,15 +69,10 @@ public class TokenMap {
             }
             ++it;
         }
-        if (it >= split.length) {
-            if (strict && leafToken != null) {
-                return Collections.singletonList(leafToken);
-            }
-//            if (!strict) {
-//                return getAll();
-//            }
-//
+        if (it >= split.length && strict && leafToken != null) {
+            return Collections.singletonList(leafToken);
         }
+
         return Collections.emptyList();
     }
 
