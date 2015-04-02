@@ -54,21 +54,25 @@ public class TokenMap {
         if (rulezzz >= 0) {
             reallyFing = reallyFing.substring(0, rulezzz);
         }
-        return getConcerned(new StringTokenizer(reallyFing));
+        String[] split = reallyFing.split("[ \t\f]+");
+        return getConcerned(split, 0);
     }
 
-    public List<JavaStepDefinition> getConcerned(StringTokenizer it) {
+    private List<JavaStepDefinition> getConcerned(String[] split, int count) {
         final List<JavaStepDefinition> result = new ArrayList<JavaStepDefinition>();
-        while (it.hasMoreTokens()) {
-            String next = it.nextToken();
+        int it = count;
+        while (it < split.length) {
+            String next = split[it];
             TokenMap tokenMap = nextTokens.get(next);
             if (tokenMap != null) {
-                result.addAll(tokenMap.getConcerned(it));
+                result.addAll(tokenMap.getConcerned(split, it));
                 return result;
             }
+            ++it;
         }
-        if (!it.hasMoreTokens()) {
+        if (it >= split.length) {
             result.addAll(leafTokens);
+            return result;
         }
         return result;
     }
