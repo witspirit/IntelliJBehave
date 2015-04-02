@@ -166,5 +166,6 @@
         <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder" language="Story"/>
         <codeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
+        <lang.foldingBuilder language="Story" implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
     </extensions>
 </idea-plugin>
