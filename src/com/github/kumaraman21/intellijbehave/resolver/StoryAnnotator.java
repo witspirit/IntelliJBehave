@@ -22,37 +22,58 @@ import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
 import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
 import com.github.kumaraman21.intellijbehave.psi.StoryScenarioTitle;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
 import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
+import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
+import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.StringToken;
 
 public class StoryAnnotator implements Annotator {
+    private TokenMap tokens = null;
+
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
         if (psiElement instanceof JBehaveStep) {
             JBehaveStep step = (JBehaveStep) psiElement;
-            PsiReference[] references = step.getReferences();
-
-            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-                return;
+//            PsiReference[] references = step.getReferences();
+//
+//            if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
+//                return;
+//            }
+//            TokenMap tokens = null;
+            if (tokens == null) {
+                tokens = JBehaveStepsIndex.getInstance(step.getProject()).findAllStepDefinitionsByType(step);
+            }
+            StoryStepLine storyStepLine = step.getStoryStepLine();
+            String text = storyStepLine.getText();
+            Collection<JavaStepDefinition> javaStepDefinitions = JBehaveStepsIndex.getInstance(
+                    step.getProject()).getJavaStepDefinitions(step, tokens);
+            Iterator<JavaStepDefinition> it = javaStepDefinitions.iterator();
+            JavaStepDefinition definition = null;
+            if (it.hasNext()) {
+                definition = it.next();
             }
 
-            StepPsiReference reference = (StepPsiReference) references[0];
-            JavaStepDefinition definition = reference.resolveToDefinition();
+//            StepPsiReference reference = (StepPsiReference) references[0];
+//            JavaStepDefinition definition = reference.resolveToDefinition();
 
             if (definition == null) {
                 Annotation errorAnnotation = annotationHolder.createErrorAnnotation(step.getStoryStepLine(),
@@ -100,25 +121,27 @@ public class StoryAnnotator implements Annotator {
         }
         ParametrizedString pString = new ParametrizedString(annotationText);
 
-        Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
+//        Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
+//
+//        PsiReference[] references = step.getReferences();
+//        for (PsiReference reference : references) {
+//            PsiElement resolve = reference.resolve();
+//            if (resolve instanceof PsiMethod) {
+//                PsiMethod method = (PsiMethod) resolve;
+//                PsiParameterList parameterList = method.getParameterList();
+//                PsiParameter[] parameters = parameterList.getParameters();
+//                for (PsiParameter parameter : parameters) {
+//                    PsiTypeElement typeElement = parameter.getTypeElement();
+//                    if (typeElement != null) {
+//                        PsiType type = typeElement.getType();
+//                        mapNameToType.put(parameter.getName(), type);
+//                    }
+//                }
+//
+//            }
+//        }
 
-        PsiReference[] references = step.getReferences();
-        for (PsiReference reference : references) {
-            PsiElement resolve = reference.resolve();
-            if (resolve instanceof PsiMethod) {
-                PsiMethod method = (PsiMethod) resolve;
-                PsiParameterList parameterList = method.getParameterList();
-                PsiParameter[] parameters = parameterList.getParameters();
-                for (PsiParameter parameter : parameters) {
-                    PsiTypeElement typeElement = parameter.getTypeElement();
-                    if (typeElement != null) {
-                        PsiType type = typeElement.getType();
-                        mapNameToType.put(parameter.getName(), type);
-                    }
-                }
-
-            }
-        }
+        Map<String, PsiType> mapNameToType =javaStepDefinition.mapNameToType();
 
         int offset = step.getTextOffset() + step.getStepTextOffset();
         int i = 0;
@@ -151,4 +174,5 @@ public class StoryAnnotator implements Annotator {
             offset += length;
         }
     }
+
 }

@@ -20,6 +20,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
     private List<Token> tokens = new ArrayList<Token>();
     private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
+    private List<Token> stringTokens = new ArrayList<Token>();
     private final String content;
     private final String parameterPrefix;
 
@@ -81,6 +82,14 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         if (!token.isIdentifier) {
             tokensWithoutIdentifier.add(token);
         }
+    }
+
+    public String toStringIdentifiers() {
+        List<String> result = new ArrayList<String>();
+        for (Token token : tokens) {
+            result.add(token.value().trim());
+        }
+        return StringUtils.join(result, " ");
     }
 
     public String toStringWithoutIdentifiers() {
@@ -347,30 +356,17 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     public String complete(String input) {
         List<String> builder = new ArrayList<String>();
         List<Pair<String, Boolean>> myTokens = new ArrayList<Pair<String, Boolean>>();
+        ArrayList<String> inputTokens = new ArrayList<String>();
 
-        for (Token token : tokens) {
-            String value = token.value();
-            if (token.isIdentifier) {
-                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
-            } else {
-                StringTokenizer tok = new StringTokenizer(value);
-                while (tok.hasMoreTokens()) {
-                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
-                }
-            }
-        }
+        putInWordTokens(myTokens);
 
-        StringTokenizer tok = new StringTokenizer(input);
-        String[] inputTokens = new String[tok.countTokens()];
-        for (int i = 0; i < inputTokens.length; ++i) {
-            inputTokens[i] = tok.nextToken();
-        }
+        putInStringTokens(input, inputTokens);
+
         Iterator<Pair<String, Boolean>> myTokenIt = myTokens.iterator();
-        Iterator<String> myInputIt = Arrays.asList(inputTokens).iterator();
+        Iterator<String> myInputIt = inputTokens.iterator();
         boolean match = false;
-        //for (int markInput = 0; markInput < inputTokens.length; ++markInput) {
         while (myInputIt.hasNext()) {
-            Pair<String, Boolean> token = myTokenIt.next();// myTokens.get(markMine);
+            Pair<String, Boolean> token = myTokenIt.next();
             String currentInput = myInputIt.next();
             if (token.second) {
                 if (!myTokenIt.hasNext() || !myInputIt.hasNext()) {
@@ -417,6 +413,20 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return StringUtils.join(builder, " ");
     }
 
+    public void putInWordTokens(Collection<Pair<String, Boolean>> myTokens) {
+        for (Token token : tokens) {
+            String value = token.value();
+            if (token.isIdentifier) {
+                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
+            } else {
+                StringTokenizer tok = new StringTokenizer(value);
+                while (tok.hasMoreTokens()) {
+                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
+                }
+            }
+        }
+    }
+
     /**
      * Process input and return a list of tokens in the same syntax as me.
      * E.g. if I'm: "the red $fox jumps over the $hill" and input is:
@@ -433,26 +443,12 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         List<Pair<String, String>> retVal = new ArrayList<Pair<String, String>>();
         Deque<Pair<String, Boolean>> myTokens = new ArrayDeque<Pair<String, Boolean>>();
 
-        for (Token token : tokens) {
-            String value = token.value();
-            if (token.isIdentifier) {
-                myTokens.add(new Pair<String, Boolean>(value.trim(), true));
-            } else {
-                StringTokenizer tok = new StringTokenizer(value);
-                while (tok.hasMoreTokens()) {
-                    myTokens.add(new Pair<String, Boolean>(tok.nextToken().trim(), false));
-                }
-            }
-        }
+        putInWordTokens(myTokens);
 
-        StringTokenizer tok = new StringTokenizer(input);
         Deque<String> inputTokens = new ArrayDeque<String>();
 
-        while (tok.hasMoreTokens()) {
-            inputTokens.add(tok.nextToken().trim());
-        }
-        //Iterator<Pair<String, Boolean>> myTokenIt = myTokens.iterator();
-        //ListIterator<String> myInputIt = inputTokens.listIterator();
+        putInStringTokens(input, inputTokens);
+
         boolean match = false;
         final List<String> subs = new ArrayList<String>();
         while (!inputTokens.isEmpty()) {
@@ -514,6 +510,13 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
 
         return retVal;
+    }
+
+    private void putInStringTokens(String input, Collection<String> inputTokens) {
+        StringTokenizer tok = new StringTokenizer(input);
+        while (tok.hasMoreTokens()) {
+            inputTokens.add(tok.nextToken().trim());
+        }
     }
 
     public List<String> textAccordingTo(List<Pair<String, String>> actualText) {

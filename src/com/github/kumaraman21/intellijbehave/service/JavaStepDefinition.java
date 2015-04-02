@@ -3,15 +3,11 @@ package com.github.kumaraman21.intellijbehave.service;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jbehave.core.parsers.RegexPrefixCapturingPatternParser;
 import org.jbehave.core.parsers.StepMatcher;
@@ -20,9 +16,7 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
 import static com.google.common.collect.FluentIterable.from;
@@ -153,7 +147,7 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
         if (stepType == StepType.AND) return true;
         StepType annotationType = getAnnotationType();
 
-        return Objects.equal(stepType, annotationType);
+        return stepType == annotationType;
     }
 
     @Override
@@ -192,5 +186,20 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
 
         }
         return cmp;
+    }
+
+    public Map<String, PsiType> mapNameToType() {
+        Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
+        PsiMethod method = getAnnotatedMethod();
+        PsiParameterList parameterList = method.getParameterList();
+        PsiParameter[] parameters = parameterList.getParameters();
+        for (PsiParameter parameter : parameters) {
+            PsiTypeElement typeElement = parameter.getTypeElement();
+            if (typeElement != null) {
+                PsiType type = typeElement.getType();
+                mapNameToType.put(parameter.getName(), type);
+            }
+        }
+        return mapNameToType;
     }
 }

@@ -95,6 +95,15 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         return "";
     }
 
+    public String getAnnotatedStoryLine() {
+        StepType stepType = getStepType();
+        StoryStepLine storyStepLine = getStoryStepLine();
+        String lowerCase = stepType.toString().toLowerCase();
+        lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
+        return String.format("%s %s", lowerCase, storyStepLine.getText());
+    }
+
+
     public String getStoryLine() {
         ASTNode stepTypeAsNode = getStepTypeAsNode();
         StoryStepLine storyStepLine = getStoryStepLine();
@@ -228,7 +237,7 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         return PsiTreeUtil.findChildrenOfType(this, StoryStepPostParameter.class);
     }
 
-    private boolean hasStoryStepPostParameters() {
+    public boolean hasStoryStepPostParameters() {
         return !getStoryStepPostParameters().isEmpty();
     }
 }

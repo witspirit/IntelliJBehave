@@ -29,7 +29,7 @@ public class ScanUtils {
         TokenMap allStepDefinitionsByType = JBehaveStepsIndex.getInstance(
                 storyRef.getProject()).findAllStepDefinitionsByType((JBehaveStep) storyRef);
         String text = storyRef.getText();
-        Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.getConcerned(text);
+        Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.getConcerned(text, false);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             iterator.processStepDefinition(stepDefinition);
         }

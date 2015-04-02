@@ -128,8 +128,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
 
     @NotNull
     public Collection<JavaStepDefinition> resolveToDefinitions() {
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        return index.findStepDefinitions(myStep);
+        return JBehaveStepsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
 
     private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();

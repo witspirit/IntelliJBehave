@@ -1,8 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepPostParameter;
 import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -15,7 +13,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -48,15 +45,21 @@ public class JBehaveStepsIndex {
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
         final TokenMap tokenMap = findAllStepDefinitionsByType(step);
+        return getJavaStepDefinitions(step, tokenMap);
+    }
+
+    @NotNull
+    public Collection<JavaStepDefinition> getJavaStepDefinitions(@NotNull JBehaveStep step,
+                                                                 @NotNull TokenMap tokenMap) {
         if (tokenMap.isEmpty()) return Collections.emptyList();
         final Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
 
-        final String stepText = getTableOffset(step).trim();
+        final String storyLine = getStoryLineShrinked(step);
+        final String text = step.getAnnotatedStoryLine();
 
-        Collection<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(stepText);
-
+        final List<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(text, true);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
-            if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
+            if (stepDefinition != null && stepDefinition.matches(storyLine) && stepDefinition.supportsStep(step)) {
                 Integer currentHighestPriority = getPriorityByDefinition(
                         definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);
@@ -65,22 +68,25 @@ public class JBehaveStepsIndex {
                     definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
                 }
             }
+
         }
         return definitionsByClass.values();
     }
 
-    private String getTableOffset(@NotNull final JBehaveStep step) {
-        final Iterator<StoryStepLine> stepLines = PsiTreeUtil.findChildrenOfType(step, StoryStepLine.class).iterator();
-        final Iterator<StoryStepPostParameter> storyStepPostParameters = PsiTreeUtil.findChildrenOfType(step,
-                StoryStepPostParameter.class).iterator();
-        if (stepLines.hasNext()) {
-            final String text = stepLines.next().getText().trim();
-            if (storyStepPostParameters.hasNext()) {
-                return text + " dummy";
-            }
-            return text;
+    private String getStoryLineShrinked(@NotNull final JBehaveStep step) {
+        String storyLine = step.getStoryStepLine().getText();
+        if (step.hasStoryStepPostParameters()) {
+            return storyLine + " dummy";
         }
-        return "";
+        return storyLine;
+    }
+
+    private String getTableOffset(@NotNull final JBehaveStep step) {
+        String storyLine = step.getAnnotatedStoryLine();
+        if (step.hasStoryStepPostParameters()) {
+            return storyLine + " dummy";
+        }
+        return storyLine;
     }
 
     @NotNull
