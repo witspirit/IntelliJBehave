@@ -43,6 +43,7 @@
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.peg.PegStoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
   extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
+  extends("Scenario")="com.github.kumaraman21.intellijbehave.peg.PegStoryScenario"
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
@@ -77,7 +78,7 @@ private StepComment ::= TOKEN_COMMENT Newline+
 
 StepArgument ::=  StepLine SpaceStar StepPostParameter | StepLine
 
-private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
+private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
 private StepWord ::= StepSimpleWord+
 StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 
@@ -94,7 +95,7 @@ TableCellEmpty ::= SpaceStar
 
 private MultiTextLine ::= (SpaceStar Line Newline)+
 
-private SimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|StoryPath|TOKEN_COLON|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
+private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON
 private Word ::= SimpleWord+
 private WordSeparator ::= Space+
 private Line ::= Word (WordSeparator Word)*

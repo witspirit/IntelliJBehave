@@ -78,6 +78,9 @@
         <li> Rename refactoring of steps </li>
         <li> Working and useful completion </li>
         <li> Find usages of step definitions </li>
+        <li> Folding </li>
+        <li> Jump to files given in GivenStories </li>
+        <li> Show parameter names of step implementation (point the mouse over the parameter of an step) </li>
     </ul>
     <p>
         New in version 1.5:
@@ -167,5 +170,6 @@
         <codeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
         <lang.foldingBuilder language="Story" implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
+        <lang.psiStructureViewFactory language="Story" implementationClass="com.github.kumaraman21.intellijbehave.structureView.JBehavePsiStructureViewFactory"/>
     </extensions>
 </idea-plugin>

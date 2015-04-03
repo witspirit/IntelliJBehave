@@ -16,11 +16,41 @@
 package com.github.kumaraman21.intellijbehave.peg;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class JBehaveRule extends ASTWrapperPsiElement {
+import javax.swing.*;
+
+public class JBehaveRule extends ASTWrapperPsiElement implements StoryElement {
     public JBehaveRule(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    @NotNull
+    public ItemPresentation getPresentation() {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return getText();
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return AllIcons.Toolwindows.Documentation;
+            }
+        };
+
     }
 }

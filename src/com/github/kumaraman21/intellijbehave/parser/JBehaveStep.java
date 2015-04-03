@@ -15,11 +15,13 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
@@ -31,6 +33,7 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -59,7 +62,10 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
             StepType type = StepType.valueOf(key.toUpperCase());
             if (type == StepType.AND) {
                 PsiElement prevSibling = getPrevSibling();
-                if (prevSibling instanceof JBehaveStep) {
+                while (!(prevSibling instanceof JBehaveStep) && prevSibling != null) {
+                    prevSibling = prevSibling.getPrevSibling();
+                }
+                if (prevSibling != null) {
                     return ((JBehaveStep) prevSibling).getStepType();
                 }
             }
@@ -239,5 +245,43 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     public boolean hasStoryStepPostParameters() {
         return !getStoryStepPostParameters().isEmpty();
+    }
+
+    @Nullable
+    @Override
+    public ItemPresentation getPresentation() {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return getAnnotatedStoryLine();
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                switch (getStepType()) {
+                    case THEN:
+                        return JBehaveIcons.THEN;
+                    case AND:
+                        return JBehaveIcons.AND;
+                    case WHEN:
+                        return JBehaveIcons.WHEN;
+                    case GIVEN:
+                        return JBehaveIcons.GIVEN;
+                }
+                return JBehaveIcons.IGNORABLE;
+            }
+        };
+    }
+
+    public String toString() {
+        return getAnnotatedStoryLine();
     }
 }

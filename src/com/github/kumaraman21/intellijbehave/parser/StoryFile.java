@@ -15,6 +15,8 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.github.kumaraman21.intellijbehave.peg.StoryElement;
+import com.github.kumaraman21.intellijbehave.peg.StoryPegParserDefinition;
 import com.github.kumaraman21.intellijbehave.utility.NodeToPsiElement;
 import com.github.kumaraman21.intellijbehave.utility.NodeToStepPsiElement;
 import com.intellij.extapi.psi.PsiFileBase;
@@ -22,18 +24,28 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
 import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
-import static com.github.kumaraman21.intellijbehave.parser.StoryElementType.*;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
 
-public class StoryFile extends PsiFileBase implements Comparable<StoryFile> {
+public class StoryFile extends PsiFileBase implements StoryElement, Comparable<StoryFile> {
+    private static Set<IElementType> immediateChildren = new HashSet<IElementType>();
+
+    static {
+        immediateChildren.add(IStoryPegElementType.STORY_DESCRIPTION);
+        immediateChildren.add(IStoryPegElementType.STORY_SCENARIO);
+        immediateChildren.add(IStoryPegElementType.STORY_GIVEN_STORIES);
+        immediateChildren.add(IStoryPegElementType.STORY_META_STATEMENT);
+        immediateChildren.add(IStoryPegElementType.STORY_NARRATIVE);
+        immediateChildren.add(IStoryPegElementType.STORY_DESCRIPTION);
+    }
 
     public StoryFile(FileViewProvider fileViewProvider) {
         super(fileViewProvider, STORY_FILE_TYPE.getLanguage());
@@ -45,13 +57,26 @@ public class StoryFile extends PsiFileBase implements Comparable<StoryFile> {
         return STORY_FILE_TYPE;
     }
 
+    public Collection<PsiElement> getStructureViewChildren() {
+        Collection<PsiElement> result = new ArrayList<PsiElement>();
+        PsiElement story = getStory();
+        PsiElement[] children = story.getChildren();
+        for (PsiElement child : children) {
+            IElementType elementType = child.getNode().getElementType();
+            if (immediateChildren.contains(elementType)) {
+                result.add(child);
+            }
+        }
+        return result;
+    }
+
     @NotNull
     public List<JBehaveStep> getSteps() {
 
         List<ASTNode> stepNodes = newArrayList();
 
         for (PsiElement scenario : getScenarios()) {
-            ASTNode[] stepNodesOfScenario = scenario.getNode().getChildren(STEPS_TOKEN_SET);
+            ASTNode[] stepNodesOfScenario = scenario.getNode().getChildren(StoryPegParserDefinition.STEP_TYPES);
             stepNodes.addAll(asList(stepNodesOfScenario));
         }
 
@@ -65,12 +90,12 @@ public class StoryFile extends PsiFileBase implements Comparable<StoryFile> {
             return newArrayList();
         }
 
-        ASTNode[] scenarioNodes = story.getNode().getChildren(TokenSet.create(SCENARIO));
+        ASTNode[] scenarioNodes = story.getNode().getChildren(TokenSet.create(IStoryPegElementType.STORY_SCENARIO));
         return transform(asList(scenarioNodes), new NodeToPsiElement());
     }
 
     private PsiElement getStory() {
-        ASTNode[] storyNodes = this.getNode().getChildren(TokenSet.create(STORY));
+        ASTNode[] storyNodes = this.getNode().getChildren(TokenSet.create(IStoryPegElementType.STORY_STORY));
 
         if (storyNodes.length > 0) {
             return storyNodes[0].getPsi();

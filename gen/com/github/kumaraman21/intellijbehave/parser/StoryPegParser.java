@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
+import com.intellij.psi.tree.IElementType;
+
 import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
 import static com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class StoryPegParser implements PsiParser {
@@ -732,22 +732,14 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|StoryPath|TOKEN_COLON|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
+  // StepSimpleWord|StoryPath|TOKEN_COLON
   static boolean SimpleWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "SimpleWord")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Uri(b, l + 1);
-    if (!r) r = IpAddress(b, l + 1);
-    if (!r) r = Alnum(b, l + 1);
-    if (!r) r = consumeToken(b, STORY_TOKEN_USER_INJECT);
-    if (!r) r = consumeToken(b, STORY_TOKEN_INJECT);
+    r = StepSimpleWord(b, l + 1);
     if (!r) r = StoryPath(b, l + 1);
     if (!r) r = consumeToken(b, STORY_TOKEN_COLON);
-    if (!r) r = consumeToken(b, STORY_TOKEN_BRACKET_OPEN);
-    if (!r) r = consumeToken(b, STORY_TOKEN_BRACKET_CLOSE);
-    if (!r) r = consumeToken(b, ",");
-    if (!r) r = consumeToken(b, ".");
     exit_section_(b, m, null, r);
     return r;
   }
@@ -957,7 +949,7 @@ public class StoryPegParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
+  // Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
   static boolean StepSimpleWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "StepSimpleWord")) return false;
     boolean r;
@@ -967,6 +959,10 @@ public class StoryPegParser implements PsiParser {
     if (!r) r = Alnum(b, l + 1);
     if (!r) r = consumeToken(b, STORY_TOKEN_USER_INJECT);
     if (!r) r = consumeToken(b, STORY_TOKEN_INJECT);
+    if (!r) r = consumeToken(b, STORY_TOKEN_BRACKET_OPEN);
+    if (!r) r = consumeToken(b, STORY_TOKEN_BRACKET_CLOSE);
+    if (!r) r = consumeToken(b, ",");
+    if (!r) r = consumeToken(b, ".");
     exit_section_(b, m, null, r);
     return r;
   }
