@@ -124,16 +124,6 @@ public class StoryCompletionContributor extends CompletionContributor {
             position = position.getParent();
         }
         return null;
-//        PsiElement positionParent = position.getParent();
-//        if (positionParent instanceof JBehaveStep) {
-//            return (JBehaveStep) positionParent;
-//        } else if (position instanceof StepPsiReference) {
-//            return ((StepPsiReference) position).getElement();
-//        } else if (position instanceof JBehaveStep) {
-//            return (JBehaveStep) position;
-//        } else {
-//            return null;
-//        }
     }
 
     private static class StepSuggester extends StepDefinitionIterator {
