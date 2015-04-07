@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -52,7 +53,7 @@ public class TokenMap {
 
     public List<JavaStepDefinition> getConcerned(String toFind, boolean strict) {
         String reallyFind = toFind;
-        int rulezzz = reallyFind.indexOf("IntellijIdeaRulezzz");
+        int rulezzz = reallyFind.indexOf(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
         if (rulezzz >= 0) {
             reallyFind = reallyFind.substring(0, rulezzz);
         }
