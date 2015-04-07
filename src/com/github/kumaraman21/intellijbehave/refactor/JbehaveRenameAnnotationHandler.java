@@ -1,17 +1,21 @@
 package com.github.kumaraman21.intellijbehave.refactor;
 
+import com.github.kumaraman21.intellijbehave.language.JBehaveLanguage;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.actions.BaseRefactoringAction;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -28,16 +32,47 @@ public class JBehaveRenameAnnotationHandler extends PsiElementRenameHandler {
         return getPsiAnnotation(editor, psiFile);
     }
 
-    private PsiAnnotation getPsiAnnotation(Editor editor, PsiFile psiFile) {
-        if (editor != null && psiFile != null) {
-            PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
-            PsiAnnotation annotation = PsiTreeUtil.getParentOfType(elementAtCaret, PsiAnnotation.class);
-            if (annotation != null) {
-                String qualifiedName = annotation.getQualifiedName();
-                if (qualifiedName != null && qualifiedName.startsWith("org.jbehave.core.annotations")) {
-                    return annotation;
+    private PsiAnnotation getPsiAnnotationFromScenarioStep(@NotNull Editor editor, @NotNull PsiFile psiFile) {
+        PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
+        ScenarioStep scenarioStep = PsiTreeUtil.getParentOfType(elementAtCaret, ScenarioStep.class);
+        if (scenarioStep != null) {
+            PsiReference[] references = scenarioStep.getReferences();
+            for (PsiReference reference : references) {
+                reference.resolve();
+                if (reference instanceof ScenarioStepReference) {
+                    ScenarioStepReference stepRef = (ScenarioStepReference) reference;
+                    Set<PsiAnnotation> annotations = stepRef.getAnnotations();
+                    for (PsiAnnotation annotation : annotations) {
+                        String qualifiedName = annotation.getQualifiedName();
+                        if (qualifiedName != null && qualifiedName.startsWith("org.jbehave.core.annotations")) {
+                            return annotation;
+                        }
+                    }
                 }
             }
+
+        }
+        return null;
+    }
+
+    private PsiAnnotation getPsiAnnotationFromJava(@NotNull Editor editor, @NotNull PsiFile psiFile) {
+        PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
+        PsiAnnotation annotation = PsiTreeUtil.getParentOfType(elementAtCaret, PsiAnnotation.class);
+        if (annotation != null) {
+            String qualifiedName = annotation.getQualifiedName();
+            if (qualifiedName != null && qualifiedName.startsWith("org.jbehave.core.annotations")) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
+    private PsiAnnotation getPsiAnnotation(Editor editor, PsiFile psiFile) {
+        if (psiFile.getLanguage() == JavaLanguage.INSTANCE) {
+            return getPsiAnnotationFromJava(editor, psiFile);
+        }
+        if (psiFile.getLanguage() == JBehaveLanguage.JBEHAVE_LANGUAGE) {
+            return getPsiAnnotationFromScenarioStep(editor, psiFile);
         }
         return null;
     }
