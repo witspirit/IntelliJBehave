@@ -18,7 +18,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     private final String parameterPrefix;
     private List<Token> tokens = new ArrayList<Token>();
     private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
-    private List<Token> stringTokens = new ArrayList<Token>();
+    private static Pattern dollarPattern = Pattern.compile("(\\$\\w*)(\\W|\\Z)", Pattern.DOTALL);
+
     public ParametrizedString(String content) {
         this(content, "$");
     }
@@ -34,6 +35,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     }
 
     private static Pattern compileParameterPattern(String parameterPrefix) {
+        if (parameterPrefix.equals("$")) return dollarPattern;
         return Pattern.compile("(\\" + parameterPrefix + "\\w*)(\\W|\\Z)", Pattern.DOTALL);
     }
 
@@ -205,10 +207,10 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     }
 
     public boolean isSameAs(String input) {
-        return complete(input).equals(input);
+        return complete(input, false).equals(input);
     }
 
-    public String complete(String input) {
+    public String complete(String input, boolean hasPostParameter) {
         List<String> builder = new ArrayList<String>();
         List<StringToken> myTokens = new ArrayList<StringToken>();
         ArrayList<String> inputTokens = new ArrayList<String>();
@@ -244,8 +246,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                     boolean b1 = !myInputIt.hasNext() && value.startsWith(currentInput);
                     boolean b2 = myInputIt.hasNext() && value.equals(currentInput);
                     if (b1 || b2) {
-                        builder.addAll(subs);
-                        builder.add(value);
+                        builder.add(StringUtils.join(subs, " "));
+                        //builder.add(value);
                         match = true;
                         break;
                     }
@@ -257,17 +259,50 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 match = (!myInputIt.hasNext() && tokenValue.startsWith(
                         currentInput)) || (myInputIt.hasNext() && tokenValue.equals(currentInput));
                 if (!match) return "";
-                builder.add(tokenValue);
             }
         }
         if (!match) return "";
         while (myTokenIt.hasNext()) {
             StringToken token = myTokenIt.next();
             String tokenValue = token.getValue();
-            builder.add(token.isIdentifier() ? "$" + tokenValue : tokenValue);
+            if (token.isIdentifier()) {
+                builder.add("$" + tokenValue);
+            }
         }
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> parameterIt = builder.iterator();
+        List<Token> tokens1 = this.tokens;
+        for (int i = 0; i < tokens1.size() - 1; i++) {
+            Token token = tokens1.get(i);
+            if (token.isIdentifier) {
+                sb.append(parameterIt.next());
+            } else {
+                sb.append(token.value());
+            }
+        }
+        Token lastToken = tokens1.get(tokens1.size() - 1);
+        if (lastToken.isIdentifier) {
+            if (!hasPostParameter) {
+                sb.append(parameterIt.next());
+            }
+        } else {
+            sb.append(lastToken.value());
+        }
+        return sb.toString();
+    }
 
-        return StringUtils.join(builder, " ");
+    private static Pattern pattern = Pattern.compile("(\\w+|[\\W&&[^\\s]])", Pattern.DOTALL);
+
+    private static List<String> split(final String text) {
+        final Matcher matcher = pattern.matcher(text);
+
+        List<String> result2 = new ArrayList<String>();
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            result2.add(text.substring(start, end));
+        }
+        return result2;
     }
 
     public void putInWordTokens(Collection<StringToken> myTokens) {
@@ -276,11 +311,16 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             if (token.isIdentifier) {
                 myTokens.add(new StringToken(value.trim(), true));
             } else {
-                StringTokenizer tok = new StringTokenizer(value);
-                while (tok.hasMoreTokens()) {
-                    myTokens.add(new StringToken(tok.nextToken().trim(), false));
+                for (String tok : split(value)) {
+                    myTokens.add(new StringToken(tok.trim(), false));
                 }
             }
+        }
+    }
+
+    private void putInStringTokens(String input, Collection<String> inputTokens) {
+        for (String s : split(input)) {
+            inputTokens.add(s.trim());
         }
     }
 
@@ -368,13 +408,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
 
         return retVal;
-    }
-
-    private void putInStringTokens(String input, Collection<String> inputTokens) {
-        StringTokenizer tok = new StringTokenizer(input);
-        while (tok.hasMoreTokens()) {
-            inputTokens.add(tok.nextToken().trim());
-        }
     }
 
     public List<String> textAccordingTo(List<Pair<String, String>> actualText) {
