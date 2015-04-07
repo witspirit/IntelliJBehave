@@ -73,7 +73,7 @@ public interface IJBehaveElementType {
         public static PsiElement createElement(ASTNode node) {
             IElementType type = node.getElementType();
             if (type == JB_DESCRIPTION) {
-                return new ParserDescriptionImpl(node);
+                return new JBehaveDescriptionImpl(node);
             } else if (type == JB_EXAMPLES) {
                 return new JBehaveExamplesImpl(node);
             } else if (type == JB_GIVEN_STORIES) {
@@ -89,25 +89,25 @@ public interface IJBehaveElementType {
             } else if (type == JB_META_ELEMENT) {
                 return new JBehaveMetaElementImpl(node);
             } else if (type == JB_META_KEY) {
-                return new ParserMetaKeyImpl(node);
+                return new JBehaveMetaKeyImpl(node);
             } else if (type == JB_META_STATEMENT) {
                 return new JBehaveMetaStatementImpl(node);
             } else if (type == JB_META_VALUE) {
-                return new ParserMetaValueImpl(node);
+                return new JBehaveMetaValueImpl(node);
             } else if (type == JB_NARRATIVE) {
                 return new JBehaveNarrativeImpl(node);
             } else if (type == JB_NARRATIVE_TEXT) {
-                return new ParserNarrativeTextImpl(node);
+                return new JBehaveNarrativeTextImpl(node);
             } else if (type == JB_SCENARIO) {
                 return new JBehaveScenarioImpl(node);
             } else if (type == JB_SCENARIO_TITLE) {
-                return new ParserScenarioTitleImpl(node);
+                return new JBehaveScenarioTitleImpl(node);
             } else if (type == JB_STEP) {
-                return new ScenarioStepImpl(node);
+                return new JBehaveStepImpl(node);
             } else if (type == JB_STEP_ARGUMENT) {
                 return new JBehaveStepArgumentImpl(node);
             } else if (type == JB_STEP_LINE) {
-                return new ParserStepLineImpl(node);
+                return new JBehaveStepLineImpl(node);
             } else if (type == JB_STEP_PAR) {
                 return new JBehaveStepParImpl(node);
             } else if (type == JB_STEP_POST_PARAMETER) {
@@ -115,19 +115,19 @@ public interface IJBehaveElementType {
             } else if (type == JB_STORY) {
                 return new JBehaveStoryImpl(node);
             } else if (type == JB_STORY_PATH) {
-                return new StoryPathImpl(node);
+                return new JBehaveStoryPathImpl(node);
             } else if (type == JB_STORY_PATHS) {
                 return new JBehaveStoryPathsImpl(node);
             } else if (type == JB_TABLE) {
                 return new JBehaveTableImpl(node);
             } else if (type == JB_TABLE_CELL) {
-                return new ParserTableCellImpl(node);
+                return new JBehaveTableCellImpl(node);
             } else if (type == JB_TABLE_CELL_EMPTY) {
                 return new JBehaveTableCellEmptyImpl(node);
             } else if (type == JB_TABLE_ROW) {
                 return new JBehaveTableRowImpl(node);
             } else if (type == JB_URI) {
-                return new ParserUriImpl(node);
+                return new JBehaveUriImpl(node);
             } else if (type == JB_URI_IDENTIFIER) {
                 return new JBehaveUriIdentifierImpl(node);
             } else if (type == JB_URI_WORD) {

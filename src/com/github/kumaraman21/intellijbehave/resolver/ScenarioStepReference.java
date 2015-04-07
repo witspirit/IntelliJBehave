@@ -135,6 +135,12 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
         return theAnnotations.contains(psiAnnotation);
     }
 
+    public Set<PsiAnnotation> getAnnotations() {
+        HashSet<PsiAnnotation> result = new HashSet<PsiAnnotation>();
+        result.addAll(theAnnotations);
+        return result;
+    }
+
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {

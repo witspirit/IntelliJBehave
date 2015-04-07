@@ -72,12 +72,12 @@ public class JavaStepDefinitionsIndex {
 
     @NotNull
     public TokenMap findAllStepDefinitionsByType(@NotNull ScenarioStep step) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(step);
-
-        if (module == null) {
-            return new TokenMap();
-        }
         if (needsUpdate.get()) {
+            Module module = ModuleUtilCore.findModuleForPsiElement(step);
+
+            if (module == null) {
+                return new TokenMap();
+            }
             this.tokenMap = loadStepsFor(module);
             updated();
         }
@@ -127,13 +127,13 @@ public class JavaStepDefinitionsIndex {
         return "";
     }
 
-    private String getTableOffset(@NotNull final ScenarioStep step) {
-        String storyLine = step.getAnnotatedStoryLine();
-        if (step.hasStoryStepPostParameters()) {
-            return storyLine + " dummy";
-        }
-        return storyLine;
-    }
+//    private String getTableOffset(@NotNull final ScenarioStep step) {
+//        String storyLine = step.getAnnotatedStoryLine();
+//        if (step.hasStoryStepPostParameters()) {
+//            return storyLine + " dummy";
+//        }
+//        return storyLine;
+//    }
 
     @NotNull
     public TokenMap loadStepsFor(@NotNull Module module) {

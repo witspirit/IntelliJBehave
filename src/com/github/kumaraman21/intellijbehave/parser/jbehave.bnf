@@ -56,10 +56,10 @@ MetaValue::= (Word|TOKEN_COLON)+
 
 private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
 
-Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText {pin=1 }
+Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText? {pin=1 }
 NarrativeText ::= MultiTextLine
 
-GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline {pin=1}
+GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths? Newline {pin=1}
 StoryPaths ::= StoryPath ( SpaceStar Newline? ',' Newline? SpaceStar StoryPath)* {pin=1}
 StoryPath ::= TOKEN_PATH {pin=1}
 

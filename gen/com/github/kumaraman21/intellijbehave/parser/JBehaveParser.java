@@ -135,7 +135,7 @@ public class JBehaveParser implements PsiParser {
     }
 
     /* ********************************************************** */
-    // TOKEN_GIVEN_STORIES SpaceStar StoryPaths Newline
+    // TOKEN_GIVEN_STORIES SpaceStar StoryPaths? Newline
     public static boolean GivenStories(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "GivenStories")) return false;
         if (!nextTokenIs(b, JB_TOKEN_GIVEN_STORIES)) return false;
@@ -144,10 +144,17 @@ public class JBehaveParser implements PsiParser {
         r = consumeToken(b, JB_TOKEN_GIVEN_STORIES);
         p = r; // pin = 1
         r = r && report_error_(b, SpaceStar(b, l + 1));
-        r = p && report_error_(b, StoryPaths(b, l + 1)) && r;
+        r = p && report_error_(b, GivenStories_2(b, l + 1)) && r;
         r = p && Newline(b, l + 1) && r;
         exit_section_(b, l, m, JB_GIVEN_STORIES, r, p, null);
         return r || p;
+    }
+
+    // StoryPaths?
+    private static boolean GivenStories_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "GivenStories_2")) return false;
+        StoryPaths(b, l + 1);
+        return true;
     }
 
     /* ********************************************************** */
@@ -502,7 +509,7 @@ public class JBehaveParser implements PsiParser {
     }
 
     /* ********************************************************** */
-    // TOKEN_NARRATIVE Newline? NarrativeText
+    // TOKEN_NARRATIVE Newline? NarrativeText?
     public static boolean Narrative(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "Narrative")) return false;
         if (!nextTokenIs(b, JB_TOKEN_NARRATIVE)) return false;
@@ -511,7 +518,7 @@ public class JBehaveParser implements PsiParser {
         r = consumeToken(b, JB_TOKEN_NARRATIVE);
         p = r; // pin = 1
         r = r && report_error_(b, Narrative_1(b, l + 1));
-        r = p && NarrativeText(b, l + 1) && r;
+        r = p && Narrative_2(b, l + 1) && r;
         exit_section_(b, l, m, JB_NARRATIVE, r, p, null);
         return r || p;
     }
@@ -520,6 +527,13 @@ public class JBehaveParser implements PsiParser {
     private static boolean Narrative_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "Narrative_1")) return false;
         Newline(b, l + 1);
+        return true;
+    }
+
+    // NarrativeText?
+    private static boolean Narrative_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Narrative_2")) return false;
+        NarrativeText(b, l + 1);
         return true;
     }
 

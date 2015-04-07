@@ -16,7 +16,10 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighter;
-import com.github.kumaraman21.intellijbehave.parser.*;
+import com.github.kumaraman21.intellijbehave.parser.ParserRule;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.parser.StoryPath;
+import com.github.kumaraman21.intellijbehave.parser.StoryPathPsiReference;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveScenarioTitle;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
@@ -113,13 +116,14 @@ public class JBehaveAnnotator implements Annotator {
                 }
                 PsiElement elementAt = step.getContainingFile().findElementAt(offset);
                 if (elementAt != null) {
-                    ASTNode node = elementAt.getNode();
-                    if (node != null) {
-                        IElementType elementType = node.getElementType();
-                        if (elementType == IJBehaveElementType.JB_TOKEN_WORD) {
-                            infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
-                        }
-                    }
+                    infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
+//                    ASTNode node = elementAt.getNode();
+//                    if (node != null) {
+//                        IElementType elementType = node.getElementType();
+//                        if (elementType == IJBehaveElementType.JB_TOKEN_WORD) {
+//                            infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
+//                        }
+//                    }
                 }
             }
             ++i;

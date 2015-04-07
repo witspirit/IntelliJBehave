@@ -55,7 +55,7 @@ public class JBehaveCompletionContributor extends CompletionContributor {
         // suggest only if at least the actualStepPrefix is complete
         if (isStepTypeComplete(keywords, textBeforeCaret)) {
             StepSuggester stepAnnotationFinder = new StepSuggester(prefixMatcher, stepType, actualStepPrefix,
-                    textBeforeCaret, consumer, step.getProject());
+                    textBeforeCaret, consumer, step.hasStoryStepPostParameters(), step.getProject());
             ScanUtils.iterateInContextOf(step, stepAnnotationFinder);
         }
     }
@@ -137,14 +137,17 @@ public class JBehaveCompletionContributor extends CompletionContributor {
         private final String actualStepPrefix;
         private final String textBeforeCaret;
         private final Consumer<LookupElement> consumer;
+        private final boolean hasPostParameter;
 
         private StepSuggester(PrefixMatcher prefixMatcher, StepType stepType, String actualStepPrefix,
-                              String textBeforeCaret, Consumer<LookupElement> consumer, Project project) {
+                              String textBeforeCaret, Consumer<LookupElement> consumer, boolean hasPostParameter,
+                              Project project) {
             super(stepType, project);
             this.prefixMatcher = prefixMatcher;
             this.actualStepPrefix = actualStepPrefix;
             this.textBeforeCaret = textBeforeCaret;
             this.consumer = consumer;
+            this.hasPostParameter = hasPostParameter;
         }
 
         @Override
@@ -157,7 +160,7 @@ public class JBehaveCompletionContributor extends CompletionContributor {
             String adjustedAnnotationText = actualStepPrefix + " " + annotationText;
 
             ParametrizedString pString = new ParametrizedString(adjustedAnnotationText);
-            String complete = pString.complete(textBeforeCaret);
+            String complete = pString.complete(textBeforeCaret, hasPostParameter);
             if (StringUtil.isNotEmpty(complete)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, complete));
@@ -180,7 +183,8 @@ public class JBehaveCompletionContributor extends CompletionContributor {
                 String adjustedAnnotationText = actualStepPrefix + " " + annotationText;
 
                 ParametrizedString pString = new ParametrizedString(adjustedAnnotationText);
-                String complete = pString.complete(textBeforeCaret);
+                String complete = pString.complete(textBeforeCaret, hasPostParameter);
+
                 if (StringUtil.isNotEmpty(complete)) {
                     PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
                     consumer.consume(LookupElementBuilder.create(matchingAnnotation, complete));
