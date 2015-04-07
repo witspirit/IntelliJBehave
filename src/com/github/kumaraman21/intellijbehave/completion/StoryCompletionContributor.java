@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.completion;
 
-import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
+import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionAnnotation;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
@@ -35,20 +35,25 @@ public class StoryCompletionContributor extends CompletionContributor {
     public void fillCompletionVariants(@NotNull CompletionParameters parameters,
                                        @NotNull final CompletionResultSet _result) {
         if (parameters.getCompletionType() == CompletionType.BASIC) {
+            JBehaveStep step = getStepPsiElement(parameters);
+            if (step == null) {
+                return;
+            }
             String prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(parameters);
             CompletionResultSet result = _result.withPrefixMatcher(prefix);
 
             LocalizedKeywords keywords = lookupLocalizedKeywords(parameters);
             Consumer<LookupElement> consumer = newConsumer(_result);
 
-            addAllKeywords(result.getPrefixMatcher(), consumer, keywords);
+            //addAllKeywords(result.getPrefixMatcher(), consumer, keywords);
             addAllSteps(parameters, result.getPrefixMatcher(), consumer, keywords);
         }
     }
 
     private LocalizedKeywords lookupLocalizedKeywords(CompletionParameters parameters) {
         String locale = "en";
-        ASTNode localeNode = parameters.getOriginalFile().getNode().findChildByType(StoryTokenType.COMMENT_WITH_LOCALE);
+        ASTNode localeNode = parameters.getOriginalFile().getNode().findChildByType(
+                IStoryPegElementType.STORY_TOKEN_COMMENT);
         if (localeNode != null) {
             String localeFound = LocalizedStorySupport.checkForLanguageDefinition(localeNode.getText());
             if (localeFound != null) {
@@ -67,29 +72,29 @@ public class StoryCompletionContributor extends CompletionContributor {
         };
     }
 
-    private static void addAllKeywords(PrefixMatcher prefixMatcher, Consumer<LookupElement> consumer,
-                                       LocalizedKeywords keywords) {
-        addIfMatches(consumer, prefixMatcher, keywords.narrative());
-        addIfMatches(consumer, prefixMatcher, keywords.asA());
-        addIfMatches(consumer, prefixMatcher, keywords.inOrderTo());
-        addIfMatches(consumer, prefixMatcher, keywords.iWantTo());
-        //
-        addIfMatches(consumer, prefixMatcher, keywords.givenStories());
-        addIfMatches(consumer, prefixMatcher, keywords.ignorable());
-        addIfMatches(consumer, prefixMatcher, keywords.scenario());
-        addIfMatches(consumer, prefixMatcher, keywords.examplesTable());
-        //
-        addIfMatches(consumer, prefixMatcher, keywords.given());
-        addIfMatches(consumer, prefixMatcher, keywords.when());
-        addIfMatches(consumer, prefixMatcher, keywords.then());
-        addIfMatches(consumer, prefixMatcher, keywords.and());
-    }
-
-    private static void addIfMatches(Consumer<LookupElement> consumer, PrefixMatcher prefixMatchers, String input) {
-        if (prefixMatchers.prefixMatches(input)) {
-            consumer.consume(LookupElementBuilder.create(input));
-        }
-    }
+//    private static void addAllKeywords(PrefixMatcher prefixMatcher, Consumer<LookupElement> consumer,
+//                                       LocalizedKeywords keywords) {
+//        addIfMatches(consumer, prefixMatcher, keywords.narrative());
+//        addIfMatches(consumer, prefixMatcher, keywords.asA());
+//        addIfMatches(consumer, prefixMatcher, keywords.inOrderTo());
+//        addIfMatches(consumer, prefixMatcher, keywords.iWantTo());
+//        //
+//        addIfMatches(consumer, prefixMatcher, keywords.givenStories());
+//        addIfMatches(consumer, prefixMatcher, keywords.ignorable());
+//        addIfMatches(consumer, prefixMatcher, keywords.scenario());
+//        addIfMatches(consumer, prefixMatcher, keywords.examplesTable());
+//        //
+//        addIfMatches(consumer, prefixMatcher, keywords.given());
+//        addIfMatches(consumer, prefixMatcher, keywords.when());
+//        addIfMatches(consumer, prefixMatcher, keywords.then());
+//        addIfMatches(consumer, prefixMatcher, keywords.and());
+//    }
+//
+//    private static void addIfMatches(Consumer<LookupElement> consumer, PrefixMatcher prefixMatchers, String input) {
+//        if (prefixMatchers.prefixMatches(input)) {
+//            consumer.consume(LookupElementBuilder.create(input));
+//        }
+//    }
 
     private static void addAllSteps(CompletionParameters parameters, PrefixMatcher prefixMatcher,
                                     Consumer<LookupElement> consumer, LocalizedKeywords keywords) {

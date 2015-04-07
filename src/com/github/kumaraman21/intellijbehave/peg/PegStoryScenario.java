@@ -27,13 +27,8 @@ public class PegStoryScenario extends ASTWrapperPsiElement {
     }
 
     public String getTitle() {
-        StoryScenario scen = (StoryScenario) getOriginalElement();
-        StoryScenarioTitle scenarioTitle = scen.getScenarioTitle();
-        if (scenarioTitle != null) {
-            String text = scenarioTitle.getText();
-            return "Scenario: " + text;
-        }
-        return "Scenario";
+        final StoryScenarioTitle scenarioTitle = ((StoryScenario) getOriginalElement()).getScenarioTitle();
+        return scenarioTitle != null ? scenarioTitle.getText() : "";
     }
 
     public Collection<? extends PsiElement> getSteps() {

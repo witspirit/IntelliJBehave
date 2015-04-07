@@ -3,6 +3,8 @@ package com.github.kumaraman21.intellijbehave.structureView;
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.parser.StoryFile;
 import com.github.kumaraman21.intellijbehave.peg.PegStoryScenario;
+import com.github.kumaraman21.intellijbehave.psi.StoryGivenStories;
+import com.github.kumaraman21.intellijbehave.psi.StoryMetaElement;
 import com.github.kumaraman21.intellijbehave.psi.StoryMetaStatement;
 import com.github.kumaraman21.intellijbehave.psi.StoryNarrative;
 import com.intellij.icons.AllIcons;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by DeBritoD on 03.04.2015.
@@ -59,9 +62,24 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
                 @Nullable
                 @Override
                 public String getPresentableText() {
-                    String text = element.getText().replace("\n", " ");
-                    if (text.length() > 40) {
-                        text = text.substring(0, 40) + "...";
+                    String text = "";
+
+                    try {
+                        if (element instanceof StoryMetaStatement) {
+                            List<StoryMetaElement> elements = ((StoryMetaStatement) element).getMetaElementList();
+                            if (!elements.isEmpty()) {
+                                text = elements.get(0).getText();
+                            } else text = "";
+                        } else if (element instanceof StoryNarrative)
+                            text = ((StoryNarrative) element).getNarrativeText().getText();
+                        else if (element instanceof StoryGivenStories)
+                            text = ((StoryGivenStories) element).getStoryPaths().getText();
+                        text = text.replace("\n", " ");
+                        if (text.length() > 40) {
+                            text = text.substring(0, 40) + "...";
+                        }
+                    } catch (NullPointerException e) {
+                        text = "";
                     }
                     return text;
                 }
@@ -77,6 +95,7 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
                 public Icon getIcon(boolean unused) {
                     if (element instanceof StoryMetaStatement) return JBehaveIcons.META;
                     if (element instanceof StoryNarrative) return JBehaveIcons.NARRATIVE;
+                    if (element instanceof StoryGivenStories) return JBehaveIcons.GIVEN_STORIES;
                     return AllIcons.Hierarchy.Base;
                 }
             };

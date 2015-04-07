@@ -103,10 +103,14 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     public String getAnnotatedStoryLine() {
         StepType stepType = getStepType();
-        StoryStepLine storyStepLine = getStoryStepLine();
         String lowerCase = stepType.toString().toLowerCase();
-        lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
-        return String.format("%s %s", lowerCase, storyStepLine.getText());
+
+        StoryStepLine storyStepLine = getStoryStepLine();
+        if (storyStepLine != null) {
+            lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
+            return String.format("%s %s", lowerCase, storyStepLine.getText());
+        }
+        return lowerCase;
     }
 
 

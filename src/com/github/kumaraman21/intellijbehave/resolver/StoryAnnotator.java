@@ -26,7 +26,6 @@ import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
-import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -45,17 +44,11 @@ import java.util.Map;
 import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.StringToken;
 
 public class StoryAnnotator implements Annotator {
-    private TokenMap tokens = null;
-
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
         if (psiElement instanceof JBehaveStep) {
             JBehaveStep step = (JBehaveStep) psiElement;
-            JBehaveStepsIndex jBehaveStepsIndex = JBehaveStepsIndex.getInstance(step.getProject());
-            if (tokens == null) {
-                tokens = jBehaveStepsIndex.findAllStepDefinitionsByType(step);
-            }
-            Iterator<JavaStepDefinition> it = jBehaveStepsIndex.getJavaStepDefinitions(step, tokens).iterator();
+            Iterator<JavaStepDefinition> it = JBehaveStepsIndex.getInstance(step.getProject()).findStepDefinitions(step).iterator();
             if (it.hasNext()) {
                 annotateParameters(step, it.next(), annotationHolder);
             } else {

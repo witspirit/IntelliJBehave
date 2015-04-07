@@ -16,4 +16,5 @@ public class JBehaveIcons {
     public static final Icon NARRATIVE = IconLoader.getIcon("/fileTypes/bdd-n-darkred.png"); // 16x16
     public static final Icon META = IconLoader.getIcon("/fileTypes/bdd-m-pink.png"); // 16x16
     public static final Icon EXAMPLES = IconLoader.getIcon("/fileTypes/bdd-e-turquoise.png"); // 16x16
+    public static final Icon GIVEN_STORIES = IconLoader.getIcon("/fileTypes/bdd-jb-lightblue.png"); // 16x16
 }

@@ -1,15 +1,17 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
 import com.github.kumaraman21.intellijbehave.utility.TokenMap;
+import com.intellij.lang.Language;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -20,15 +22,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Arrays.asList;
 
 public class JBehaveStepsIndex {
-
-    private static final TreeSet<JavaStepDefinition> emptyTreeSet = new TreeSet<JavaStepDefinition>();
+    private TokenMap tokenMap = new TokenMap();
+    private AtomicBoolean needsUpdate = new AtomicBoolean(true);
+    private final PsiManager manager;
+    private ChangeListener changeListener = new ChangeListener(this);
 
     public static JBehaveStepsIndex getInstance(Project project) {
         return ServiceManager.getService(project, JBehaveStepsIndex.class);
+    }
+
+    private synchronized void needsUpdate() {
+        manager.removePsiTreeChangeListener(changeListener);
+        needsUpdate.set(true);
+    }
+
+    private synchronized void updated() {
+        needsUpdate.set(false);
+        manager.addPsiTreeChangeListener(changeListener);
+    }
+
+    public JBehaveStepsIndex(Project project) {
+        manager = PsiManager.getInstance(project);
     }
 
     @NotNull
@@ -38,8 +57,11 @@ public class JBehaveStepsIndex {
         if (module == null) {
             return new TokenMap();
         }
-
-        return loadStepsFor(module);
+        if (needsUpdate.get()) {
+            this.tokenMap = loadStepsFor(module);
+            updated();
+        }
+        return this.tokenMap;
     }
 
     @NotNull
@@ -74,11 +96,15 @@ public class JBehaveStepsIndex {
     }
 
     private String getStoryLineShrinked(@NotNull final JBehaveStep step) {
-        String storyLine = step.getStoryStepLine().getText();
-        if (step.hasStoryStepPostParameters()) {
-            return storyLine + " dummy";
+        StoryStepLine storyStepLine = step.getStoryStepLine();
+        if (storyStepLine != null) {
+            String storyLine = storyStepLine.getText();
+            if (step.hasStoryStepPostParameters()) {
+                return storyLine + " dummy";
+            }
+            return storyLine;
         }
-        return storyLine;
+        return "";
     }
 
     private String getTableOffset(@NotNull final JBehaveStep step) {
@@ -146,5 +172,87 @@ public class JBehaveStepsIndex {
         }
 
         return null;
+    }
+
+    private class ChangeListener implements PsiTreeChangeListener {
+        private JBehaveStepsIndex theIndexer;
+
+        public ChangeListener(JBehaveStepsIndex theIndexer) {
+            this.theIndexer = theIndexer;
+        }
+
+        @Override
+        public void beforeChildAddition(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        @Override
+        public void beforeChildRemoval(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        @Override
+        public void beforeChildReplacement(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        @Override
+        public void beforeChildMovement(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        @Override
+        public void beforeChildrenChange(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        @Override
+        public void beforePropertyChange(@NotNull PsiTreeChangeEvent event) {
+
+        }
+
+        private void changed(@NotNull PsiTreeChangeEvent event) {
+            PsiFile file = event.getFile();
+            if (file != null) {
+                Language language = file.getLanguage();
+                if (language == JavaLanguage.INSTANCE) {
+                    theIndexer.needsUpdate();
+                }
+            }
+        }
+
+        @Override
+        public void childAdded(@NotNull PsiTreeChangeEvent event) {
+            changed(event);
+        }
+
+        @Override
+        public void childRemoved(@NotNull PsiTreeChangeEvent event) {
+            changed(event);
+
+        }
+
+        @Override
+        public void childReplaced(@NotNull PsiTreeChangeEvent event) {
+            changed(event);
+
+        }
+
+        @Override
+        public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
+            changed(event);
+
+        }
+
+        @Override
+        public void childMoved(@NotNull PsiTreeChangeEvent event) {
+            changed(event);
+
+        }
+
+        @Override
+        public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
+
+        }
     }
 }

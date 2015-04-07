@@ -15,7 +15,6 @@
  */
 package com.github.kumaraman21.intellijbehave.peg;
 
-import com.github.kumaraman21.intellijbehave.highlighter.LexicalState;
 import com.intellij.lexer.FlexAdapter;
 
 import java.io.Reader;
@@ -23,9 +22,5 @@ import java.io.Reader;
 public class StoryPegLexer extends FlexAdapter {
     public StoryPegLexer() {
         super(new _StoryPegLexer((Reader) null));
-    }
-
-    public LexicalState lexerState() {
-        return LexicalState.fromLexer(getFlex().yystate());
     }
 }
