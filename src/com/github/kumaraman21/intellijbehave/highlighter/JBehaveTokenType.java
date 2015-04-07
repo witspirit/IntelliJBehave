@@ -18,7 +18,7 @@ package com.github.kumaraman21.intellijbehave.highlighter;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 
 public class JBehaveTokenType extends IElementType {
 
@@ -26,7 +26,7 @@ public class JBehaveTokenType extends IElementType {
     private final String key;
 
     public JBehaveTokenType(@NonNls String debugName) {
-        super(debugName, STORY_FILE_TYPE.getLanguage());
+        super(debugName, JBEHAVE_FILE_TYPE.getLanguage());
         this.key = debugName;
     }
 

@@ -23,7 +23,7 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
     }
 
 //    private static SpacingBuilder createSpaceBuilder(CodeStyleSettings settings) {
-//        return new SpacingBuilder(settings, StoryFileType.STORY_FILE_TYPE.getLanguage()).
+//        return new SpacingBuilder(settings, StoryFileType.JBEHAVE_FILE_TYPE.getLanguage()).
 //                around(SimpleTypes.SEPARATOR).spaceIf(settings.SPACE_AROUND_ASSIGNMENT_OPERATORS).
 //                before(SimpleTypes.PROPERTY).none();
 //    }

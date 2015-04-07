@@ -16,8 +16,8 @@
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -63,16 +63,16 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
                 Project project = method.getProject();
                 StepUsageFinder stepUsageFinder = new StepUsageFinder(project);
                 ProjectRootManager.getInstance(project).getFileIndex().iterateContent(stepUsageFinder);
-                Set<JBehaveStep> stepUsages = stepUsageFinder.getStepUsages();
+                Set<ScenarioStep> stepUsages = stepUsageFinder.getStepUsages();
 
-                for (JBehaveStep step : stepUsages) {
+                for (ScenarioStep step : stepUsages) {
                     PsiReference[] references = step.getReferences();
 
-                    if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
+                    if (references.length != 1 || !(references[0] instanceof ScenarioStepReference)) {
                         return;
                     }
 
-                    StepPsiReference reference = (StepPsiReference) references[0];
+                    ScenarioStepReference reference = (ScenarioStepReference) references[0];
                     JavaStepDefinition definition = reference.resolveToDefinition();
 
                     if (definition != null && definition.getAnnotatedMethod() != null && definition.getAnnotatedMethod().isEquivalentTo(
@@ -88,7 +88,7 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
 
     private static class StepUsageFinder implements ContentIterator {
         private Project project;
-        private Set<JBehaveStep> stepUsages = newHashSet();
+        private Set<ScenarioStep> stepUsages = newHashSet();
 
         private StepUsageFinder(Project project) {
             this.project = project;
@@ -102,13 +102,13 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
 
             PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
             if (psiFile instanceof JBehaveFile) {
-                List<JBehaveStep> steps = ((JBehaveFile) psiFile).getSteps();
+                List<ScenarioStep> steps = ((JBehaveFile) psiFile).getSteps();
                 stepUsages.addAll(steps);
             }
             return true;
         }
 
-        public Set<JBehaveStep> getStepUsages() {
+        public Set<ScenarioStep> getStepUsages() {
             return stepUsages;
         }
     }

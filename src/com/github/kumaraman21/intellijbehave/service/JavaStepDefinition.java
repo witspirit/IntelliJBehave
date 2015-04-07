@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -158,7 +158,7 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
         return myElementPointer.hashCode();
     }
 
-    public boolean supportsStep(@NotNull JBehaveStep step) {
+    public boolean supportsStep(@NotNull ScenarioStep step) {
         StepType stepType = step.getStepType();
         if (stepType == StepType.AND) return true;
         StepType annotationType = getAnnotationType();

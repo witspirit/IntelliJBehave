@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.codeStyle;
 
-import com.github.kumaraman21.intellijbehave.language.StoryLanguage;
+import com.github.kumaraman21.intellijbehave.language.JBehaveLanguage;
 import com.intellij.application.options.CodeStyleAbstractConfigurable;
 import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
@@ -53,7 +53,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
 
     private static class JBehaveCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
         public JBehaveCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
-            super(StoryLanguage.STORY_LANGUAGE, currentSettings, settings);
+            super(JBehaveLanguage.JBEHAVE_LANGUAGE, currentSettings, settings);
         }
     }
 }

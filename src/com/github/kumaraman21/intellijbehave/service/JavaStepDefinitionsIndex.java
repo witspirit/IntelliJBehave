@@ -1,7 +1,7 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveStepLine;
 import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
@@ -26,18 +26,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Arrays.asList;
 
-public class JBehaveStepsIndex {
+public class JavaStepDefinitionsIndex {
     private final PsiManager manager;
     private TokenMap tokenMap = new TokenMap();
     private AtomicBoolean needsUpdate = new AtomicBoolean(true);
     private ChangeListener changeListener = new ChangeListener(this);
 
-    public JBehaveStepsIndex(Project project) {
+    public JavaStepDefinitionsIndex(Project project) {
         manager = PsiManager.getInstance(project);
     }
 
-    public static JBehaveStepsIndex getInstance(Project project) {
-        return ServiceManager.getService(project, JBehaveStepsIndex.class);
+    public static JavaStepDefinitionsIndex getInstance(Project project) {
+        return ServiceManager.getService(project, JavaStepDefinitionsIndex.class);
     }
 
     @NotNull
@@ -71,7 +71,7 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    public TokenMap findAllStepDefinitionsByType(@NotNull JBehaveStep step) {
+    public TokenMap findAllStepDefinitionsByType(@NotNull ScenarioStep step) {
         Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
         if (module == null) {
@@ -85,13 +85,13 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
+    public Collection<JavaStepDefinition> findStepDefinitions(@NotNull ScenarioStep step) {
         final TokenMap tokenMap = findAllStepDefinitionsByType(step);
         return getJavaStepDefinitions(step, tokenMap);
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> getJavaStepDefinitions(@NotNull JBehaveStep step,
+    public Collection<JavaStepDefinition> getJavaStepDefinitions(@NotNull ScenarioStep step,
                                                                  @NotNull TokenMap tokenMap) {
         if (tokenMap.isEmpty()) return Collections.emptyList();
         final Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
@@ -115,8 +115,8 @@ public class JBehaveStepsIndex {
         return definitionsByClass.values();
     }
 
-    private String getStoryLineShrinked(@NotNull final JBehaveStep step) {
-        StoryStepLine storyStepLine = step.getStoryStepLine();
+    private String getStoryLineShrinked(@NotNull final ScenarioStep step) {
+        JBehaveStepLine storyStepLine = step.getStoryStepLine();
         if (storyStepLine != null) {
             String storyLine = storyStepLine.getText();
             if (step.hasStoryStepPostParameters()) {
@@ -127,7 +127,7 @@ public class JBehaveStepsIndex {
         return "";
     }
 
-    private String getTableOffset(@NotNull final JBehaveStep step) {
+    private String getTableOffset(@NotNull final ScenarioStep step) {
         String storyLine = step.getAnnotatedStoryLine();
         if (step.hasStoryStepPostParameters()) {
             return storyLine + " dummy";
@@ -175,9 +175,9 @@ public class JBehaveStepsIndex {
     }
 
     private class ChangeListener implements PsiTreeChangeListener {
-        private JBehaveStepsIndex theIndexer;
+        private JavaStepDefinitionsIndex theIndexer;
 
-        public ChangeListener(JBehaveStepsIndex theIndexer) {
+        public ChangeListener(JavaStepDefinitionsIndex theIndexer) {
             this.theIndexer = theIndexer;
         }
 

@@ -129,35 +129,33 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable"/>
-        <spellchecker.support language="Story"
+        <spellchecker.support language="JBehave"
                               implementationClass="com.github.kumaraman21.intellijbehave.spellchecker.JBehaveSpellcheckerStrategy"/>
-        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.StoryFileTypeFactory"/>
-        <lang.parserDefinition language="Story"
+        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.JBehaveFileTypeFactory"/>
+        <lang.parserDefinition language="JBehave"
                                implementationClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParserDefinition"/>
-        <annotator language="Story"
-                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
-        <lang.commenter language="Story"
-                        implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
-        <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>
-        <completion.contributor language="Story"
-                                implementationClass="com.github.kumaraman21.intellijbehave.completion.StoryCompletionContributor"/>
+        <annotator language="JBehave"
+                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.JBehaveAnnotator"/>
+        <lang.commenter language="JBehave"
+                        implementationClass="com.github.kumaraman21.intellijbehave.commenter.JBehaveCommenter"/>
+        <colorSettingsPage
+                implementation="com.github.kumaraman21.intellijbehave.highlighter.JBehaveColorsAndFontsPage"/>
+        <completion.contributor language="JBehave"
+                                implementationClass="com.github.kumaraman21.intellijbehave.completion.JBehaveCompletionContributor"/>
 
         <referencesSearch
-                implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaStepDefinitionSearch"/>
+                implementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsSearch"/>
         <methodReferencesSearch
-                implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaMethodUsageSearcher"/>
+                implementation="com.github.kumaraman21.intellijbehave.service.JavaMethodUsageSearcher"/>
         <!--code inspections-->
         <localInspection id="unusedStepDeclaration" language="JAVA" displayName="Unused step declaration"
                          groupName="JBehave" enabledByDefault="false" level="WARNING"
                          implementationClass="com.github.kumaraman21.intellijbehave.codeInspector.UnusedStepDeclarationInspection"/>
-        <localInspection id="undefinedStep" language="Story" displayName="Undefined step"
-                         groupName="JBehave" enabledByDefault="true" level="WARNING"
-                         implementationClass="com.github.kumaraman21.intellijbehave.codeInspector.UndefinedStepInspection"/>
         <psi.referenceContributor
-                implementation="com.github.kumaraman21.intellijbehave.resolver.StepPsiReferenceContributor"/>
+                implementation="com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReferenceContributor"/>
 
-        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"
-                        serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
+        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"
+                        serviceImplementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"/>
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
         <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler" />
@@ -166,10 +164,13 @@
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveNameSuggestionProvider"/>
         <elementDescriptionProvider
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
-        <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder" language="Story"/>
+        <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder"
+                        language="JBehave"/>
         <codeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
-        <lang.foldingBuilder language="Story" implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
-        <lang.psiStructureViewFactory language="Story" implementationClass="com.github.kumaraman21.intellijbehave.structureView.JBehavePsiStructureViewFactory"/>
+        <lang.foldingBuilder language="JBehave"
+                             implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
+        <lang.psiStructureViewFactory language="JBehave"
+                                      implementationClass="com.github.kumaraman21.intellijbehave.structureView.StructureViewFactory"/>
     </extensions>
 </idea-plugin>

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.*;
 
-public class JBehaveJavaStepDefinitionSearch implements QueryExecutor<PsiReference, SearchParameters> {
+public class JavaStepDefinitionsSearch implements QueryExecutor<PsiReference, SearchParameters> {
     public boolean execute(@NotNull final SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
         PsiElement myElement = queryParameters.getElementToSearch();
 

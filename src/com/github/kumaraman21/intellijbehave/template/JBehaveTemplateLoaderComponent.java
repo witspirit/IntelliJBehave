@@ -24,16 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
 public class JBehaveTemplateLoaderComponent implements ApplicationComponent {
     @Override
     public void initComponent() {
-        FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
+        FileTemplate template = FileTemplateManager.getInstance().getTemplate(JBEHAVE_FILE_TYPE.getName());
         if (template == null) {
-            template = FileTemplateManager.getInstance().addTemplate(STORY_FILE_TYPE.getName(),
-                    STORY_FILE_TYPE.getDefaultExtension());
+            template = FileTemplateManager.getInstance().addTemplate(JBEHAVE_FILE_TYPE.getName(),
+                    JBEHAVE_FILE_TYPE.getDefaultExtension());
 
             InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");
             try {

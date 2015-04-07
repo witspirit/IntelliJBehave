@@ -15,7 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -31,12 +31,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class JBehaveGivenStories extends JBehaveRule {
+public class GivenStories extends ParserRule {
 
     private static final Key<Boolean> hasStories = new Key<Boolean>("hasStories");
     private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
-    public JBehaveGivenStories(@NotNull ASTNode node) {
+    public GivenStories(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -88,7 +88,7 @@ public class JBehaveGivenStories extends JBehaveRule {
             myFiles.clear();
             Project project = getProject();
             GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
-                    GlobalSearchScope.projectScope(project), StoryFileType.STORY_FILE_TYPE);
+                    GlobalSearchScope.projectScope(project), JBehaveFileType.JBEHAVE_FILE_TYPE);
             PsiFile[] filesByName = FilenameIndex.getFilesByName(project, getFileName(), scopeRestrictedByFileTypes);
             for (final PsiFile psiFile : filesByName) {
                 if (hasSameFileNamePart(psiFile)) myFiles.add(psiFile);
@@ -101,7 +101,7 @@ public class JBehaveGivenStories extends JBehaveRule {
         PsiFile[] files = aDir.getFiles();
         if (files.length == 0) return true;
         for (PsiFile file : files) {
-            if (file.getFileType() == StoryFileType.STORY_FILE_TYPE) return true;
+            if (file.getFileType() == JBehaveFileType.JBEHAVE_FILE_TYPE) return true;
         }
         return false;
     }

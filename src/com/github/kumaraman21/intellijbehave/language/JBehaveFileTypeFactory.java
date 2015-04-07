@@ -13,33 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.commenter;
+package com.github.kumaraman21.intellijbehave.language;
 
-import com.intellij.lang.Commenter;
+import com.intellij.openapi.fileTypes.FileTypeConsumer;
+import com.intellij.openapi.fileTypes.FileTypeFactory;
+import org.jetbrains.annotations.NotNull;
 
-public class StoryCommenter implements Commenter {
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
+
+public class JBehaveFileTypeFactory extends FileTypeFactory {
     @Override
-    public String getLineCommentPrefix() {
-        return "!--";
-    }
-
-    @Override
-    public String getBlockCommentPrefix() {
-        return null;
-    }
-
-    @Override
-    public String getBlockCommentSuffix() {
-        return null;
-    }
-
-    @Override
-    public String getCommentedBlockCommentPrefix() {
-        return null;
-    }
-
-    @Override
-    public String getCommentedBlockCommentSuffix() {
-        return null;
+    public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
+        fileTypeConsumer.consume(JBEHAVE_FILE_TYPE, JBEHAVE_FILE_TYPE.getDefaultExtension());
     }
 }

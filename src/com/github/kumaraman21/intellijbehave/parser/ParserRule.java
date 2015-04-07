@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class JBehaveRule extends ASTWrapperPsiElement implements JBehaveElement {
-    public JBehaveRule(@NotNull ASTNode node) {
+public class ParserRule extends ASTWrapperPsiElement implements JBehaveElement {
+    public ParserRule(@NotNull ASTNode node) {
         super(node);
     }
 

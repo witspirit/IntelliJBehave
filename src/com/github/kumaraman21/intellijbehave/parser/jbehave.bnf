@@ -5,7 +5,7 @@
   elementTypePrefix="JB_"
   elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveElementType"
   tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveTokenType"
-  psiClassPrefix="Story"
+  psiClassPrefix="JBehave"
   psiImplClassSuffix="Impl"
   psiPackage="com.github.kumaraman21.intellijbehave.psi"
   psiImplPackage="com.github.kumaraman21.intellijbehave.psi.impl"
@@ -40,10 +40,10 @@
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     TOKEN_WORD = "regexp:([a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
   ]
-  extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.JBehaveStoryPath"
-  extends("Step")="com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
-  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.JBehaveRule"
-  extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.JBehaveStoryScenario"
+  extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
+  extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
+  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
+  extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.Scenario"
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}

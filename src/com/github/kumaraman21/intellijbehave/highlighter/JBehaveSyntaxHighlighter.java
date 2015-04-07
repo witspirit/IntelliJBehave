@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
-public class StorySyntaxHighlighter extends SyntaxHighlighterBase {
+public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
 
     @NonNls
     public static final String JB_DESCRIPTION_ID = "JBEHAVE.JB_DESCRIPTION";

@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class JBehaveStructureViewModel extends StructureViewModelBase {
-    public JBehaveStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
-        super(psiFile, editor, new JBehaveStructureViewElement(psiFile));
+public class StructureViewModel extends StructureViewModelBase {
+    public StructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+        super(psiFile, editor, new StructureViewElement(psiFile));
         withSorters(Sorter.ALPHA_SORTER);
-        withSuitableClasses(StoryDescription.class, StoryScenario.class, StoryStep.class, StoryMetaStatement.class,
-                StoryNarrative.class);
+        withSuitableClasses(JBehaveDescription.class, JBehaveScenario.class, JBehaveStep.class,
+                JBehaveMetaStatement.class, JBehaveNarrative.class);
     }
 
 }

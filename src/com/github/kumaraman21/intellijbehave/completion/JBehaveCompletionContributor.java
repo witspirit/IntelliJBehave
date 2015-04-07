@@ -1,10 +1,10 @@
 package com.github.kumaraman21.intellijbehave.completion;
 
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionAnnotation;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
-import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
@@ -27,8 +27,8 @@ import java.util.Set;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class StoryCompletionContributor extends CompletionContributor {
-    public StoryCompletionContributor() {
+public class JBehaveCompletionContributor extends CompletionContributor {
+    public JBehaveCompletionContributor() {
     }
 
     private static Consumer<LookupElement> newConsumer(final CompletionResultSet result) {
@@ -42,7 +42,7 @@ public class StoryCompletionContributor extends CompletionContributor {
 
     private static void addAllSteps(CompletionParameters parameters, PrefixMatcher prefixMatcher,
                                     Consumer<LookupElement> consumer, LocalizedKeywords keywords) {
-        JBehaveStep step = getStepPsiElement(parameters);
+        ScenarioStep step = getStepPsiElement(parameters);
         if (step == null) {
             return;
         }
@@ -89,11 +89,11 @@ public class StoryCompletionContributor extends CompletionContributor {
 //        }
 //    }
 
-    private static JBehaveStep getStepPsiElement(CompletionParameters parameters) {
+    private static ScenarioStep getStepPsiElement(CompletionParameters parameters) {
         PsiElement position = parameters.getPosition();
         while (position != null) {
-            if (position instanceof JBehaveStep) return (JBehaveStep) position;
-            if (position instanceof StepPsiReference) return ((StepPsiReference) position).getElement();
+            if (position instanceof ScenarioStep) return (ScenarioStep) position;
+            if (position instanceof ScenarioStepReference) return ((ScenarioStepReference) position).getElement();
             position = position.getParent();
         }
         return null;
@@ -103,7 +103,7 @@ public class StoryCompletionContributor extends CompletionContributor {
     public void fillCompletionVariants(@NotNull CompletionParameters parameters,
                                        @NotNull final CompletionResultSet _result) {
         if (parameters.getCompletionType() == CompletionType.BASIC) {
-            JBehaveStep step = getStepPsiElement(parameters);
+            ScenarioStep step = getStepPsiElement(parameters);
             if (step == null) {
                 return;
             }

@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.codeStyle;
 
-import com.github.kumaraman21.intellijbehave.language.StoryLanguage;
+import com.github.kumaraman21.intellijbehave.language.JBehaveLanguage;
 import com.intellij.lang.Language;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
@@ -13,7 +13,7 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
     @NotNull
     @Override
     public Language getLanguage() {
-        return StoryLanguage.STORY_LANGUAGE;
+        return JBehaveLanguage.JBEHAVE_LANGUAGE;
     }
 
     @Override

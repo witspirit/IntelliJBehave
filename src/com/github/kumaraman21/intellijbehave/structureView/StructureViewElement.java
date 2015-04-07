@@ -2,11 +2,11 @@ package com.github.kumaraman21.intellijbehave.structureView;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStoryScenario;
-import com.github.kumaraman21.intellijbehave.psi.StoryGivenStories;
-import com.github.kumaraman21.intellijbehave.psi.StoryMetaElement;
-import com.github.kumaraman21.intellijbehave.psi.StoryMetaStatement;
-import com.github.kumaraman21.intellijbehave.psi.StoryNarrative;
+import com.github.kumaraman21.intellijbehave.parser.Scenario;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveGivenStories;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveMetaElement;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveMetaStatement;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveNarrative;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
@@ -25,10 +25,10 @@ import java.util.List;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class JBehaveStructureViewElement implements StructureViewTreeElement {
+public class StructureViewElement implements StructureViewTreeElement {
     private NavigatablePsiElement element;
 
-    public JBehaveStructureViewElement(NavigatablePsiElement element) {
+    public StructureViewElement(NavigatablePsiElement element) {
         this.element = element;
     }
 
@@ -65,15 +65,15 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
                     String text = "";
 
                     try {
-                        if (element instanceof StoryMetaStatement) {
-                            List<StoryMetaElement> elements = ((StoryMetaStatement) element).getMetaElementList();
+                        if (element instanceof JBehaveMetaStatement) {
+                            List<JBehaveMetaElement> elements = ((JBehaveMetaStatement) element).getMetaElementList();
                             if (!elements.isEmpty()) {
                                 text = elements.get(0).getText();
                             } else text = "";
-                        } else if (element instanceof StoryNarrative)
-                            text = ((StoryNarrative) element).getNarrativeText().getText();
-                        else if (element instanceof StoryGivenStories)
-                            text = ((StoryGivenStories) element).getStoryPaths().getText();
+                        } else if (element instanceof JBehaveNarrative)
+                            text = ((JBehaveNarrative) element).getNarrativeText().getText();
+                        else if (element instanceof JBehaveGivenStories)
+                            text = ((JBehaveGivenStories) element).getStoryPaths().getText();
                         text = text.replace("\n", " ");
                         if (text.length() > 40) {
                             text = text.substring(0, 40) + "...";
@@ -93,9 +93,9 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
                 @Nullable
                 @Override
                 public Icon getIcon(boolean unused) {
-                    if (element instanceof StoryMetaStatement) return JBehaveIcons.META;
-                    if (element instanceof StoryNarrative) return JBehaveIcons.NARRATIVE;
-                    if (element instanceof StoryGivenStories) return JBehaveIcons.GIVEN_STORIES;
+                    if (element instanceof JBehaveMetaStatement) return JBehaveIcons.META;
+                    if (element instanceof JBehaveNarrative) return JBehaveIcons.NARRATIVE;
+                    if (element instanceof JBehaveGivenStories) return JBehaveIcons.GIVEN_STORIES;
                     return AllIcons.Hierarchy.Base;
                 }
             };
@@ -109,14 +109,14 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
         Collection<? extends PsiElement> structureViewChildren;
         if (element instanceof JBehaveFile) {
             structureViewChildren = ((JBehaveFile) element).getStructureViewChildren();
-        } else if (element instanceof JBehaveStoryScenario) {
-            structureViewChildren = ((JBehaveStoryScenario) element).getSteps();
+        } else if (element instanceof Scenario) {
+            structureViewChildren = ((Scenario) element).getSteps();
         } else return EMPTY_ARRAY;
         return ContainerUtil.map2Array(structureViewChildren, TreeElement.class,
                 new Function<PsiElement, TreeElement>() {
                     @Override
                     public TreeElement fun(PsiElement psiElement) {
-                        return new JBehaveStructureViewElement((NavigatablePsiElement) psiElement);
+                        return new StructureViewElement((NavigatablePsiElement) psiElement);
                     }
                 });
     }

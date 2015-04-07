@@ -21,13 +21,13 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 
 public class JBehaveElementType extends IElementType {
     public static final JBehaveElementType UNKNOWN_FRAGMENT = new JBehaveElementType("UNKNOWN_FRAGMENT");
 
     public static final JBehaveElementType COMMENT = new JBehaveElementType("COMMENT");
-    public static final IFileElementType STORY_FILE = new IFileElementType(STORY_FILE_TYPE.getLanguage());
+    public static final IFileElementType STORY_FILE = new IFileElementType(JBEHAVE_FILE_TYPE.getLanguage());
     public static final JBehaveElementType STORY = new JBehaveElementType("STORY");
     public static final JBehaveElementType STORY_DESCRIPTION = new JBehaveElementType("STORY_DESCRIPTION");
     public static final JBehaveElementType SCENARIO = new JBehaveElementType("SCENARIO");
@@ -45,6 +45,6 @@ public class JBehaveElementType extends IElementType {
 
 
     public JBehaveElementType(@NotNull @NonNls String debugName) {
-        super(debugName, STORY_FILE_TYPE.getLanguage());
+        super(debugName, JBEHAVE_FILE_TYPE.getLanguage());
     }
 }

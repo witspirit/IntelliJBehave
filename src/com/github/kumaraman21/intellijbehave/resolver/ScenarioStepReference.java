@@ -15,10 +15,10 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.psi.StoryStepLine;
-import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveStepLine;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -30,19 +30,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class StepPsiReference implements PsiPolyVariantReference {
-    private final JBehaveStep myStep;
+public class ScenarioStepReference implements PsiPolyVariantReference {
+    private final ScenarioStep myStep;
     private TextRange myRange = null;
     private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
 
-    public StepPsiReference(@NotNull JBehaveStep element, @NotNull TextRange range) {
+    public ScenarioStepReference(@NotNull ScenarioStep element, @NotNull TextRange range) {
         myStep = element;
         ASTNode node = element.getNode();
         final int startOffset = node.getStartOffset();
 //        ASTNode lastChildNode = node.getLastChildNode();
-        Iterator<StoryStepLine> it = PsiTreeUtil.findChildrenOfType(myStep, StoryStepLine.class).iterator();
+        Iterator<JBehaveStepLine> it = PsiTreeUtil.findChildrenOfType(myStep, JBehaveStepLine.class).iterator();
         if (it.hasNext()) {
-            StoryStepLine next = it.next();
+            JBehaveStepLine next = it.next();
             ASTNode nextNode = next.getNode();
             myRange = new TextRange(range.getStartOffset(), nextNode.getTextRange().getEndOffset() - startOffset);
         } else {
@@ -65,7 +65,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public JBehaveStep getElement() {
+    public ScenarioStep getElement() {
         return myStep;
     }
 
@@ -128,7 +128,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
 
     @NotNull
     public Collection<JavaStepDefinition> resolveToDefinitions() {
-        return JBehaveStepsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
+        return JavaStepDefinitionsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
 
     public boolean containsAnnotation(PsiAnnotation psiAnnotation) {

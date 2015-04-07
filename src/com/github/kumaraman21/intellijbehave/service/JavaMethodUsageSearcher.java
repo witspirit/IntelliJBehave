@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
@@ -19,7 +19,7 @@ import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getAnnot
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getTheBiggestWordToSearchByIndex;
 import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 
-public class JBehaveJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, SearchParameters> {
+public class JavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, SearchParameters> {
     public void processQuery(@NotNull SearchParameters searchParameters, @NotNull Processor<PsiReference> consumer) {
         final PsiMethod method = searchParameters.getMethod();
 
@@ -35,7 +35,7 @@ public class JBehaveJavaMethodUsageSearcher extends QueryExecutorBase<PsiReferen
                 if (searchParameters.getScopeDeterminedByUser() instanceof GlobalSearchScope) {
                     GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes(
                             (GlobalSearchScope) searchParameters.getScopeDeterminedByUser(),
-                            StoryFileType.STORY_FILE_TYPE);
+                            JBehaveFileType.JBEHAVE_FILE_TYPE);
                     Query<PsiReference> query = ReferencesSearch.search(
                             new ReferencesSearch.SearchParameters(method, restrictedScope, false,
                                     searchParameters.getOptimizer()));

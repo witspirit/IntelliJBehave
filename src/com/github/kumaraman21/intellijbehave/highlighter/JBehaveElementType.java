@@ -19,10 +19,10 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 
 public class JBehaveElementType extends IElementType {
     public JBehaveElementType(@NotNull @NonNls String debugName) {
-        super(debugName, STORY_FILE_TYPE.getLanguage());
+        super(debugName, JBEHAVE_FILE_TYPE.getLanguage());
     }
 }

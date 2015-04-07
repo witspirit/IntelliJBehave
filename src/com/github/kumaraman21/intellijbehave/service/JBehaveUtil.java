@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -234,7 +234,7 @@ public class JBehaveUtil {
                 SearchScope originalScope = originalScopeComputation.compute();
                 if (originalScope instanceof GlobalSearchScope) {
                     return GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) originalScope,
-                            StoryFileType.STORY_FILE_TYPE);
+                            JBehaveFileType.JBEHAVE_FILE_TYPE);
                 } else {
                     return originalScope;
                 }

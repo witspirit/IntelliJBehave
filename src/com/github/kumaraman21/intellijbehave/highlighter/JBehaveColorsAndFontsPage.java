@@ -17,35 +17,35 @@ import java.util.Map;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class StoryColorsAndFontsPage implements ColorSettingsPage {
+public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
 
     private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{//
-            new AttributesDescriptor("Story description", StorySyntaxHighlighter.JB_DESCRIPTION),//
-            new AttributesDescriptor("Narrative keyword", StorySyntaxHighlighter.JB_TOKEN_NARRATIVE),//
-            new AttributesDescriptor("Narrative text", StorySyntaxHighlighter.JB_NARRATIVE_TEXT),//
-            new AttributesDescriptor("Scenario keyword", StorySyntaxHighlighter.JB_TOKEN_SCENARIO),//
-            new AttributesDescriptor("Scenario text", StorySyntaxHighlighter.JB_SCENARIO_TITLE),//
-            new AttributesDescriptor("And keyword", StorySyntaxHighlighter.JB_TOKEN_AND),//
-            new AttributesDescriptor("Then keyword", StorySyntaxHighlighter.JB_TOKEN_THEN),//
-            new AttributesDescriptor("When keyword", StorySyntaxHighlighter.JB_TOKEN_WHEN),//
-            new AttributesDescriptor("Given keyword", StorySyntaxHighlighter.JB_TOKEN_GIVEN),//
-            new AttributesDescriptor("Step text", StorySyntaxHighlighter.JB_STEP_LINE), //
-            new AttributesDescriptor("Step parameter", StorySyntaxHighlighter.JB_STEP_POST_PARAMETER), //
-            new AttributesDescriptor("Table delimiter", StorySyntaxHighlighter.JB_TOKEN_PIPE),//
-            new AttributesDescriptor("Table cell", StorySyntaxHighlighter.JB_TABLE_CELL),//
-            new AttributesDescriptor("Meta keyword", StorySyntaxHighlighter.JB_TOKEN_META),//
-            new AttributesDescriptor("Meta key", StorySyntaxHighlighter.JB_META_KEY),//
-            new AttributesDescriptor("Meta value", StorySyntaxHighlighter.JB_META_VALUE), //
-            new AttributesDescriptor("Line comment", StorySyntaxHighlighter.JB_TOKEN_COMMENT),//
+            new AttributesDescriptor("Story description", JBehaveSyntaxHighlighter.JB_DESCRIPTION),//
+            new AttributesDescriptor("Narrative keyword", JBehaveSyntaxHighlighter.JB_TOKEN_NARRATIVE),//
+            new AttributesDescriptor("Narrative text", JBehaveSyntaxHighlighter.JB_NARRATIVE_TEXT),//
+            new AttributesDescriptor("Scenario keyword", JBehaveSyntaxHighlighter.JB_TOKEN_SCENARIO),//
+            new AttributesDescriptor("Scenario text", JBehaveSyntaxHighlighter.JB_SCENARIO_TITLE),//
+            new AttributesDescriptor("And keyword", JBehaveSyntaxHighlighter.JB_TOKEN_AND),//
+            new AttributesDescriptor("Then keyword", JBehaveSyntaxHighlighter.JB_TOKEN_THEN),//
+            new AttributesDescriptor("When keyword", JBehaveSyntaxHighlighter.JB_TOKEN_WHEN),//
+            new AttributesDescriptor("Given keyword", JBehaveSyntaxHighlighter.JB_TOKEN_GIVEN),//
+            new AttributesDescriptor("Step text", JBehaveSyntaxHighlighter.JB_STEP_LINE), //
+            new AttributesDescriptor("Step parameter", JBehaveSyntaxHighlighter.JB_STEP_POST_PARAMETER), //
+            new AttributesDescriptor("Table delimiter", JBehaveSyntaxHighlighter.JB_TOKEN_PIPE),//
+            new AttributesDescriptor("Table cell", JBehaveSyntaxHighlighter.JB_TABLE_CELL),//
+            new AttributesDescriptor("Meta keyword", JBehaveSyntaxHighlighter.JB_TOKEN_META),//
+            new AttributesDescriptor("Meta key", JBehaveSyntaxHighlighter.JB_META_KEY),//
+            new AttributesDescriptor("Meta value", JBehaveSyntaxHighlighter.JB_META_VALUE), //
+            new AttributesDescriptor("Line comment", JBehaveSyntaxHighlighter.JB_TOKEN_COMMENT),//
             //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
-            new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.JB_TOKEN_GIVEN_STORIES),//
-            new AttributesDescriptor("Story path", StorySyntaxHighlighter.JB_TOKEN_PATH),//
+            new AttributesDescriptor("Given Stories", JBehaveSyntaxHighlighter.JB_TOKEN_GIVEN_STORIES),//
+            new AttributesDescriptor("Story path", JBehaveSyntaxHighlighter.JB_TOKEN_PATH),//
             //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.JB_JB_PATH),//
-            new AttributesDescriptor("System parameter inject", StorySyntaxHighlighter.JB_TOKEN_INJECT),//
-            new AttributesDescriptor("User parameter inject", StorySyntaxHighlighter.JB_TOKEN_USERINJECT),//
-            new AttributesDescriptor("IP", StorySyntaxHighlighter.JB_IP_ADDRESS),//
-            new AttributesDescriptor("File not found", StorySyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND),//
-            new AttributesDescriptor("Stepdefinition not found", StorySyntaxHighlighter.JB_ERROR_NO_DEF_FOUND)//
+            new AttributesDescriptor("System parameter inject", JBehaveSyntaxHighlighter.JB_TOKEN_INJECT),//
+            new AttributesDescriptor("User parameter inject", JBehaveSyntaxHighlighter.JB_TOKEN_USERINJECT),//
+            new AttributesDescriptor("IP", JBehaveSyntaxHighlighter.JB_IP_ADDRESS),//
+            new AttributesDescriptor("File not found", JBehaveSyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND),//
+            new AttributesDescriptor("Stepdefinition not found", JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND)//
 
     };
 
@@ -71,7 +71,7 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
 
     @NotNull
     public SyntaxHighlighter getHighlighter() {
-        return new StorySyntaxHighlighter();
+        return new JBehaveSyntaxHighlighter();
     }
 
     @NonNls
@@ -111,18 +111,18 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
     @Nullable
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
-        result.put("scenText", StorySyntaxHighlighter.JB_SCENARIO_TITLE);
+        result.put("scenText", JBehaveSyntaxHighlighter.JB_SCENARIO_TITLE);
         //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
-        result.put("stepText", StorySyntaxHighlighter.JB_STEP_LINE);
-        result.put("stepParameter", StorySyntaxHighlighter.JB_STEP_POST_PARAMETER);
-        result.put("tableCell", StorySyntaxHighlighter.JB_TABLE_CELL);
-        result.put("description", StorySyntaxHighlighter.JB_DESCRIPTION);
-        result.put("narrativeText", StorySyntaxHighlighter.JB_NARRATIVE_TEXT);
-        result.put("ipAdress", StorySyntaxHighlighter.JB_IP_ADDRESS);
-        result.put("metaKey", StorySyntaxHighlighter.JB_META_KEY);
-        result.put("metaValue", StorySyntaxHighlighter.JB_META_VALUE);
-        result.put("errorDef", StorySyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
-        result.put("errorFile", StorySyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
+        result.put("stepText", JBehaveSyntaxHighlighter.JB_STEP_LINE);
+        result.put("stepParameter", JBehaveSyntaxHighlighter.JB_STEP_POST_PARAMETER);
+        result.put("tableCell", JBehaveSyntaxHighlighter.JB_TABLE_CELL);
+        result.put("description", JBehaveSyntaxHighlighter.JB_DESCRIPTION);
+        result.put("narrativeText", JBehaveSyntaxHighlighter.JB_NARRATIVE_TEXT);
+        result.put("ipAdress", JBehaveSyntaxHighlighter.JB_IP_ADDRESS);
+        result.put("metaKey", JBehaveSyntaxHighlighter.JB_META_KEY);
+        result.put("metaValue", JBehaveSyntaxHighlighter.JB_META_VALUE);
+        result.put("errorDef", JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
+        result.put("errorFile", JBehaveSyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
         return result;
     }
 }

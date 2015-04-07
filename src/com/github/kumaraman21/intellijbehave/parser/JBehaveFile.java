@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
@@ -46,13 +46,13 @@ public class JBehaveFile extends PsiFileBase implements JBehaveElement, Comparab
     }
 
     public JBehaveFile(FileViewProvider fileViewProvider) {
-        super(fileViewProvider, STORY_FILE_TYPE.getLanguage());
+        super(fileViewProvider, JBEHAVE_FILE_TYPE.getLanguage());
     }
 
     @NotNull
     @Override
     public FileType getFileType() {
-        return STORY_FILE_TYPE;
+        return JBEHAVE_FILE_TYPE;
     }
 
     public Collection<PsiElement> getStructureViewChildren() {
@@ -69,7 +69,7 @@ public class JBehaveFile extends PsiFileBase implements JBehaveElement, Comparab
     }
 
     @NotNull
-    public List<JBehaveStep> getSteps() {
+    public List<ScenarioStep> getSteps() {
 
         List<ASTNode> stepNodes = newArrayList();
 

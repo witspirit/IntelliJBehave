@@ -15,7 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
@@ -32,11 +32,11 @@ import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class JBehaveStoryPath extends ASTWrapperPsiElement {
+public class StoryPath extends ASTWrapperPsiElement {
 
     private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
-    public JBehaveStoryPath(@NotNull ASTNode node) {
+    public StoryPath(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -88,7 +88,7 @@ public class JBehaveStoryPath extends ASTWrapperPsiElement {
             myFiles.clear();
             Project project = getProject();
             GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
-                    GlobalSearchScope.projectScope(project), StoryFileType.STORY_FILE_TYPE);
+                    GlobalSearchScope.projectScope(project), JBehaveFileType.JBEHAVE_FILE_TYPE);
             PsiFile[] filesByName = FilenameIndex.getFilesByName(project, getFileName(), scopeRestrictedByFileTypes);
             for (final PsiFile psiFile : filesByName) {
                 if (hasSameFileNamePart(psiFile)) myFiles.add(psiFile);

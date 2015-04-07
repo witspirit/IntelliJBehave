@@ -1,7 +1,7 @@
 package com.github.kumaraman21.intellijbehave.refactor;
 
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
-import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -65,13 +65,13 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
         PsiMethod method = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
         PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
         GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
-                GlobalSearchScope.projectScope(element.getProject()), StoryFileType.STORY_FILE_TYPE);
+                GlobalSearchScope.projectScope(element.getProject()), JBehaveFileType.JBEHAVE_FILE_TYPE);
         Collection<PsiReference> all = ReferencesSearch.search(method, scopeRestrictedByFileTypes).findAll();
         Collection<PsiReference> retVal = new ArrayList<PsiReference>();
         for (PsiReference psiReference : all) {
-            if (psiReference instanceof StepPsiReference) {
-                StepPsiReference stepPsiReference = (StepPsiReference) psiReference;
-                if (stepPsiReference.containsAnnotation(annotation)) {
+            if (psiReference instanceof ScenarioStepReference) {
+                ScenarioStepReference scenarioStepReference = (ScenarioStepReference) psiReference;
+                if (scenarioStepReference.containsAnnotation(annotation)) {
                     retVal.add(psiReference);
                 }
             }
@@ -95,7 +95,7 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
     public void prepareRenaming(PsiElement element, String newName, Map<PsiElement, String> allRenames) {
         prepareRenaming(element, newName, allRenames,
                 GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()),
-                        StoryFileType.STORY_FILE_TYPE));
+                        JBehaveFileType.JBEHAVE_FILE_TYPE));
 
     }
 

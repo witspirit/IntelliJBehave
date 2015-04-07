@@ -15,13 +15,13 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
 import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
 
-public class NodeToStepPsiElement implements Function<ASTNode, JBehaveStep> {
+public class NodeToStepPsiElement implements Function<ASTNode, ScenarioStep> {
     @Override
-    public JBehaveStep apply(ASTNode astNode) {
-        return (JBehaveStep) astNode.getPsi();
+    public ScenarioStep apply(ASTNode astNode) {
+        return (ScenarioStep) astNode.getPsi();
     }
 }

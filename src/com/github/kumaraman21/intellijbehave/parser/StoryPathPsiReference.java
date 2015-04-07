@@ -26,17 +26,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JBehavePathPsiReference implements PsiPolyVariantReference {
-    private final JBehaveStoryPath myElement;
+public class StoryPathPsiReference implements PsiPolyVariantReference {
+    private final StoryPath myElement;
     private final TextRange myRange;
 
-    public JBehavePathPsiReference(@NotNull JBehaveStoryPath element, @NotNull TextRange range) {
+    public StoryPathPsiReference(@NotNull StoryPath element, @NotNull TextRange range) {
         myElement = element;
         myRange = range;
     }
 
     @Override
-    public JBehaveStoryPath getElement() {
+    public StoryPath getElement() {
         return myElement;
     }
 

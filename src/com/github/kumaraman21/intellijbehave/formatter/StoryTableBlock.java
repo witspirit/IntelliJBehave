@@ -1,8 +1,8 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.github.kumaraman21.intellijbehave.psi.StoryTableCell;
-import com.github.kumaraman21.intellijbehave.psi.StoryTableCellEmpty;
-import com.github.kumaraman21.intellijbehave.psi.StoryTableRow;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveTableCell;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveTableCellEmpty;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveTableRow;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.Spacing;
@@ -26,18 +26,18 @@ public class StoryTableBlock extends StoryIgnoreBlock {
     protected List<Block> buildChildren() {
         List<Block> retVal = new ArrayList<Block>();
         PsiElement psiElement = myNode.getPsi();
-        Collection<StoryTableRow> rows = PsiTreeUtil.findChildrenOfType(psiElement, StoryTableRow.class);
+        Collection<JBehaveTableRow> rows = PsiTreeUtil.findChildrenOfType(psiElement, JBehaveTableRow.class);
         int[] columnWidths = new int[0];
-        Iterator<StoryTableRow> rowIt = rows.iterator();
+        Iterator<JBehaveTableRow> rowIt = rows.iterator();
         if (rowIt.hasNext()) {
-            StoryTableRow headerRow = rowIt.next();
-            Collection<StoryTableCell> cells = PsiTreeUtil.findChildrenOfType(headerRow, StoryTableCell.class);
+            JBehaveTableRow headerRow = rowIt.next();
+            Collection<JBehaveTableCell> cells = PsiTreeUtil.findChildrenOfType(headerRow, JBehaveTableCell.class);
             columnWidths = new int[cells.size()];
             Arrays.fill(columnWidths, 0);
-            for (StoryTableRow row : rows) {
+            for (JBehaveTableRow row : rows) {
                 int i = 0;
-                for (PsiElement cell : PsiTreeUtil.findChildrenOfAnyType(row, StoryTableCell.class,
-                        StoryTableCellEmpty.class)) {
+                for (PsiElement cell : PsiTreeUtil.findChildrenOfAnyType(row, JBehaveTableCell.class,
+                        JBehaveTableCellEmpty.class)) {
                     String cellText = cell.getText().trim();
                     int length = cellText.length();
                     if (length > columnWidths[i]) {
@@ -47,7 +47,7 @@ public class StoryTableBlock extends StoryIgnoreBlock {
                 }
             }
         }
-        for (StoryTableRow row : rows) {
+        for (JBehaveTableRow row : rows) {
             retVal.add(new StoryTableRowBlock(columnWidths, row.getNode(), null, null));
         }
 

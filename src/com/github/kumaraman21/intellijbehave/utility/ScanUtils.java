@@ -15,10 +15,10 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
 import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
-import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.intellij.psi.PsiElement;
 
 import java.util.Collection;
@@ -26,8 +26,8 @@ import java.util.Collection;
 public class ScanUtils {
 
     public static boolean iterateInContextOf(PsiElement storyRef, StepDefinitionIterator iterator) {
-        TokenMap allStepDefinitionsByType = JBehaveStepsIndex.getInstance(
-                storyRef.getProject()).findAllStepDefinitionsByType((JBehaveStep) storyRef);
+        TokenMap allStepDefinitionsByType = JavaStepDefinitionsIndex.getInstance(
+                storyRef.getProject()).findAllStepDefinitionsByType((ScenarioStep) storyRef);
         String text = storyRef.getText();
         Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.getConcerned(text, false);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {

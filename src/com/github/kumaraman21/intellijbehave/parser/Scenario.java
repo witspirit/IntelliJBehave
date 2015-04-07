@@ -1,8 +1,8 @@
 package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
-import com.github.kumaraman21.intellijbehave.psi.StoryScenario;
-import com.github.kumaraman21.intellijbehave.psi.StoryScenarioTitle;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveScenario;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveScenarioTitle;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
@@ -15,8 +15,8 @@ import java.util.Collection;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class JBehaveStoryScenario extends ASTWrapperPsiElement {
-    public JBehaveStoryScenario(ASTNode node) {
+public class Scenario extends ASTWrapperPsiElement {
+    public Scenario(ASTNode node) {
         super(node);
     }
 
@@ -27,12 +27,12 @@ public class JBehaveStoryScenario extends ASTWrapperPsiElement {
     }
 
     public String getTitle() {
-        final StoryScenarioTitle scenarioTitle = ((StoryScenario) getOriginalElement()).getScenarioTitle();
+        final JBehaveScenarioTitle scenarioTitle = ((JBehaveScenario) getOriginalElement()).getScenarioTitle();
         return scenarioTitle != null ? scenarioTitle.getText() : "";
     }
 
     public Collection<? extends PsiElement> getSteps() {
-        return ((StoryScenario) getOriginalElement()).getStepList();
+        return ((JBehaveScenario) getOriginalElement()).getStepList();
     }
 
     @Nullable

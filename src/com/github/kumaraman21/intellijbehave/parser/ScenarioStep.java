@@ -15,8 +15,8 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
-import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
@@ -41,8 +41,8 @@ import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.trim;
 
-public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
-    public JBehaveStep(@NotNull ASTNode node) {
+public class ScenarioStep extends ParserRule implements PsiNamedElement {
+    public ScenarioStep(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -61,11 +61,11 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
             StepType type = StepType.valueOf(key.toUpperCase());
             if (type == StepType.AND) {
                 PsiElement prevSibling = getPrevSibling();
-                while (!(prevSibling instanceof JBehaveStep) && prevSibling != null) {
+                while (!(prevSibling instanceof ScenarioStep) && prevSibling != null) {
                     prevSibling = prevSibling.getPrevSibling();
                 }
                 if (prevSibling != null) {
-                    return ((JBehaveStep) prevSibling).getStepType();
+                    return ((ScenarioStep) prevSibling).getStepType();
                 }
             }
             return type;
@@ -87,8 +87,8 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     public String getStepText() {
         int offset = getStepTextOffset();
-        PsiElement firstChild = PsiTreeUtil.getChildOfType(this, StoryStepPar.class);
-        PsiElement firstChild1 = PsiTreeUtil.getChildOfType(this, StoryStepArgument.class);
+        PsiElement firstChild = PsiTreeUtil.getChildOfType(this, JBehaveStepPar.class);
+        PsiElement firstChild1 = PsiTreeUtil.getChildOfType(this, JBehaveStepArgument.class);
         if (firstChild != null && firstChild1 != null) {
             final String text = String.format("%s %s", firstChild.getText(), firstChild1.getText());
             if (offset <= 0 || offset >= text.length()) {
@@ -104,7 +104,7 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         StepType stepType = getStepType();
         String lowerCase = stepType.toString().toLowerCase();
 
-        StoryStepLine storyStepLine = getStoryStepLine();
+        JBehaveStepLine storyStepLine = getStoryStepLine();
         if (storyStepLine != null) {
             lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
             return String.format("%s %s", lowerCase, storyStepLine.getText());
@@ -115,7 +115,7 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
 
     public String getStoryLine() {
         ASTNode stepTypeAsNode = getStepTypeAsNode();
-        StoryStepLine storyStepLine = getStoryStepLine();
+        JBehaveStepLine storyStepLine = getStoryStepLine();
         if (stepTypeAsNode != null && storyStepLine != null)
             return String.format("%s %s", stepTypeAsNode.getText(), storyStepLine.getText());
         else {
@@ -185,12 +185,12 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
                                 printWriter.print(" ");
                                 printWriter.print(newText);
                                 if (havePostParameters) {
-                                    Iterator<StoryStepPostParameter> it = getStoryStepPostParameters().iterator();
-                                    StoryStepPostParameter postParameter = it.next();
-                                    Collection<StoryStoryPath> storyPaths = PsiTreeUtil.findChildrenOfType(this,
-                                            StoryStoryPath.class);
+                                    Iterator<JBehaveStepPostParameter> it = getStoryStepPostParameters().iterator();
+                                    JBehaveStepPostParameter postParameter = it.next();
+                                    Collection<StoryPath> storyPaths = PsiTreeUtil.findChildrenOfType(this,
+                                            StoryPath.class);
                                     //StoryStoryPaths storyPath = postParameter.getStoryPaths();
-                                    StoryTable table = postParameter.getTable();
+                                    JBehaveTable table = postParameter.getTable();
                                     if (!storyPaths.isEmpty() && table == null) {
                                         printWriter.print(" ");
                                         printWriter.print("dummy/story/story.story");
@@ -203,9 +203,9 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
                                 printWriter.close();
                                 String newNodeAsText = stringWriter.toString();
                                 PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText(
-                                        "dummy.story", StoryFileType.STORY_FILE_TYPE, newNodeAsText);
-                                StoryStepLine newStepLine = getStoryStepLine(psiFile);
-                                StoryStepLine oldStepLine = getStoryStepLine();
+                                        "dummy.story", JBehaveFileType.JBEHAVE_FILE_TYPE, newNodeAsText);
+                                JBehaveStepLine newStepLine = getStoryStepLine(psiFile);
+                                JBehaveStepLine oldStepLine = getStoryStepLine();
                                 if (newStepLine != null && oldStepLine != null) {
                                     oldStepLine.replace(newStepLine);
                                 }
@@ -222,28 +222,28 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
         return getNode().getText();
     }
 
-    private StoryStep getStoryStep(PsiElement psiElement) {
-        Collection<StoryStep> stepLines1 = PsiTreeUtil.findChildrenOfType(psiElement, StoryStep.class);
-        Iterator<StoryStep> iterator = stepLines1.iterator();
+    private ScenarioStep getStoryStep(PsiElement psiElement) {
+        Collection<ScenarioStep> stepLines1 = PsiTreeUtil.findChildrenOfType(psiElement, ScenarioStep.class);
+        Iterator<ScenarioStep> iterator = stepLines1.iterator();
         return iterator.hasNext() ? iterator.next() : null;
     }
 
-    public StoryStep getStoryStep() {
+    public ScenarioStep getStoryStep() {
         return getStoryStep(this);
     }
 
-    private StoryStepLine getStoryStepLine(PsiElement psiElement) {
-        Collection<StoryStepLine> stepLines1 = PsiTreeUtil.findChildrenOfType(psiElement, StoryStepLine.class);
-        Iterator<StoryStepLine> iterator = stepLines1.iterator();
+    private JBehaveStepLine getStoryStepLine(PsiElement psiElement) {
+        Collection<JBehaveStepLine> stepLines1 = PsiTreeUtil.findChildrenOfType(psiElement, JBehaveStepLine.class);
+        Iterator<JBehaveStepLine> iterator = stepLines1.iterator();
         return iterator.hasNext() ? iterator.next() : null;
     }
 
-    public StoryStepLine getStoryStepLine() {
+    public JBehaveStepLine getStoryStepLine() {
         return getStoryStepLine(this);
     }
 
-    private Collection<StoryStepPostParameter> getStoryStepPostParameters() {
-        return PsiTreeUtil.findChildrenOfType(this, StoryStepPostParameter.class);
+    private Collection<JBehaveStepPostParameter> getStoryStepPostParameters() {
+        return PsiTreeUtil.findChildrenOfType(this, JBehaveStepPostParameter.class);
     }
 
     public boolean hasStoryStepPostParameters() {
