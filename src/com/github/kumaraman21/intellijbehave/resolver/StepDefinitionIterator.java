@@ -55,7 +55,8 @@ public abstract class StepDefinitionIterator implements ContentIterator {
 
                 for (PsiMethod method : methods) {
                     PsiAnnotation[] annotations = method.getModifierList().getApplicableAnnotations();
-                    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(annotations);
+                    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(
+                            annotations);
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
                         StepType stepType1 = stepDefinitionAnnotation.getStepType();

@@ -32,6 +32,10 @@ import static org.apache.commons.lang.StringUtils.*;
 
 public class StepDefinitionAnnotationConverter {
 
+    private static String getTextFromValue(PsiElement value) {
+        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
+    }
+
     public Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
         Set<StepDefinitionAnnotation> res = null;
 
@@ -74,18 +78,14 @@ public class StepDefinitionAnnotationConverter {
         return res == null ? ImmutableSet.<StepDefinitionAnnotation>of() : res;
     }
 
-    private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
+    private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText,
+                                                             final PsiAnnotation annotation) {
 
-        return FluentIterable
-                .from(new PatternVariantBuilder(annotationText).allVariants())
-                .transform(new Function<String, StepDefinitionAnnotation>() {
+        return FluentIterable.from(new PatternVariantBuilder(annotationText).allVariants()).transform(
+                new Function<String, StepDefinitionAnnotation>() {
                     public StepDefinitionAnnotation apply(String variant) {
                         return new StepDefinitionAnnotation(stepType, variant, annotation);
                     }
                 }).toSet();
-    }
-
-    private static String getTextFromValue(PsiElement value) {
-        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
     }
 }

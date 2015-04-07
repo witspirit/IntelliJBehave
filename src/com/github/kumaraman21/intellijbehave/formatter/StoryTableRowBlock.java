@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
+import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.Spacing;
@@ -30,16 +30,16 @@ public class StoryTableRowBlock extends StoryIgnoreBlock {
         int columnNr = 0;
         ASTNode node = getNode();
         ASTNode[] children = node.getChildren(
-                TokenSet.create(IStoryPegElementType.STORY_TOKEN_PIPE, IStoryPegElementType.STORY_TABLE_CELL,
-                        IStoryPegElementType.STORY_TABLE_CELL_EMPTY));
+                TokenSet.create(IJBehaveElementType.JB_TOKEN_PIPE, IJBehaveElementType.JB_TABLE_CELL,
+                        IJBehaveElementType.JB_TABLE_CELL_EMPTY));
         for (ASTNode child : children) {
             IElementType elementType = child.getElementType();
-            if (elementType == IStoryPegElementType.STORY_TABLE_CELL_EMPTY) {
+            if (elementType == IJBehaveElementType.JB_TABLE_CELL_EMPTY) {
                 ++columnNr;
-            } else if (elementType == IStoryPegElementType.STORY_TABLE_CELL) {
+            } else if (elementType == IJBehaveElementType.JB_TABLE_CELL) {
                 retVal.add(new StoryTableCellBlock(columnNr, child, null, null));
                 ++columnNr;
-            } else if (elementType == IStoryPegElementType.STORY_TOKEN_PIPE) {
+            } else if (elementType == IJBehaveElementType.JB_TOKEN_PIPE) {
                 retVal.add(new StoryTableDelimiterBlock(columnNr, child, null, null));
             }
         }

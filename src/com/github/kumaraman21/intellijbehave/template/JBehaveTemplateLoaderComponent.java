@@ -28,41 +28,36 @@ import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY
 import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
 public class JBehaveTemplateLoaderComponent implements ApplicationComponent {
-  @Override
-  public void initComponent() {
-    FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
-    if (template == null) {
-      template = FileTemplateManager.getInstance()
-        .addTemplate(STORY_FILE_TYPE.getName(), STORY_FILE_TYPE.getDefaultExtension());
+    @Override
+    public void initComponent() {
+        FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
+        if (template == null) {
+            template = FileTemplateManager.getInstance().addTemplate(STORY_FILE_TYPE.getName(),
+                    STORY_FILE_TYPE.getDefaultExtension());
 
-      InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");
-      try {
-        if(stream!=null)
-          template.setText(loadTextAndClose(new InputStreamReader(stream)));
-      }
-      catch (IOException e) {
-        e.printStackTrace();
-      }
-      finally {
-        try {
-          if(stream!=null)
-            stream.close();
+            InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");
+            try {
+                if (stream != null) template.setText(loadTextAndClose(new InputStreamReader(stream)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (stream != null) stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
     }
-  }
 
-  @Override
-  public void disposeComponent() {
-    // do nothing
-  }
+    @Override
+    public void disposeComponent() {
+        // do nothing
+    }
 
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return this.getClass().getName();
-  }
+    @NotNull
+    @Override
+    public String getComponentName() {
+        return this.getClass().getName();
+    }
 }

@@ -7,11 +7,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
+import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveStoryPath;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class StoryStoryPathImpl extends PegStoryPath implements StoryStoryPath {
+public class StoryStoryPathImpl extends JBehaveStoryPath implements StoryStoryPath {
 
   public StoryStoryPathImpl(ASTNode node) {
     super(node);
@@ -25,7 +25,7 @@ public class StoryStoryPathImpl extends PegStoryPath implements StoryStoryPath {
   @Override
   @NotNull
   public PsiElement getTokenPath() {
-    return findNotNullChildByType(STORY_TOKEN_PATH);
+    return findNotNullChildByType(JB_TOKEN_PATH);
   }
 
 }

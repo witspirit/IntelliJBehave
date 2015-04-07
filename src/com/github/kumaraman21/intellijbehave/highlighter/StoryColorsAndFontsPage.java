@@ -19,6 +19,36 @@ import java.util.Map;
  */
 public class StoryColorsAndFontsPage implements ColorSettingsPage {
 
+    private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{//
+            new AttributesDescriptor("Story description", StorySyntaxHighlighter.JB_DESCRIPTION),//
+            new AttributesDescriptor("Narrative keyword", StorySyntaxHighlighter.JB_TOKEN_NARRATIVE),//
+            new AttributesDescriptor("Narrative text", StorySyntaxHighlighter.JB_NARRATIVE_TEXT),//
+            new AttributesDescriptor("Scenario keyword", StorySyntaxHighlighter.JB_TOKEN_SCENARIO),//
+            new AttributesDescriptor("Scenario text", StorySyntaxHighlighter.JB_SCENARIO_TITLE),//
+            new AttributesDescriptor("And keyword", StorySyntaxHighlighter.JB_TOKEN_AND),//
+            new AttributesDescriptor("Then keyword", StorySyntaxHighlighter.JB_TOKEN_THEN),//
+            new AttributesDescriptor("When keyword", StorySyntaxHighlighter.JB_TOKEN_WHEN),//
+            new AttributesDescriptor("Given keyword", StorySyntaxHighlighter.JB_TOKEN_GIVEN),//
+            new AttributesDescriptor("Step text", StorySyntaxHighlighter.JB_STEP_LINE), //
+            new AttributesDescriptor("Step parameter", StorySyntaxHighlighter.JB_STEP_POST_PARAMETER), //
+            new AttributesDescriptor("Table delimiter", StorySyntaxHighlighter.JB_TOKEN_PIPE),//
+            new AttributesDescriptor("Table cell", StorySyntaxHighlighter.JB_TABLE_CELL),//
+            new AttributesDescriptor("Meta keyword", StorySyntaxHighlighter.JB_TOKEN_META),//
+            new AttributesDescriptor("Meta key", StorySyntaxHighlighter.JB_META_KEY),//
+            new AttributesDescriptor("Meta value", StorySyntaxHighlighter.JB_META_VALUE), //
+            new AttributesDescriptor("Line comment", StorySyntaxHighlighter.JB_TOKEN_COMMENT),//
+            //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
+            new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.JB_TOKEN_GIVEN_STORIES),//
+            new AttributesDescriptor("Story path", StorySyntaxHighlighter.JB_TOKEN_PATH),//
+            //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.JB_JB_PATH),//
+            new AttributesDescriptor("System parameter inject", StorySyntaxHighlighter.JB_TOKEN_INJECT),//
+            new AttributesDescriptor("User parameter inject", StorySyntaxHighlighter.JB_TOKEN_USERINJECT),//
+            new AttributesDescriptor("IP", StorySyntaxHighlighter.JB_IP_ADDRESS),//
+            new AttributesDescriptor("File not found", StorySyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND),//
+            new AttributesDescriptor("Stepdefinition not found", StorySyntaxHighlighter.JB_ERROR_NO_DEF_FOUND)//
+
+    };
+
     @NotNull
     public String getDisplayName() {
         return "JBehave";
@@ -34,36 +64,6 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
         return ATTRS;
     }
 
-    private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{//
-            new AttributesDescriptor("Story description", StorySyntaxHighlighter.STORY_DESCRIPTION),//
-            new AttributesDescriptor("Narrative keyword", StorySyntaxHighlighter.STORY_TOKEN_NARRATIVE),//
-            new AttributesDescriptor("Narrative text", StorySyntaxHighlighter.STORY_NARRATIVE_TEXT),//
-            new AttributesDescriptor("Scenario keyword", StorySyntaxHighlighter.STORY_TOKEN_SCENARIO),//
-            new AttributesDescriptor("Scenario text", StorySyntaxHighlighter.STORY_SCENARIO_TITLE),//
-            new AttributesDescriptor("And keyword", StorySyntaxHighlighter.STORY_TOKEN_AND),//
-            new AttributesDescriptor("Then keyword", StorySyntaxHighlighter.STORY_TOKEN_THEN),//
-            new AttributesDescriptor("When keyword", StorySyntaxHighlighter.STORY_TOKEN_WHEN),//
-            new AttributesDescriptor("Given keyword", StorySyntaxHighlighter.STORY_TOKEN_GIVEN),//
-            new AttributesDescriptor("Step text", StorySyntaxHighlighter.STORY_STEP_LINE), //
-            new AttributesDescriptor("Step parameter", StorySyntaxHighlighter.STORY_STEP_POST_PARAMETER), //
-            new AttributesDescriptor("Table delimiter", StorySyntaxHighlighter.STORY_TOKEN_PIPE),//
-            new AttributesDescriptor("Table cell", StorySyntaxHighlighter.STORY_TABLE_CELL),//
-            new AttributesDescriptor("Meta keyword", StorySyntaxHighlighter.STORY_TOKEN_META),//
-            new AttributesDescriptor("Meta key", StorySyntaxHighlighter.STORY_META_KEY),//
-            new AttributesDescriptor("Meta value", StorySyntaxHighlighter.STORY_META_VALUE), //
-            new AttributesDescriptor("Line comment", StorySyntaxHighlighter.STORY_TOKEN_COMMENT),//
-            //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
-            new AttributesDescriptor("Given Stories", StorySyntaxHighlighter.STORY_TOKEN_GIVEN_STORIES),//
-            new AttributesDescriptor("Story path", StorySyntaxHighlighter.STORY_TOKEN_PATH),//
-            //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.STORY_STORY_PATH),//
-            new AttributesDescriptor("System parameter inject", StorySyntaxHighlighter.STORY_TOKEN_INJECT),//
-            new AttributesDescriptor("User parameter inject", StorySyntaxHighlighter.STORY_TOKEN_USERINJECT),//
-            new AttributesDescriptor("IP", StorySyntaxHighlighter.STORY_IP_ADDRESS),//
-            new AttributesDescriptor("File not found", StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND),//
-            new AttributesDescriptor("Stepdefinition not found", StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND)//
-
-    };
-
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
         return new ColorDescriptor[0];
@@ -77,7 +77,7 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
     @NonNls
     @NotNull
     public String getDemoText() {
-        return  "<description>This is a demo text for\n" + //
+        return "<description>This is a demo text for\n" + //
                 "configuration of\n" + //
                 "JBehave syntax highlighting</description>\n" + //
                 "\n" + //
@@ -111,18 +111,18 @@ public class StoryColorsAndFontsPage implements ColorSettingsPage {
     @Nullable
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
-        result.put("scenText", StorySyntaxHighlighter.STORY_SCENARIO_TITLE);
+        result.put("scenText", StorySyntaxHighlighter.JB_SCENARIO_TITLE);
         //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
-        result.put("stepText", StorySyntaxHighlighter.STORY_STEP_LINE);
-        result.put("stepParameter", StorySyntaxHighlighter.STORY_STEP_POST_PARAMETER);
-        result.put("tableCell", StorySyntaxHighlighter.STORY_TABLE_CELL);
-        result.put("description", StorySyntaxHighlighter.STORY_DESCRIPTION);
-        result.put("narrativeText", StorySyntaxHighlighter.STORY_NARRATIVE_TEXT);
-        result.put("ipAdress", StorySyntaxHighlighter.STORY_IP_ADDRESS);
-        result.put("metaKey", StorySyntaxHighlighter.STORY_META_KEY);
-        result.put("metaValue", StorySyntaxHighlighter.STORY_META_VALUE);
-        result.put("errorDef", StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND);
-        result.put("errorFile", StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND);
+        result.put("stepText", StorySyntaxHighlighter.JB_STEP_LINE);
+        result.put("stepParameter", StorySyntaxHighlighter.JB_STEP_POST_PARAMETER);
+        result.put("tableCell", StorySyntaxHighlighter.JB_TABLE_CELL);
+        result.put("description", StorySyntaxHighlighter.JB_DESCRIPTION);
+        result.put("narrativeText", StorySyntaxHighlighter.JB_NARRATIVE_TEXT);
+        result.put("ipAdress", StorySyntaxHighlighter.JB_IP_ADDRESS);
+        result.put("metaKey", StorySyntaxHighlighter.JB_META_KEY);
+        result.put("metaValue", StorySyntaxHighlighter.JB_META_VALUE);
+        result.put("errorDef", StorySyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
+        result.put("errorFile", StorySyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
         return result;
     }
 }

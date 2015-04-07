@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -32,9 +32,11 @@ import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class PegStoryPath extends ASTWrapperPsiElement {
+public class JBehaveStoryPath extends ASTWrapperPsiElement {
 
-    public PegStoryPath(@NotNull ASTNode node) {
+    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
+
+    public JBehaveStoryPath(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -65,8 +67,6 @@ public class PegStoryPath extends ASTWrapperPsiElement {
         split[lastIdx] = split[lastIdx].trim();
         return split;
     }
-
-    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
     private boolean isMyFilesValid() {
         if (myFiles.isEmpty()) return false;

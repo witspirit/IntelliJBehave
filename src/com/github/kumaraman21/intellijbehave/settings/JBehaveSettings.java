@@ -24,9 +24,7 @@ import org.jetbrains.annotations.NotNull;
         name = "JBehaveSettings",
         storages = {@Storage(
                 id = "main",
-                file = "$PROJECT_CONFIG_DIR$/jbehave_settings.xml"
-        )}
-)
+                file = "$PROJECT_CONFIG_DIR$/jbehave_settings.xml")})
 public class JBehaveSettings implements ProjectComponent, PersistentStateComponent<JBehaveSettings> {
     private String storyRunner;
 

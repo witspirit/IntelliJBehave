@@ -20,8 +20,8 @@ import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
 
 public class NodeToStepPsiElement implements Function<ASTNode, JBehaveStep> {
-	@Override
-	public JBehaveStep apply(ASTNode astNode) {
-		return (JBehaveStep) astNode.getPsi();
-	}
+    @Override
+    public JBehaveStep apply(ASTNode astNode) {
+        return (JBehaveStep) astNode.getPsi();
+    }
 }

@@ -27,13 +27,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.util.Arrays.asList;
 
 public class JBehaveStepsIndex {
+    private final PsiManager manager;
     private TokenMap tokenMap = new TokenMap();
     private AtomicBoolean needsUpdate = new AtomicBoolean(true);
-    private final PsiManager manager;
     private ChangeListener changeListener = new ChangeListener(this);
+
+    public JBehaveStepsIndex(Project project) {
+        manager = PsiManager.getInstance(project);
+    }
 
     public static JBehaveStepsIndex getInstance(Project project) {
         return ServiceManager.getService(project, JBehaveStepsIndex.class);
+    }
+
+    @NotNull
+    private static Integer getPriorityByDefinition(@Nullable JavaStepDefinition definition) {
+        if (definition == null) {
+            return -1;
+        }
+
+        return definition.getAnnotationPriority();
+    }
+
+    @NotNull
+    private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass,
+                                                                   @NotNull final GlobalSearchScope scope) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Collection<PsiAnnotation>>() {
+            @Override
+            public Collection<PsiAnnotation> compute() {
+                return JavaAnnotationIndex.getInstance().get(annClass.getName(), annClass.getProject(), scope);
+            }
+        });
     }
 
     private synchronized void needsUpdate() {
@@ -44,10 +68,6 @@ public class JBehaveStepsIndex {
     private synchronized void updated() {
         needsUpdate.set(false);
         manager.addPsiTreeChangeListener(changeListener);
-    }
-
-    public JBehaveStepsIndex(Project project) {
-        manager = PsiManager.getInstance(project);
     }
 
     @NotNull
@@ -116,15 +136,6 @@ public class JBehaveStepsIndex {
     }
 
     @NotNull
-    private static Integer getPriorityByDefinition(@Nullable JavaStepDefinition definition) {
-        if (definition == null) {
-            return -1;
-        }
-
-        return definition.getAnnotationPriority();
-    }
-
-    @NotNull
     public TokenMap loadStepsFor(@NotNull Module module) {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
@@ -147,17 +158,6 @@ public class JBehaveStepsIndex {
         }
 
         return result;
-    }
-
-    @NotNull
-    private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass,
-                                                                   @NotNull final GlobalSearchScope scope) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Collection<PsiAnnotation>>() {
-            @Override
-            public Collection<PsiAnnotation> compute() {
-                return JavaAnnotationIndex.getInstance().get(annClass.getName(), annClass.getProject(), scope);
-            }
-        });
     }
 
     @Nullable

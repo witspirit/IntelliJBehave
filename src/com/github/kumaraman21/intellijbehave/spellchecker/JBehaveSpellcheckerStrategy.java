@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.spellchecker;
 
-import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -17,7 +17,7 @@ public class JBehaveSpellcheckerStrategy extends SpellcheckingStrategy {
     public Tokenizer getTokenizer(PsiElement element) {
         if (element instanceof LeafElement) {
             ASTNode node = element.getNode();
-            if (node != null && node.getElementType() instanceof StoryElementType) {
+            if (node != null && node.getElementType() instanceof JBehaveElementType) {
                 return TEXT_TOKENIZER;
             }
         }
@@ -25,7 +25,8 @@ public class JBehaveSpellcheckerStrategy extends SpellcheckingStrategy {
         return super.getTokenizer(element);
     }
 
-    public SpellCheckerQuickFix[] getRegularFixes(PsiElement element, int offset, @NotNull TextRange textRange, boolean useRename, String wordWithTypo) {
+    public SpellCheckerQuickFix[] getRegularFixes(PsiElement element, int offset, @NotNull TextRange textRange,
+                                                  boolean useRename, String wordWithTypo) {
         return new SpellCheckerQuickFix[]{new ChangeTo(wordWithTypo), new AcceptWordAsCorrect(wordWithTypo)};
     }
 }

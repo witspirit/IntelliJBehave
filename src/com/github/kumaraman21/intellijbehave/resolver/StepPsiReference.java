@@ -33,6 +33,7 @@ import java.util.*;
 public class StepPsiReference implements PsiPolyVariantReference {
     private final JBehaveStep myStep;
     private TextRange myRange = null;
+    private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
 
     public StepPsiReference(@NotNull JBehaveStep element, @NotNull TextRange range) {
         myStep = element;
@@ -44,8 +45,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
             StoryStepLine next = it.next();
             ASTNode nextNode = next.getNode();
             myRange = new TextRange(range.getStartOffset(), nextNode.getTextRange().getEndOffset() - startOffset);
-        }
-        else{
+        } else {
             myRange = new TextRange(range.getStartOffset(), node.getTextRange().getEndOffset() - startOffset);
         }
 
@@ -130,8 +130,6 @@ public class StepPsiReference implements PsiPolyVariantReference {
     public Collection<JavaStepDefinition> resolveToDefinitions() {
         return JBehaveStepsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
-
-    private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
 
     public boolean containsAnnotation(PsiAnnotation psiAnnotation) {
         return theAnnotations.contains(psiAnnotation);

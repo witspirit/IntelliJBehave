@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.folding;
 
-import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
+import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
@@ -67,8 +67,8 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
 
     @Override
     protected String getLanguagePlaceholderText(ASTNode node, TextRange range) {
-        if (node.getElementType() == IStoryPegElementType.STORY_TABLE) return "Table";
-        if (node.getElementType() == IStoryPegElementType.STORY_DESCRIPTION) return "Description";
+        if (node.getElementType() == IJBehaveElementType.JB_TABLE) return "Table";
+        if (node.getElementType() == IJBehaveElementType.JB_DESCRIPTION) return "Description";
         return "...";
     }
 

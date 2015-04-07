@@ -16,7 +16,6 @@
 package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -33,6 +32,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class JBehaveGivenStories extends JBehaveRule {
+
+    private static final Key<Boolean> hasStories = new Key<Boolean>("hasStories");
+    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
     public JBehaveGivenStories(@NotNull ASTNode node) {
         super(node);
@@ -66,8 +68,6 @@ public class JBehaveGivenStories extends JBehaveRule {
         return split;
     }
 
-    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
-
     private boolean isMyFilesValid() {
         if (myFiles.isEmpty()) return false;
         for (PsiFile psiFile : myFiles) {
@@ -87,11 +87,11 @@ public class JBehaveGivenStories extends JBehaveRule {
         if (!isMyFilesValid()) {
             myFiles.clear();
             Project project = getProject();
-            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project), StoryFileType.STORY_FILE_TYPE);
+            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
+                    GlobalSearchScope.projectScope(project), StoryFileType.STORY_FILE_TYPE);
             PsiFile[] filesByName = FilenameIndex.getFilesByName(project, getFileName(), scopeRestrictedByFileTypes);
             for (final PsiFile psiFile : filesByName) {
-                if (hasSameFileNamePart(psiFile))
-                    myFiles.add(psiFile);
+                if (hasSameFileNamePart(psiFile)) myFiles.add(psiFile);
             }
         }
         return myFiles.toArray(new PsiFile[myFiles.size()]);
@@ -101,13 +101,10 @@ public class JBehaveGivenStories extends JBehaveRule {
         PsiFile[] files = aDir.getFiles();
         if (files.length == 0) return true;
         for (PsiFile file : files) {
-            if (file.getFileType() == StoryFileType.STORY_FILE_TYPE)
-                return true;
+            if (file.getFileType() == StoryFileType.STORY_FILE_TYPE) return true;
         }
         return false;
     }
-
-    private static final Key<Boolean> hasStories = new Key<Boolean>("hasStories");
 
     private boolean hasDirTreeOnlyStories(PsiDirectory aDir) {
         Boolean userData = aDir.getUserData(hasStories);
@@ -133,10 +130,8 @@ public class JBehaveGivenStories extends JBehaveRule {
         if (hasDirTreeOnlyStories(start)) {
             PsiDirectory parentDirectory = start.getParentDirectory();
             PsiDirectory tree = getBiggestStoryTree(parentDirectory);
-            if (tree != null)
-                return getBiggestStoryTree(tree);
-            else
-                return start;
+            if (tree != null) return getBiggestStoryTree(tree);
+            else return start;
         }
         return null;
     }

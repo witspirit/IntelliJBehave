@@ -16,11 +16,7 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.StorySyntaxHighlighter;
-import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
-import com.github.kumaraman21.intellijbehave.peg.PegStoryPath;
-import com.github.kumaraman21.intellijbehave.peg.StoryPathPsiReference;
+import com.github.kumaraman21.intellijbehave.parser.*;
 import com.github.kumaraman21.intellijbehave.psi.StoryScenarioTitle;
 import com.github.kumaraman21.intellijbehave.psi.StoryStoryPath;
 import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
@@ -48,28 +44,29 @@ public class StoryAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
         if (psiElement instanceof JBehaveStep) {
             JBehaveStep step = (JBehaveStep) psiElement;
-            Iterator<JavaStepDefinition> it = JBehaveStepsIndex.getInstance(step.getProject()).findStepDefinitions(step).iterator();
+            Iterator<JavaStepDefinition> it = JBehaveStepsIndex.getInstance(step.getProject()).findStepDefinitions(
+                    step).iterator();
             if (it.hasNext()) {
                 annotateParameters(step, it.next(), annotationHolder);
             } else {
                 Annotation errorAnnotation = annotationHolder.createErrorAnnotation(step.getStoryStepLine(),
                         "No definition found for the step");
-                errorAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_ERROR_NO_DEF_FOUND);
+                errorAnnotation.setTextAttributes(StorySyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
             }
 
-        } else if (psiElement instanceof PegStoryPath) {
+        } else if (psiElement instanceof JBehaveStoryPath) {
             PsiElement parent = psiElement.getParent();
             if (parent != null && !(parent instanceof StoryScenarioTitle)) {
                 StoryStoryPath storyPath = (StoryStoryPath) psiElement;
                 PsiReference[] references = storyPath.getReferences();
-                if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
+                if (references.length != 1 || !(references[0] instanceof JBehavePathPsiReference)) {
                     return;
                 }
-                StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
+                JBehavePathPsiReference reference = (JBehavePathPsiReference) references[0];
 
                 if (reference.multiResolve(false).length == 0) {
                     Annotation errorAnnotation = annotationHolder.createErrorAnnotation(psiElement, "File not found");
-                    errorAnnotation.setTextAttributes(StorySyntaxHighlighter.STORY_ERROR_FILE_NOT_FOUND);
+                    errorAnnotation.setTextAttributes(StorySyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
                 }
             }
         } else if (psiElement instanceof JBehaveRule) {
@@ -119,7 +116,7 @@ public class StoryAnnotator implements Annotator {
                     ASTNode node = elementAt.getNode();
                     if (node != null) {
                         IElementType elementType = node.getElementType();
-                        if (elementType == IStoryPegElementType.STORY_TOKEN_WORD) {
+                        if (elementType == IJBehaveElementType.JB_TOKEN_WORD) {
                             infoAnnotation.setTextAttributes(StorySyntaxHighlighter.STEP_PARAMETER);
                         }
                     }

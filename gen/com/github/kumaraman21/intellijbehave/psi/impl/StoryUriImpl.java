@@ -7,8 +7,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType.*;
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
+import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class StoryUriImpl extends JBehaveRule implements StoryUri {

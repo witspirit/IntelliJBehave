@@ -1,4 +1,4 @@
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.psi.StoryScenario;
@@ -15,8 +15,8 @@ import java.util.Collection;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class PegStoryScenario extends ASTWrapperPsiElement {
-    public PegStoryScenario(ASTNode node) {
+public class JBehaveStoryScenario extends ASTWrapperPsiElement {
+    public JBehaveStoryScenario(ASTNode node) {
         super(node);
     }
 

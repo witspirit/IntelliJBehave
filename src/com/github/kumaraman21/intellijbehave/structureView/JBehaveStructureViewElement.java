@@ -1,8 +1,8 @@
 package com.github.kumaraman21.intellijbehave.structureView;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
-import com.github.kumaraman21.intellijbehave.parser.StoryFile;
-import com.github.kumaraman21.intellijbehave.peg.PegStoryScenario;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveStoryScenario;
 import com.github.kumaraman21.intellijbehave.psi.StoryGivenStories;
 import com.github.kumaraman21.intellijbehave.psi.StoryMetaElement;
 import com.github.kumaraman21.intellijbehave.psi.StoryMetaStatement;
@@ -107,10 +107,10 @@ public class JBehaveStructureViewElement implements StructureViewTreeElement {
     @Override
     public TreeElement[] getChildren() {
         Collection<? extends PsiElement> structureViewChildren;
-        if (element instanceof StoryFile) {
-            structureViewChildren = ((StoryFile) element).getStructureViewChildren();
-        } else if (element instanceof PegStoryScenario) {
-            structureViewChildren = ((PegStoryScenario) element).getSteps();
+        if (element instanceof JBehaveFile) {
+            structureViewChildren = ((JBehaveFile) element).getStructureViewChildren();
+        } else if (element instanceof JBehaveStoryScenario) {
+            structureViewChildren = ((JBehaveStoryScenario) element).getSteps();
         } else return EMPTY_ARRAY;
         return ContainerUtil.map2Array(structureViewChildren, TreeElement.class,
                 new Function<PsiElement, TreeElement>() {

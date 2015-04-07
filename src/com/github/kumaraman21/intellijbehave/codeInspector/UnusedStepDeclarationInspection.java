@@ -15,8 +15,8 @@
  */
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
+import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.parser.StoryFile;
 import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
@@ -49,11 +49,12 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
         return new JavaElementVisitor() {
             @Override
             public void visitMethod(final PsiMethod method) {
-                Boolean isStepDefinition = (Boolean) ApplicationManager.getApplication().runReadAction(new Computable() {
-                    public Boolean compute() {
-                        return isStepDefinition(method);
-                    }
-                });
+                Boolean isStepDefinition = (Boolean) ApplicationManager.getApplication().runReadAction(
+                        new Computable() {
+                            public Boolean compute() {
+                                return isStepDefinition(method);
+                            }
+                        });
 
                 if (!isStepDefinition) {
                     return;
@@ -74,7 +75,8 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
                     StepPsiReference reference = (StepPsiReference) references[0];
                     JavaStepDefinition definition = reference.resolveToDefinition();
 
-                    if (definition != null && definition.getAnnotatedMethod() != null && definition.getAnnotatedMethod().isEquivalentTo(method)) {
+                    if (definition != null && definition.getAnnotatedMethod() != null && definition.getAnnotatedMethod().isEquivalentTo(
+                            method)) {
                         return;
                     }
                 }
@@ -99,8 +101,8 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
             }
 
             PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-            if (psiFile instanceof StoryFile) {
-                List<JBehaveStep> steps = ((StoryFile) psiFile).getSteps();
+            if (psiFile instanceof JBehaveFile) {
+                List<JBehaveStep> steps = ((JBehaveFile) psiFile).getSteps();
                 stepUsages.addAll(steps);
             }
             return true;

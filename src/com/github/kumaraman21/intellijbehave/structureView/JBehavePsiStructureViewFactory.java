@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.structureView;
 
-import com.github.kumaraman21.intellijbehave.parser.StoryFile;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
@@ -17,7 +17,7 @@ public class JBehavePsiStructureViewFactory implements PsiStructureViewFactory {
     @Nullable
     @Override
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
-        if (!(psiFile instanceof StoryFile)) return null;
+        if (!(psiFile instanceof JBehaveFile)) return null;
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             @Override

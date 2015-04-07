@@ -40,72 +40,74 @@ import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY
 
 public class CreateStoryAction extends CreateElementActionBase {
 
-  public CreateStoryAction() {
-    super("Create New Story File", STORY_FILE_TYPE.getDescription(), STORY_FILE_TYPE.getIcon());
-  }
-
-  @NotNull
-  @Override
-  protected PsiElement[] invokeDialog(Project project, PsiDirectory directory) {
-    CreateElementActionBase.MyInputValidator validator = new CreateElementActionBase.MyInputValidator(project, directory);
-    Messages.showInputDialog(project, "Enter a new file name:", "New Story File", Messages.getQuestionIcon(), "", validator);
-    return validator.getCreatedElements();
-  }
-
-  @NotNull
-  @Override
-  protected PsiElement[] create(String newName, PsiDirectory directory) throws Exception {
-    final FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
-
-    String fileName = getFileName(newName);
-    Project project = directory.getProject();
-
-    directory.checkCreateFile(fileName);
-    PsiFile psiFile = PsiFileFactory.getInstance(project)
-      .createFileFromText(fileName, STORY_FILE_TYPE, template.getText());
-
-    if (template.isReformatCode()) {
-      CodeStyleManager.getInstance(project).reformat(psiFile);
+    public CreateStoryAction() {
+        super("Create New Story File", STORY_FILE_TYPE.getDescription(), STORY_FILE_TYPE.getIcon());
     }
-    psiFile = (PsiFile)directory.add(psiFile);
 
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
-    FileEditorManager.getInstance(project).openFile(virtualFile, true);
-
-    return new PsiElement[]{psiFile};
-  }
-
-  @Override
-  protected String getErrorTitle() {
-    return "Cannot Create Story File";
-  }
-
-  @Override
-  protected String getCommandName() {
-    return "Create Story File";
-  }
-
-  @Override
-  protected String getActionName(PsiDirectory directory, String newName) {
-    return IdeBundle.message("progress.creating.file", STORY_FILE_TYPE.getName(), newName, directory.getName());
-  }
-
-  public void update(final AnActionEvent e) {
-    super.update(e);
-    Presentation presentation = e.getPresentation();
-    final FileTypeManager manager = FileTypeManager.getInstance();
-    final FileType fileType = manager.getFileTypeByExtension(HtmlFileType.DOT_DEFAULT_EXTENSION);
-    if (fileType == FileTypes.PLAIN_TEXT) {
-      presentation.setEnabled(false);
-      presentation.setVisible(false);
+    @NotNull
+    @Override
+    protected PsiElement[] invokeDialog(Project project, PsiDirectory directory) {
+        CreateElementActionBase.MyInputValidator validator = new CreateElementActionBase.MyInputValidator(project,
+                directory);
+        Messages.showInputDialog(project, "Enter a new file name:", "New Story File", Messages.getQuestionIcon(), "",
+                validator);
+        return validator.getCreatedElements();
     }
-  }
 
-  private String getFileName(String name) {
-      if (name.endsWith("." + STORY_FILE_TYPE.getDefaultExtension())) {
-          return name;
-      } else {
-          return name + "." + STORY_FILE_TYPE.getDefaultExtension();
-      }
+    @NotNull
+    @Override
+    protected PsiElement[] create(String newName, PsiDirectory directory) throws Exception {
+        final FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
+
+        String fileName = getFileName(newName);
+        Project project = directory.getProject();
+
+        directory.checkCreateFile(fileName);
+        PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, STORY_FILE_TYPE,
+                template.getText());
+
+        if (template.isReformatCode()) {
+            CodeStyleManager.getInstance(project).reformat(psiFile);
+        }
+        psiFile = (PsiFile) directory.add(psiFile);
+
+        final VirtualFile virtualFile = psiFile.getVirtualFile();
+        FileEditorManager.getInstance(project).openFile(virtualFile, true);
+
+        return new PsiElement[]{psiFile};
+    }
+
+    @Override
+    protected String getErrorTitle() {
+        return "Cannot Create Story File";
+    }
+
+    @Override
+    protected String getCommandName() {
+        return "Create Story File";
+    }
+
+    @Override
+    protected String getActionName(PsiDirectory directory, String newName) {
+        return IdeBundle.message("progress.creating.file", STORY_FILE_TYPE.getName(), newName, directory.getName());
+    }
+
+    public void update(final AnActionEvent e) {
+        super.update(e);
+        Presentation presentation = e.getPresentation();
+        final FileTypeManager manager = FileTypeManager.getInstance();
+        final FileType fileType = manager.getFileTypeByExtension(HtmlFileType.DOT_DEFAULT_EXTENSION);
+        if (fileType == FileTypes.PLAIN_TEXT) {
+            presentation.setEnabled(false);
+            presentation.setVisible(false);
+        }
+    }
+
+    private String getFileName(String name) {
+        if (name.endsWith("." + STORY_FILE_TYPE.getDefaultExtension())) {
+            return name;
+        } else {
+            return name + "." + STORY_FILE_TYPE.getDefaultExtension();
+        }
     }
 }

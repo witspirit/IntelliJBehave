@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave.utility;
 import org.apache.commons.lang.LocaleUtils;
 import org.jbehave.core.i18n.LocalizedKeywords;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +17,7 @@ public class LocalizedStorySupport {
 
     /**
      * Returns the language directive if it exists.
-     *
+     * <p/>
      * The methods checks if the {@link CharSequence} contains a language directive,
      * if so it returns the corresponding locale as a {@link String} otherwise returns
      * <code>null</code>.
@@ -44,8 +45,7 @@ public class LocalizedStorySupport {
         Locale locale;
         try {
             locale = LocaleUtils.toLocale(localeAsString);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             locale = Locale.ENGLISH;
         }
         return new LocalizedKeywords(locale);

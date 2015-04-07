@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.parser;
 
-import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
-import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
-import com.github.kumaraman21.intellijbehave.parser.StoryFile;
-import com.github.kumaraman21.intellijbehave.parser.StoryPegParser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -34,21 +30,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Reader;
 
-public class StoryPegParserDefinition implements ParserDefinition {
+public class JBehaveParserDefinition implements ParserDefinition {
+    public static final TokenSet STEP_TYPES = TokenSet.create(IJBehaveElementType.JB_TOKEN_AND,
+            IJBehaveElementType.JB_TOKEN_WHEN, IJBehaveElementType.JB_TOKEN_THEN, IJBehaveElementType.JB_TOKEN_GIVEN);
+
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
-        return new FlexAdapter(new _StoryPegLexer((Reader) null));
+        return new FlexAdapter(new _JBehaveLexer((Reader) null));
     }
 
     @Override
     public PsiParser createParser(Project project) {
-        return new StoryPegParser();
+        return new JBehaveParser();
     }
 
     @Override
     public IFileElementType getFileNodeType() {
-        return StoryElementType.STORY_FILE;
+        return JBehaveElementType.STORY_FILE;
     }
 
     @NotNull
@@ -74,19 +73,15 @@ public class StoryPegParserDefinition implements ParserDefinition {
         //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_WORD);
     }
 
-    public static final TokenSet STEP_TYPES = TokenSet.create(IStoryPegElementType.STORY_TOKEN_AND,
-            IStoryPegElementType.STORY_TOKEN_WHEN, IStoryPegElementType.STORY_TOKEN_THEN,
-            IStoryPegElementType.STORY_TOKEN_GIVEN);
-
     @NotNull
     @Override
     public PsiElement createElement(ASTNode node) {
-        return IStoryPegElementType.Factory.createElement(node);
+        return IJBehaveElementType.Factory.createElement(node);
     }
 
     @Override
     public PsiFile createFile(FileViewProvider fileViewProvider) {
-        return new StoryFile(fileViewProvider);
+        return new JBehaveFile(fileViewProvider);
     }
 
     @Override

@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.highlighter;
 
-import com.intellij.lexer.FlexAdapter;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.Reader;
+import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 
-public class StoryPegLexer extends FlexAdapter {
-    public StoryPegLexer() {
-        super(new _StoryPegLexer((Reader) null));
+public class JBehaveElementType extends IElementType {
+    public JBehaveElementType(@NotNull @NonNls String debugName) {
+        super(debugName, STORY_FILE_TYPE.getLanguage());
     }
 }

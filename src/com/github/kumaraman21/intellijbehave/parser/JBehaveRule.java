@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.parser;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.icons.AllIcons;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class JBehaveRule extends ASTWrapperPsiElement implements StoryElement {
+public class JBehaveRule extends ASTWrapperPsiElement implements JBehaveElement {
     public JBehaveRule(@NotNull ASTNode node) {
         super(node);
     }

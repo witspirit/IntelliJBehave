@@ -17,12 +17,26 @@ package com.github.kumaraman21.intellijbehave.highlighter;
 
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 
-public class StoryPegElementType extends IElementType {
-    public StoryPegElementType(@NotNull @NonNls String debugName) {
+public class JBehaveTokenType extends IElementType {
+
+
+    private final String key;
+
+    public JBehaveTokenType(@NonNls String debugName) {
         super(debugName, STORY_FILE_TYPE.getLanguage());
+        this.key = debugName;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof JBehaveTokenType && ((JBehaveTokenType) other).key.equals(key);
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 }

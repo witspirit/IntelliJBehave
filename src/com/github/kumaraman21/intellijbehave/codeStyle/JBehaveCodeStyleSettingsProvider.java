@@ -17,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @Override
     public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
-        settings.OTHER_INDENT_OPTIONS.CONTINUATION_INDENT_SIZE=0;
-        settings.OTHER_INDENT_OPTIONS.INDENT_SIZE=0;
-        settings.OTHER_INDENT_OPTIONS.TAB_SIZE=0;
+        settings.OTHER_INDENT_OPTIONS.CONTINUATION_INDENT_SIZE = 0;
+        settings.OTHER_INDENT_OPTIONS.INDENT_SIZE = 0;
+        settings.OTHER_INDENT_OPTIONS.TAB_SIZE = 0;
         return new JBehaveCodeStyleSettings(settings);
     }
 
@@ -33,6 +33,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
     public String getConfigurableDisplayName() {
         return "JBehave";
     }
+
     @NotNull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.kumaraman21.intellijbehave.peg;
+package com.github.kumaraman21.intellijbehave.parser;
 
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.openapi.util.TextRange;
@@ -26,17 +26,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StoryPathPsiReference implements PsiPolyVariantReference {
-    private final PegStoryPath myElement;
+public class JBehavePathPsiReference implements PsiPolyVariantReference {
+    private final JBehaveStoryPath myElement;
     private final TextRange myRange;
 
-    public StoryPathPsiReference(@NotNull PegStoryPath element,@NotNull TextRange range) {
+    public JBehavePathPsiReference(@NotNull JBehaveStoryPath element, @NotNull TextRange range) {
         myElement = element;
         myRange = range;
     }
 
     @Override
-    public PegStoryPath getElement() {
+    public JBehaveStoryPath getElement() {
         return myElement;
     }
 

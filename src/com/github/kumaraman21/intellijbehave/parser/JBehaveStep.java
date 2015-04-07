@@ -17,7 +17,6 @@ package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
-import com.github.kumaraman21.intellijbehave.peg.JBehaveRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
@@ -83,7 +82,7 @@ public class JBehaveStep extends JBehaveRule implements PsiNamedElement {
     @Nullable
     public ASTNode getKeyword() {
         //return getNode().findChildByType(StoryTokenType.STEP_TYPES);
-        return getNode().findChildByType(IStoryPegElementType.STORY_STEP_PAR);
+        return getNode().findChildByType(IJBehaveElementType.JB_STEP_PAR);
     }
 
     public String getStepText() {

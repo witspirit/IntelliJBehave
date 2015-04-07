@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType;
+import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.Spacing;
@@ -25,16 +25,16 @@ public class StoryBlock extends StoryIgnoreBlock {
     protected List<Block> buildChildren() {
         List<Block> retVal = new ArrayList<Block>();
         ASTNode firstChildNode = myNode.getFirstChildNode();
-        if (firstChildNode.getElementType() == IStoryPegElementType.STORY_TABLE) {
+        if (firstChildNode.getElementType() == IJBehaveElementType.JB_TABLE) {
             retVal.add(new StoryTableBlock(firstChildNode, null, null));
         } else {
             ASTNode node = firstChildNode.getFirstChildNode();
             while (node != null) {
                 IElementType elementType = node.getElementType();
-                if (elementType != IStoryPegElementType.STORY_TOKEN_NEWLINE && elementType != IStoryPegElementType.STORY_TOKEN_SPACE) {
-                    if (elementType == IStoryPegElementType.STORY_SCENARIO) {
+                if (elementType != IJBehaveElementType.JB_TOKEN_NEWLINE && elementType != IJBehaveElementType.JB_TOKEN_SPACE) {
+                    if (elementType == IJBehaveElementType.JB_SCENARIO) {
                         retVal.add(new StoryScenarioBlock(node, null, null));
-                    } else if (elementType == IStoryPegElementType.STORY_TABLE) {
+                    } else if (elementType == IJBehaveElementType.JB_TABLE) {
                         retVal.add(new StoryTableBlock(node, null, null));
                     } else retVal.add(new StoryBlockBlock(node, null, null));
                 }

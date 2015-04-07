@@ -23,15 +23,16 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class StoryLanguage extends CompositeLanguage {
-  public static final StoryLanguage STORY_LANGUAGE = new StoryLanguage();
+    public static final StoryLanguage STORY_LANGUAGE = new StoryLanguage();
 
-  private StoryLanguage() {
-    super("Story", "text/story");
-    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
-      @NotNull
-      protected SyntaxHighlighter createHighlighter() {
-        return new StorySyntaxHighlighter();
-      }
-    });
-  }
+    private StoryLanguage() {
+        super("Story", "text/story");
+        SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this,
+                new SingleLazyInstanceSyntaxHighlighterFactory() {
+                    @NotNull
+                    protected SyntaxHighlighter createHighlighter() {
+                        return new StorySyntaxHighlighter();
+                    }
+                });
+    }
 }

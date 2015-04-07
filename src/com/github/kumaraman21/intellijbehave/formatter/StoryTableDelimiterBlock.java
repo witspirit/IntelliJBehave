@@ -14,9 +14,10 @@ import java.util.List;
  */
 public class StoryTableDelimiterBlock extends StoryIgnoreBlock {
     private int columnNr;
-    protected StoryTableDelimiterBlock(int columnNr,ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
+
+    protected StoryTableDelimiterBlock(int columnNr, ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
         super(node, wrap, alignment);
-        this.columnNr=columnNr;
+        this.columnNr = columnNr;
     }
 
     public int getColumnNr() {

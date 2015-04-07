@@ -1,10 +1,10 @@
 {
-  parserClass="com.github.kumaraman21.intellijbehave.parser.StoryPegParser"
-  parserUtilClass="com.github.kumaraman21.intellijbehave.peg.StoryPegParserUtil"
-  elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IStoryPegElementType"
-  elementTypePrefix="STORY_"
-  elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegElementType"
-  tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.StoryPegTokenType"
+  parserClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParser"
+  parserUtilClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParserUtil"
+  elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType"
+  elementTypePrefix="JB_"
+  elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveElementType"
+  tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveTokenType"
   psiClassPrefix="Story"
   psiImplClassSuffix="Impl"
   psiPackage="com.github.kumaraman21.intellijbehave.psi"
@@ -40,10 +40,10 @@
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     TOKEN_WORD = "regexp:([a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
   ]
-  extends("StoryPath")="com.github.kumaraman21.intellijbehave.peg.PegStoryPath"
+  extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.JBehaveStoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.JBehaveStep"
-  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.peg.JBehaveRule"
-  extends("Scenario")="com.github.kumaraman21.intellijbehave.peg.PegStoryScenario"
+  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.JBehaveRule"
+  extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.JBehaveStoryScenario"
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}

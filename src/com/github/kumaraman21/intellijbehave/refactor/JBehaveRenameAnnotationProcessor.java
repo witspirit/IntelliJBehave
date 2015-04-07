@@ -27,6 +27,10 @@ import java.util.*;
  * Created by DeBritoD on 18.03.2015.
  */
 public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor {
+    public JBehaveRenameAnnotationProcessor() {
+        super();
+    }
+
     @Override
     public boolean canProcessElement(PsiElement element) {
         PsiElement help = element;
@@ -34,10 +38,6 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
             help = help.getParent();
         }
         return help != null || element instanceof PsiSuggestionHolder;
-    }
-
-    public JBehaveRenameAnnotationProcessor() {
-        super();
     }
 
     @Override

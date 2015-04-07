@@ -14,20 +14,15 @@ import java.util.regex.Pattern;
  */
 public class ParametrizedString implements Comparable<ParametrizedString> {
 
-    private static Pattern compileParameterPattern(String parameterPrefix) {
-        return Pattern.compile("(\\" + parameterPrefix + "\\w*)(\\W|\\Z)", Pattern.DOTALL);
-    }
-
+    private final String content;
+    private final String parameterPrefix;
     private List<Token> tokens = new ArrayList<Token>();
     private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
     private List<Token> stringTokens = new ArrayList<Token>();
-    private final String content;
-    private final String parameterPrefix;
-
-
     public ParametrizedString(String content) {
         this(content, "$");
     }
+
 
     public ParametrizedString(String content, String parameterPrefix) {
         if (content == null) {
@@ -36,6 +31,10 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         this.content = content;
         this.parameterPrefix = parameterPrefix;
         parse(compileParameterPattern(parameterPrefix));
+    }
+
+    private static Pattern compileParameterPattern(String parameterPrefix) {
+        return Pattern.compile("(\\" + parameterPrefix + "\\w*)(\\W|\\Z)", Pattern.DOTALL);
     }
 
     @Override
@@ -106,51 +105,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return toStringWithoutIdentifiers().compareTo(other.toStringWithoutIdentifiers());
     }
 
-    public class Token {
-        private final int offset;
-        private final int length;
-        private final boolean isIdentifier;
-
-        public Token(int offset, int length, boolean isIdentifier) {
-            this.offset = offset;
-            this.length = length;
-            this.isIdentifier = isIdentifier;
-        }
-
-        public String value() {
-            return content.substring(getOffset(), getOffset() + getLength());
-        }
-
-        @Override
-        public String toString() {
-            return "<<" + (isIdentifier() ? "$" : "") + value() + ">>";
-        }
-
-        public boolean regionMatches(int toffset, String other, int ooffset, int len) {
-            try {
-                return normalize(content, getOffset() + toffset, len).equalsIgnoreCase(normalize(other, ooffset, len));
-            } catch (final java.lang.StringIndexOutOfBoundsException e) {
-                return false;
-            }
-        }
-
-        private String normalize(final String input, final int offset, final int len) {
-            return input.substring(offset, offset + len).replaceAll("\\s+", "");
-        }
-
-        public int getOffset() {
-            return offset;
-        }
-
-        public int getLength() {
-            return length;
-        }
-
-        public boolean isIdentifier() {
-            return isIdentifier;
-        }
-    }
-
     public Token getToken(int index) {
         return tokens.get(index);
     }
@@ -164,24 +118,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         chain.input = input;
         chain.collectWeights();
         return chain;
-    }
-
-    public static class StringToken {
-        private final String value;
-        private final boolean identifier;
-
-        public StringToken(String value, boolean identifier) {
-            this.value = value;
-            this.identifier = identifier;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public boolean isIdentifier() {
-            return identifier;
-        }
     }
 
     public List<StringToken> tokenize(String stepInput) {
@@ -266,87 +202,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             }
         }
         return pair;
-    }
-
-    public static class WeightChain {
-        public static WeightChain zero() {
-            return new WeightChain();
-        }
-
-        private String input;
-        private int inputIndex;
-        private int weight;
-        private int tokenIndex = -1;
-        private WeightChain next;
-
-        public WeightChain last() {
-            WeightChain last = this;
-            WeightChain iter = this;
-            while (iter != null) {
-                if (!iter.isZero()) {
-                    last = iter;
-                }
-                iter = iter.next;
-            }
-            return last;
-        }
-
-        public boolean isZero() {
-            return weight == 0 && tokenIndex == -1;
-        }
-
-        public WeightChain getNext() {
-            return next;
-        }
-
-        public int getTokenIndex() {
-            return tokenIndex;
-        }
-
-        public boolean hasMoreWeightThan(WeightChain pair) {
-            if (weight > pair.weight) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "WeightChain [inputIndex=" + inputIndex + ", weight=" + weight + ", tokenIndex=" + tokenIndex + "]";
-        }
-
-        public void collectWeights() {
-            int w = weight;
-            WeightChain n = next;
-            while (n != null) {
-                if (!n.isZero()) {
-                    w += n.weight;
-                }
-                n = n.next;
-            }
-
-            this.weight = w;
-        }
-
-        public List<String> tokenize() {
-            List<String> parts = new ArrayList<String>();
-            if (isZero()) {
-                return parts;
-            }
-
-            int indexBeg = inputIndex;
-            WeightChain n = next;
-            while (n != null) {
-                if (!n.isZero()) {
-                    parts.add(input.substring(indexBeg, n.inputIndex));
-                    indexBeg = n.inputIndex;
-                }
-                n = n.next;
-            }
-            parts.add(input.substring(indexBeg));
-
-            return parts;
-        }
     }
 
     public boolean isSameAs(String input) {
@@ -543,5 +398,149 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             }
         }
         return retval;
+    }
+
+    public static class StringToken {
+        private final String value;
+        private final boolean identifier;
+
+        public StringToken(String value, boolean identifier) {
+            this.value = value;
+            this.identifier = identifier;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean isIdentifier() {
+            return identifier;
+        }
+    }
+
+    public static class WeightChain {
+        private String input;
+        private int inputIndex;
+        private int weight;
+        private int tokenIndex = -1;
+        private WeightChain next;
+
+        public static WeightChain zero() {
+            return new WeightChain();
+        }
+
+        public WeightChain last() {
+            WeightChain last = this;
+            WeightChain iter = this;
+            while (iter != null) {
+                if (!iter.isZero()) {
+                    last = iter;
+                }
+                iter = iter.next;
+            }
+            return last;
+        }
+
+        public boolean isZero() {
+            return weight == 0 && tokenIndex == -1;
+        }
+
+        public WeightChain getNext() {
+            return next;
+        }
+
+        public int getTokenIndex() {
+            return tokenIndex;
+        }
+
+        public boolean hasMoreWeightThan(WeightChain pair) {
+            if (weight > pair.weight) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "WeightChain [inputIndex=" + inputIndex + ", weight=" + weight + ", tokenIndex=" + tokenIndex + "]";
+        }
+
+        public void collectWeights() {
+            int w = weight;
+            WeightChain n = next;
+            while (n != null) {
+                if (!n.isZero()) {
+                    w += n.weight;
+                }
+                n = n.next;
+            }
+
+            this.weight = w;
+        }
+
+        public List<String> tokenize() {
+            List<String> parts = new ArrayList<String>();
+            if (isZero()) {
+                return parts;
+            }
+
+            int indexBeg = inputIndex;
+            WeightChain n = next;
+            while (n != null) {
+                if (!n.isZero()) {
+                    parts.add(input.substring(indexBeg, n.inputIndex));
+                    indexBeg = n.inputIndex;
+                }
+                n = n.next;
+            }
+            parts.add(input.substring(indexBeg));
+
+            return parts;
+        }
+    }
+
+    public class Token {
+        private final int offset;
+        private final int length;
+        private final boolean isIdentifier;
+
+        public Token(int offset, int length, boolean isIdentifier) {
+            this.offset = offset;
+            this.length = length;
+            this.isIdentifier = isIdentifier;
+        }
+
+        public String value() {
+            return content.substring(getOffset(), getOffset() + getLength());
+        }
+
+        @Override
+        public String toString() {
+            return "<<" + (isIdentifier() ? "$" : "") + value() + ">>";
+        }
+
+        public boolean regionMatches(int toffset, String other, int ooffset, int len) {
+            try {
+                return normalize(content, getOffset() + toffset, len).equalsIgnoreCase(normalize(other, ooffset, len));
+            } catch (final java.lang.StringIndexOutOfBoundsException e) {
+                return false;
+            }
+        }
+
+        private String normalize(final String input, final int offset, final int len) {
+            return input.substring(offset, offset + len).replaceAll("\\s+", "");
+        }
+
+        public int getOffset() {
+            return offset;
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public boolean isIdentifier() {
+            return isIdentifier;
+        }
     }
 }
