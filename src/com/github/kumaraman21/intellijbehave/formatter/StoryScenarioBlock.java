@@ -56,7 +56,7 @@ public class StoryScenarioBlock extends StoryIgnoreBlock {
             return Spacing.createSpacing(0, 0, 0, false, 0);
         }
         if (child1 instanceof StoryScenarioLeafBlock && child2 instanceof StoryScenarioLeafBlock) {
-            return Spacing.createSpacing(1, 1, 0, false, 0);
+            return Spacing.createSpacing(1, 1, 0, true, 0);
         }
         return Spacing.createSpacing(0, 1, 0, true, 1);
     }
