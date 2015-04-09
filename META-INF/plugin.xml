@@ -70,6 +70,15 @@
 
     <h2>Release notes:</h2>
     <p>
+        New in version 2.1.0:
+    </p>
+    <ul>
+        <li> Structure view </li>
+        <li> Rename factoring of injects </li>
+        <li> Rename factoring of step parameters </li>
+        <li> Coloring of tables, table rows and table cells </li>
+    </ul>
+    <p>
         New in version 2.00:
     </p>
     <ul>
