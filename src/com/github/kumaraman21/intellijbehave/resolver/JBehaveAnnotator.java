@@ -79,6 +79,7 @@ public class JBehaveAnnotator implements Annotator {
 
     }
 
+
     private void annotateElement(PsiElement psiElement, AnnotationHolder annotationHolder, IElementType elementType) {
         TextAttributesKey textAttribute = JBehaveSyntaxHighlighter.getTextAttribute(elementType);
         if (textAttribute != null) {
@@ -87,7 +88,10 @@ public class JBehaveAnnotator implements Annotator {
         if (elementType == IJBehaveElementType.JB_TABLE_CELL || elementType == IJBehaveElementType.JB_TABLE_ROW) {
             PsiElement parent = psiElement.getParent();
             if (parent != null) {
-                annotateElement(parent, annotationHolder, parent.getNode().getElementType());
+                PsiElement[] children = parent.getChildren();
+                if (children.length > 0 && children[0] == psiElement) {
+                    annotateElement(parent, annotationHolder, parent.getNode().getElementType());
+                }
             }
         }
     }
