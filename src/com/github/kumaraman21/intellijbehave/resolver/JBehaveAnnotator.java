@@ -16,10 +16,7 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighter;
-import com.github.kumaraman21.intellijbehave.parser.ParserRule;
-import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
-import com.github.kumaraman21.intellijbehave.parser.StoryPath;
-import com.github.kumaraman21.intellijbehave.parser.StoryPathPsiReference;
+import com.github.kumaraman21.intellijbehave.parser.*;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveScenarioTitle;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
@@ -99,8 +96,11 @@ public class JBehaveAnnotator implements Annotator {
         Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
 
         int offset = step.getTextOffset() + step.getStepTextOffset();
+        final List<StringToken> tokenize = pString.tokenize(stepText);
+        final int lastToken = tokenize.size() - 1;
         int i = 0;
-        for (StringToken token : pString.tokenize(stepText)) {
+        final boolean hasStoryStepPostParameters = step.hasStoryStepPostParameters();
+        for (StringToken token : tokenize) {
             int length = token.getValue().length();
             if (token.isIdentifier()) {
                 ParametrizedString.Token token1 = pString.getToken(i);
@@ -117,19 +117,22 @@ public class JBehaveAnnotator implements Annotator {
                                                                                          token1.value()));
 
                 }
-                infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
+                if (!(hasStoryStepPostParameters && i == lastToken))
+                    infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
+                else {
+                    infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_DEFAULT_TEXT);
+                }
                 List<String> stringList = ParametrizedString.split(token.getValue());
                 int running = offset;
                 PsiElement elementAt;
                 for (String s : stringList) {
                     elementAt = step.getContainingFile().findElementAt(running);
-                    if (elementAt != null) {
+                    if (elementAt != null &&
+                            elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
                         elementAt.putUserData(ParserRule.isStepParameter, true);
                     }
                     running += s.length() + 1;
                 }
-
-
             }
             ++i;
             offset += length;

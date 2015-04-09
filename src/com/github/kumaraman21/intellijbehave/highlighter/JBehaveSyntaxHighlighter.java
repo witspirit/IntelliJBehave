@@ -93,9 +93,11 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String JB_TOKEN_COMMENT_ID = "JBEHAVE.JB_COMMENT_ID";
     public static final String STEP_PARAMETER_ID = "JBEHAVE.STEP_PARAMETER";
     public static final String JB_TOKEN_PATH_ID = "JBEHAVE.JB_TOKEN_PATH";
+    public static final String JB_DEFAULT_TEXT_ID = "JBEHAVE.JB_DEFAULT_TEXT";
 
     // Registering TextAttributes
     static {
+        createKey(JB_DEFAULT_TEXT_ID, HighlighterColors.TEXT);
         createKey(JB_DESCRIPTION_ID, HighlighterColors.TEXT);
         createKey(JB_IP_ADDRESS_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(JB_LIFECYCLE_AFTER_ID, DefaultLanguageHighlighterColors.KEYWORD);
@@ -139,6 +141,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     }
 
     private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new THashMap<IElementType, TextAttributesKey>();
+    public static TextAttributesKey JB_DEFAULT_TEXT = createTextAttributesKey(JB_DEFAULT_TEXT_ID);
     public static TextAttributesKey JB_DESCRIPTION = createTextAttributesKey(JB_DESCRIPTION_ID);
     public static TextAttributesKey JB_EXAMPLES = createTextAttributesKey(JB_EXAMPLES_ID);
     //public static TextAttributesKey JB_GIVEN_STORIES = createTextAttributesKey(JB_GIVEN_STORIES_ID);
