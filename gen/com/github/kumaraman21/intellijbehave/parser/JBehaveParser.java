@@ -24,67 +24,67 @@ public class JBehaveParser implements PsiParser {
         Marker m = enter_section_(b, 0, _COLLAPSE_, null);
         if (t == JB_DESCRIPTION) {
             r = Description(b, 0);
-        } else if (t == JB_EXAMPLES) {
+    } else if (t == JB_EXAMPLES) {
             r = Examples(b, 0);
-        } else if (t == JB_GIVEN_STORIES) {
+    } else if (t == JB_GIVEN_STORIES) {
             r = GivenStories(b, 0);
-        } else if (t == JB_IP_ADDRESS) {
+    } else if (t == JB_IP_ADDRESS) {
             r = IpAddress(b, 0);
-        } else if (t == JB_LIFECYCLE) {
+    } else if (t == JB_LIFECYCLE) {
             r = Lifecycle(b, 0);
-        } else if (t == JB_LIFECYCLE_AFTER) {
+    } else if (t == JB_LIFECYCLE_AFTER) {
             r = LifecycleAfter(b, 0);
-        } else if (t == JB_LIFECYCLE_BEFORE) {
+    } else if (t == JB_LIFECYCLE_BEFORE) {
             r = LifecycleBefore(b, 0);
-        } else if (t == JB_META_ELEMENT) {
+    } else if (t == JB_META_ELEMENT) {
             r = MetaElement(b, 0);
-        } else if (t == JB_META_KEY) {
+    } else if (t == JB_META_KEY) {
             r = MetaKey(b, 0);
-        } else if (t == JB_META_STATEMENT) {
+    } else if (t == JB_META_STATEMENT) {
             r = MetaStatement(b, 0);
-        } else if (t == JB_META_VALUE) {
+    } else if (t == JB_META_VALUE) {
             r = MetaValue(b, 0);
-        } else if (t == JB_NARRATIVE) {
+    } else if (t == JB_NARRATIVE) {
             r = Narrative(b, 0);
-        } else if (t == JB_NARRATIVE_TEXT) {
+    } else if (t == JB_NARRATIVE_TEXT) {
             r = NarrativeText(b, 0);
-        } else if (t == JB_SCENARIO) {
+    } else if (t == JB_SCENARIO) {
             r = Scenario(b, 0);
-        } else if (t == JB_SCENARIO_TITLE) {
+    } else if (t == JB_SCENARIO_TITLE) {
             r = ScenarioTitle(b, 0);
-        } else if (t == JB_STEP) {
+    } else if (t == JB_STEP) {
             r = Step(b, 0);
-        } else if (t == JB_STEP_ARGUMENT) {
+    } else if (t == JB_STEP_ARGUMENT) {
             r = StepArgument(b, 0);
-        } else if (t == JB_STEP_LINE) {
+    } else if (t == JB_STEP_LINE) {
             r = StepLine(b, 0);
-        } else if (t == JB_STEP_PAR) {
+    } else if (t == JB_STEP_PAR) {
             r = StepPar(b, 0);
-        } else if (t == JB_STEP_POST_PARAMETER) {
+    } else if (t == JB_STEP_POST_PARAMETER) {
             r = StepPostParameter(b, 0);
-        } else if (t == JB_STORY) {
+    } else if (t == JB_STORY) {
             r = Story(b, 0);
-        } else if (t == JB_STORY_PATH) {
+    } else if (t == JB_STORY_PATH) {
             r = StoryPath(b, 0);
-        } else if (t == JB_STORY_PATHS) {
+    } else if (t == JB_STORY_PATHS) {
             r = StoryPaths(b, 0);
-        } else if (t == JB_TABLE) {
+    } else if (t == JB_TABLE) {
             r = Table(b, 0);
-        } else if (t == JB_TABLE_CELL) {
+    } else if (t == JB_TABLE_CELL) {
             r = TableCell(b, 0);
-        } else if (t == JB_TABLE_CELL_EMPTY) {
+    } else if (t == JB_TABLE_CELL_EMPTY) {
             r = TableCellEmpty(b, 0);
-        } else if (t == JB_TABLE_ROW) {
+    } else if (t == JB_TABLE_ROW) {
             r = TableRow(b, 0);
-        } else if (t == JB_URI) {
+    } else if (t == JB_URI) {
             r = Uri(b, 0);
-        } else if (t == JB_URI_IDENTIFIER) {
+    } else if (t == JB_URI_IDENTIFIER) {
             r = UriIdentifier(b, 0);
-        } else if (t == JB_URI_WORD) {
+    } else if (t == JB_URI_WORD) {
             r = UriWord(b, 0);
-        } else {
+    } else {
             r = parse_root_(t, b, 0);
-        }
+    }
         exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
     }
 
@@ -192,7 +192,7 @@ public class JBehaveParser implements PsiParser {
             if (!IpAddress_1_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "IpAddress_1_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -260,7 +260,7 @@ public class JBehaveParser implements PsiParser {
             if (!Step(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "LifecycleAfter_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -289,7 +289,7 @@ public class JBehaveParser implements PsiParser {
             if (!Step(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "LifecycleBefore_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -314,7 +314,7 @@ public class JBehaveParser implements PsiParser {
             if (!Line_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Line_1", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -381,7 +381,7 @@ public class JBehaveParser implements PsiParser {
             if (!MetaKey_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "MetaKey_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -437,7 +437,7 @@ public class JBehaveParser implements PsiParser {
             if (!MetaStatement_2_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "MetaStatement_2", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -463,7 +463,7 @@ public class JBehaveParser implements PsiParser {
             if (!MetaValue_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "MetaValue", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, l, m, JB_META_VALUE, r, false, null);
         return r;
     }
@@ -491,7 +491,7 @@ public class JBehaveParser implements PsiParser {
             if (!MultiTextLine_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "MultiTextLine", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -655,7 +655,7 @@ public class JBehaveParser implements PsiParser {
             if (!Scenario_8_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Scenario_8", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -681,7 +681,7 @@ public class JBehaveParser implements PsiParser {
             if (!Scenario_8_0_0_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Scenario_8_0_0", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -743,7 +743,7 @@ public class JBehaveParser implements PsiParser {
             if (!consumeToken(b, JB_TOKEN_SPACE)) break;
             if (!empty_element_parsed_guard_(b, "SpaceStar", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -770,7 +770,7 @@ public class JBehaveParser implements PsiParser {
             if (!Newline(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Step_3", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -822,7 +822,7 @@ public class JBehaveParser implements PsiParser {
             if (!Newline(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StepComment_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -849,7 +849,7 @@ public class JBehaveParser implements PsiParser {
             if (!StepLine_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StepLine_1", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -872,7 +872,7 @@ public class JBehaveParser implements PsiParser {
             if (!Space(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StepLine_2", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -928,7 +928,7 @@ public class JBehaveParser implements PsiParser {
             if (!Newline(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StepPostParameter_0_0", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -963,7 +963,7 @@ public class JBehaveParser implements PsiParser {
             if (!StepSimpleWord(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StepWord", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -999,7 +999,7 @@ public class JBehaveParser implements PsiParser {
             if (!Newline(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Story_0", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -1084,7 +1084,7 @@ public class JBehaveParser implements PsiParser {
             if (!Scenario(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Story_11", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -1130,7 +1130,7 @@ public class JBehaveParser implements PsiParser {
             if (!StoryPaths_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "StoryPaths_1", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -1164,7 +1164,7 @@ public class JBehaveParser implements PsiParser {
     }
 
     /* ********************************************************** */
-    // (SpaceStar TableRow)+
+    // (SpaceStar TableRow Newline)+
     public static boolean Table(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "Table")) return false;
         if (!nextTokenIs(b, "<table>", JB_TOKEN_PIPE, JB_TOKEN_SPACE)) return false;
@@ -1176,18 +1176,19 @@ public class JBehaveParser implements PsiParser {
             if (!Table_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Table", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, l, m, JB_TABLE, r, false, null);
         return r;
     }
 
-    // SpaceStar TableRow
+    // SpaceStar TableRow Newline
     private static boolean Table_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "Table_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = SpaceStar(b, l + 1);
         r = r && TableRow(b, l + 1);
+        r = r && Newline(b, l + 1);
         exit_section_(b, m, null, r);
         return r;
     }
@@ -1215,7 +1216,7 @@ public class JBehaveParser implements PsiParser {
     }
 
     /* ********************************************************** */
-    // TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
+    // TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
     public static boolean TableRow(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "TableRow")) return false;
         if (!nextTokenIs(b, JB_TOKEN_PIPE)) return false;
@@ -1225,7 +1226,6 @@ public class JBehaveParser implements PsiParser {
         r = r && TableRow_1(b, l + 1);
         r = r && consumeToken(b, JB_TOKEN_PIPE);
         r = r && TableRow_3(b, l + 1);
-        r = r && Newline(b, l + 1);
         exit_section_(b, m, JB_TABLE_ROW, r);
         return r;
     }
@@ -1261,7 +1261,7 @@ public class JBehaveParser implements PsiParser {
             if (!TableRow_3_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "TableRow_3", c)) break;
             c = current_position_(b);
-        }
+    }
         return true;
     }
 
@@ -1358,7 +1358,7 @@ public class JBehaveParser implements PsiParser {
             if (!UriIdentifier_1_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "UriIdentifier_1", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -1399,7 +1399,7 @@ public class JBehaveParser implements PsiParser {
             if (!SimpleWord(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "Word", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }
@@ -1417,7 +1417,7 @@ public class JBehaveParser implements PsiParser {
             if (!Space(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "WordSeparator", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }

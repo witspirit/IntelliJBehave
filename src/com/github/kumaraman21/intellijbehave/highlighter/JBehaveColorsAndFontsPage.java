@@ -31,6 +31,8 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Given keyword", JBehaveSyntaxHighlighter.JB_TOKEN_GIVEN),//
             new AttributesDescriptor("Step text", JBehaveSyntaxHighlighter.JB_STEP_LINE), //
             new AttributesDescriptor("Step parameter", JBehaveSyntaxHighlighter.JB_STEP_POST_PARAMETER), //
+            new AttributesDescriptor("Table", JBehaveSyntaxHighlighter.JB_TABLE),//
+            new AttributesDescriptor("Table row", JBehaveSyntaxHighlighter.JB_TABLE_ROW),//
             new AttributesDescriptor("Table delimiter", JBehaveSyntaxHighlighter.JB_TOKEN_PIPE),//
             new AttributesDescriptor("Table cell", JBehaveSyntaxHighlighter.JB_TABLE_CELL),//
             new AttributesDescriptor("Meta keyword", JBehaveSyntaxHighlighter.JB_TOKEN_META),//
@@ -101,8 +103,10 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
                 "Scenario: <scenText>A known user cannot be logged using a wrong password</scenText>\n" + //
                 "\n" + //
                 "Given <stepText>the following existing users:</stepText>\n" + //
-                "| <tableCell>nickname</tableCell> | <tableCell>password</tableCell> |\n" + //
-                "|  <tableCell>Travis</tableCell>  |  <tableCell>PacMan</tableCell>  |\n" + //
+                "<table><tableRow>| <tableCell>nickname</tableCell> | <tableCell>password</tableCell> |</tableRow>\n" +
+                //
+                "<tableRow>|  <tableCell>Travis</tableCell>  |  <tableCell>PacMan</tableCell>  |</tableRow>\n</table>" +
+                //
                 "Given <errorDef>i am the user with nickname: \"Travis\"</errorDef>\n" + //
                 "When <stepText>i try to login using the password <stepParameter>McCallum</stepParameter></stepText>\n" + //
                 "Then <stepText>i get an error message of type \"Wrong Credentials\"</stepText>";
@@ -115,6 +119,8 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
         //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
         result.put("stepText", JBehaveSyntaxHighlighter.JB_STEP_LINE);
         result.put("stepParameter", JBehaveSyntaxHighlighter.JB_STEP_POST_PARAMETER);
+        result.put("table", JBehaveSyntaxHighlighter.JB_TABLE);
+        result.put("tableRow", JBehaveSyntaxHighlighter.JB_TABLE_ROW);
         result.put("tableCell", JBehaveSyntaxHighlighter.JB_TABLE_CELL);
         result.put("description", JBehaveSyntaxHighlighter.JB_DESCRIPTION);
         result.put("narrativeText", JBehaveSyntaxHighlighter.JB_NARRATIVE_TEXT);

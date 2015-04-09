@@ -42,7 +42,7 @@
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
-  extends("ScenarioTitle|TableCell|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
+  extends("ScenarioTitle|TableCell|Table|TableRow|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
   extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.Scenario"
   extends("MetaStatement")="com.github.kumaraman21.intellijbehave.parser.MetaStatement"
   extends("Narrative")="com.github.kumaraman21.intellijbehave.parser.Narrative"
@@ -91,8 +91,8 @@ StepPostParameter ::= Newline* Table| StoryPaths
 
 Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
 
-Table ::= (SpaceStar TableRow)+
-TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* Newline
+Table ::= (SpaceStar TableRow Newline)+
+TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
 TableCell ::= Line
 TableCellEmpty ::= SpaceStar
 

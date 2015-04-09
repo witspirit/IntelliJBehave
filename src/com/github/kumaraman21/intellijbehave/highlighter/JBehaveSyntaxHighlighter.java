@@ -68,7 +68,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String JB_TABLE_ID = "JBEHAVE.JB_TABLE";
     //public static final String JB_TABLE_CELL_EMPTY_ID = "JBEHAVE.JB_TABLE_CELL_EMPTY";
     public static final String JB_TABLE_CELL_ID = "JBEHAVE.JB_TABLE_CELL";
-    //public static final String JB_TABLE_ROW_ID = "JBEHAVE.JB_TABLE_ROW";
+    public static final String JB_TABLE_ROW_ID = "JBEHAVE.JB_TABLE_ROW";
     //public static final String JB_URI_ID = "JBEHAVE.JB_URI";
     //public static final String JB_URI_IDENTIFIER_ID = "JBEHAVE.JB_URI_IDENTIFIER";
     //public static final String JB_URI_WORD_ID = "JBEHAVE.JB_URI_WORD";
@@ -116,6 +116,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(JB_ERROR_FILE_NOT_FOUND_ID, CodeInsightColors.ERRORS_ATTRIBUTES);
         //createKey(JB_JB_PATH_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(JB_TABLE_ID, DefaultLanguageHighlighterColors.STRING);
+        createKey(JB_TABLE_ROW_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(JB_TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
         //createKey(JB_URI_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(STEP_PARAMETER_ID, DefaultLanguageHighlighterColors.STRING);
@@ -140,7 +141,8 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(JB_TOKEN_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
     }
 
-    private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new THashMap<IElementType, TextAttributesKey>();
+    private static final Map<IElementType, TextAttributesKey> ATTRIBUTES =
+            new THashMap<IElementType, TextAttributesKey>();
     public static TextAttributesKey JB_DEFAULT_TEXT = createTextAttributesKey(JB_DEFAULT_TEXT_ID);
     public static TextAttributesKey JB_DESCRIPTION = createTextAttributesKey(JB_DESCRIPTION_ID);
     public static TextAttributesKey JB_EXAMPLES = createTextAttributesKey(JB_EXAMPLES_ID);
@@ -160,20 +162,20 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     //    public static TextAttributesKey JB_SCENARIO = createTextAttributesKey(JB_SCENARIO_ID);
     public static TextAttributesKey JB_SCENARIO_TITLE = createTextAttributesKey(JB_SCENARIO_TITLE_ID);
     //    public static TextAttributesKey JB_STEP = createTextAttributesKey(JB_STEP_ID);
-//    public static TextAttributesKey JB_STEP_ARGUMENT = createTextAttributesKey(JB_STEP_ARGUMENT_ID);
+    //    public static TextAttributesKey JB_STEP_ARGUMENT = createTextAttributesKey(JB_STEP_ARGUMENT_ID);
     public static TextAttributesKey JB_STEP_LINE = createTextAttributesKey(JB_STEP_LINE_ID);
     //    public static TextAttributesKey JB_STEP_PAR = createTextAttributesKey(JB_STEP_PAR_ID);
     public static TextAttributesKey JB_STEP_POST_PARAMETER = createTextAttributesKey(JB_STEP_POST_PARAMETER_ID);
     public static TextAttributesKey JB_JBEHAVE = createTextAttributesKey(JB_JB_ID);
     //public static TextAttributesKey JB_TOKEN_PATH = createTextAttributesKey(JB_JB_PATH_ID);
-//    public static TextAttributesKey JB_JB_PATHS = createTextAttributesKey(JB_JB_PATHS_ID);
+    //    public static TextAttributesKey JB_JB_PATHS = createTextAttributesKey(JB_JB_PATHS_ID);
     public static TextAttributesKey JB_TABLE = createTextAttributesKey(JB_TABLE_ID);
     public static TextAttributesKey JB_TABLE_CELL = createTextAttributesKey(JB_TABLE_CELL_ID);
     //    public static TextAttributesKey JB_TABLE_CELL_EMPTY = createTextAttributesKey(JB_TABLE_CELL_EMPTY_ID);
-//    public static TextAttributesKey JB_TABLE_ROW = createTextAttributesKey(JB_TABLE_ROW_ID);
+    public static TextAttributesKey JB_TABLE_ROW = createTextAttributesKey(JB_TABLE_ROW_ID);
     //public static TextAttributesKey JB_URI = createTextAttributesKey(JB_URI_ID);
     //    public static TextAttributesKey JB_URI_IDENTIFIER = createTextAttributesKey(JB_URI_IDENTIFIER_ID);
-//    public static TextAttributesKey JB_URI_WORD = createTextAttributesKey(JB_URI_WORD_ID);
+    //    public static TextAttributesKey JB_URI_WORD = createTextAttributesKey(JB_URI_WORD_ID);
     public static TextAttributesKey STEP_PARAMETER = createTextAttributesKey(STEP_PARAMETER_ID);
     public static TextAttributesKey JB_TOKEN_AFTER = createTextAttributesKey(JB_TOKEN_AFTER_ID);
     public static TextAttributesKey JB_TOKEN_AND = createTextAttributesKey(JB_TOKEN_AND_ID);
@@ -200,8 +202,8 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IJBehaveElementType.JB_EXAMPLES, JB_EXAMPLES);
         //ATTRIBUTES.put(IJBehaveElementType.JB_GIVEN_STORIES, JB_GIVEN_STORIES);
         //ATTRIBUTES.put(IJBehaveElementType.JB_INJECT, JB_INJECT);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_INJECT_IDENTIFIER, JB_INJECT_IDENTIFIER);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_INJECT_SEPARATOR, JB_INJECT_SEPARATOR);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_INJECT_IDENTIFIER, JB_INJECT_IDENTIFIER);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_INJECT_SEPARATOR, JB_INJECT_SEPARATOR);
         ATTRIBUTES.put(IJBehaveElementType.JB_IP_ADDRESS, JB_IP_ADDRESS);
         //ATTRIBUTES.put(IJBehaveElementType.JB_LIFECYCLE, JB_LIFECYCLE);
         ATTRIBUTES.put(IJBehaveElementType.JB_LIFECYCLE_AFTER, JB_LIFECYCLE_AFTER);
@@ -210,25 +212,25 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IJBehaveElementType.JB_META_KEY, JB_META_KEY);
         //ATTRIBUTES.put(IJBehaveElementType.JB_META_STATEMENT, JB_META_STATEMENT);
         ATTRIBUTES.put(IJBehaveElementType.JB_META_VALUE, JB_META_VALUE);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_MULTI_TEXT_LINE, JB_MULTI_TEXT_LINE);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_MULTI_TEXT_LINE, JB_MULTI_TEXT_LINE);
         //ATTRIBUTES.put(IJBehaveElementType.JB_NARRATIVE, JB_NARRATIVE);
         ATTRIBUTES.put(IJBehaveElementType.JB_NARRATIVE_TEXT, JB_NARRATIVE_TEXT);
         //ATTRIBUTES.put(IJBehaveElementType.JB_RECOVER_STEP, JB_RECOVER_STEP);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_SCENARIO, JB_SCENARIO);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_SCENARIO, JB_SCENARIO);
         ATTRIBUTES.put(IJBehaveElementType.JB_SCENARIO_TITLE, JB_SCENARIO_TITLE);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_STEP, JB_STEP);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_ARGUMENT, JB_STEP_ARGUMENT);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_STEP, JB_STEP);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_ARGUMENT, JB_STEP_ARGUMENT);
         ATTRIBUTES.put(IJBehaveElementType.JB_STEP_LINE, JB_STEP_LINE);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_PAR, JB_STEP_PAR);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_PAR, JB_STEP_PAR);
         ATTRIBUTES.put(IJBehaveElementType.JB_STEP_POST_PARAMETER, JB_STEP_POST_PARAMETER);
         //ATTRIBUTES.put(IJBehaveElementType.JB_JBEHAVE, JB_JBEHAVE);
         ATTRIBUTES.put(IJBehaveElementType.JB_TABLE, JB_TABLE);
         ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL, JB_TABLE_CELL);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL_EMPTY, JB_TABLE_CELL_EMPTY);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_ROW, JB_TABLE_ROW);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL_EMPTY, JB_TABLE_CELL_EMPTY);
+        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_ROW, JB_TABLE_ROW);
         //ATTRIBUTES.put(IJBehaveElementType.JB_URI, JB_URI);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_URI_IDENTIFIER, JB_URI_IDENTIFIER);
-//        ATTRIBUTES.put(IJBehaveElementType.JB_URI_WORD, JB_URI_WORD);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_IDENTIFIER, JB_URI_IDENTIFIER);
+        //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_WORD, JB_URI_WORD);
         //ATTRIBUTES.put(IJBehaveElementType.JB_USER_INJECT, JB_USER_INJECT);
 
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_AFTER, JB_TOKEN_AFTER);

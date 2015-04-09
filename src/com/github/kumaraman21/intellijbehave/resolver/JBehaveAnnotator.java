@@ -73,13 +73,23 @@ public class JBehaveAnnotator implements Annotator {
             ASTNode node = psiElement.getNode();
             IElementType elementType = node.getElementType();
             if (elementType != null) {
-                TextAttributesKey textAttribute = JBehaveSyntaxHighlighter.getTextAttribute(elementType);
-                if (textAttribute != null) {
-                    annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(textAttribute);
-                }
+                annotateElement(psiElement, annotationHolder, elementType);
             }
         }
 
+    }
+
+    private void annotateElement(PsiElement psiElement, AnnotationHolder annotationHolder, IElementType elementType) {
+        TextAttributesKey textAttribute = JBehaveSyntaxHighlighter.getTextAttribute(elementType);
+        if (textAttribute != null) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(textAttribute);
+        }
+        if (elementType == IJBehaveElementType.JB_TABLE_CELL || elementType == IJBehaveElementType.JB_TABLE_ROW) {
+            PsiElement parent = psiElement.getParent();
+            if (parent != null) {
+                annotateElement(parent, annotationHolder, parent.getNode().getElementType());
+            }
+        }
     }
 
     private void annotateParameters(ScenarioStep step, JavaStepDefinition javaStepDefinition,

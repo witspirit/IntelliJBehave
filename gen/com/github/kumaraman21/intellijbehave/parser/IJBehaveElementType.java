@@ -134,6 +134,6 @@ public interface IJBehaveElementType {
                 return new JBehaveUriWordImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
-        }
+    }
     }
 }
