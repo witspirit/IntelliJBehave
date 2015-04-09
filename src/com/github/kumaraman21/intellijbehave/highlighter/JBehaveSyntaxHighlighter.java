@@ -69,7 +69,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     //public static final String JB_TABLE_CELL_EMPTY_ID = "JBEHAVE.JB_TABLE_CELL_EMPTY";
     public static final String JB_TABLE_CELL_ID = "JBEHAVE.JB_TABLE_CELL";
     //public static final String JB_TABLE_ROW_ID = "JBEHAVE.JB_TABLE_ROW";
-    public static final String JB_URI_ID = "JBEHAVE.JB_URI";
+    //public static final String JB_URI_ID = "JBEHAVE.JB_URI";
     //public static final String JB_URI_IDENTIFIER_ID = "JBEHAVE.JB_URI_IDENTIFIER";
     //public static final String JB_URI_WORD_ID = "JBEHAVE.JB_URI_WORD";
     public static final String JB_USER_INJECT_ID = "JBEHAVE.JB_USER_INJECT";
@@ -115,7 +115,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         //createKey(JB_JB_PATH_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(JB_TABLE_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(JB_TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
-        createKey(JB_URI_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
+        //createKey(JB_URI_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(STEP_PARAMETER_ID, DefaultLanguageHighlighterColors.STRING);
 
 
@@ -168,7 +168,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey JB_TABLE_CELL = createTextAttributesKey(JB_TABLE_CELL_ID);
     //    public static TextAttributesKey JB_TABLE_CELL_EMPTY = createTextAttributesKey(JB_TABLE_CELL_EMPTY_ID);
 //    public static TextAttributesKey JB_TABLE_ROW = createTextAttributesKey(JB_TABLE_ROW_ID);
-    public static TextAttributesKey JB_URI = createTextAttributesKey(JB_URI_ID);
+    //public static TextAttributesKey JB_URI = createTextAttributesKey(JB_URI_ID);
     //    public static TextAttributesKey JB_URI_IDENTIFIER = createTextAttributesKey(JB_URI_IDENTIFIER_ID);
 //    public static TextAttributesKey JB_URI_WORD = createTextAttributesKey(JB_URI_WORD_ID);
     public static TextAttributesKey STEP_PARAMETER = createTextAttributesKey(STEP_PARAMETER_ID);
@@ -223,7 +223,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL, JB_TABLE_CELL);
 //        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL_EMPTY, JB_TABLE_CELL_EMPTY);
 //        ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_ROW, JB_TABLE_ROW);
-        ATTRIBUTES.put(IJBehaveElementType.JB_URI, JB_URI);
+        //ATTRIBUTES.put(IJBehaveElementType.JB_URI, JB_URI);
 //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_IDENTIFIER, JB_URI_IDENTIFIER);
 //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_WORD, JB_URI_WORD);
         //ATTRIBUTES.put(IJBehaveElementType.JB_USER_INJECT, JB_USER_INJECT);

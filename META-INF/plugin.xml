@@ -109,7 +109,7 @@
 
     <project-components>
         <!--<component>-->
-            <!--<implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>-->
+        <!--<implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>-->
         <!--</component>-->
     </project-components>
 
@@ -158,16 +158,29 @@
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"/>
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
-        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler" />
-        <renamePsiElementProcessor implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationProcessor" />
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler"/>
+        <renamePsiElementProcessor id="annotation"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationProcessor"
+                                   order="last"/>
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameInjectHandler"/>
+        <renamePsiElementProcessor id="inject"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameInjectProcessor"
+                                   order="first"/>
+        <renameHandler
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameStepParameterHandler"/>
+        <renamePsiElementProcessor id="stepParameter"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameStepParameterProcessor"
+                                   order="first"/>
         <nameSuggestionProvider
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveNameSuggestionProvider"/>
         <elementDescriptionProvider
                 implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
         <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder"
                         language="JBehave"/>
-        <codeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
-        <langCodeStyleSettingsProvider implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
+        <codeStyleSettingsProvider
+                implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
         <lang.foldingBuilder language="JBehave"
                              implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
         <lang.psiStructureViewFactory language="JBehave"

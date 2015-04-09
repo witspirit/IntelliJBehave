@@ -16,7 +16,10 @@
 package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
+import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveGivenStories;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiDirectory;
@@ -28,6 +31,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -141,4 +145,35 @@ public class GivenStories extends ParserRule {
         return getBiggestStoryTree(file.getOriginalFile().getParent());
     }
 
+    @NotNull
+    @Override
+    public ItemPresentation getPresentation() {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                String text = "";
+
+                try {
+                    text = ((JBehaveGivenStories) getOriginalElement()).getStoryPaths().getText();
+                    text = text.replace("\n", " ");
+                } catch (NullPointerException e) {
+                    text = "";
+                }
+                return text;
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return JBehaveIcons.GIVEN_STORIES;
+            }
+        };
+    }
 }

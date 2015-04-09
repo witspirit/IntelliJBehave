@@ -16,15 +16,27 @@ public class JBehaveNameSuggestionProvider implements NameSuggestionProvider {
     public SuggestedNameInfo getSuggestedNames(PsiElement element, PsiElement nameSuggestionContext,
                                                Set<String> result) {
         assert result != null;
-        if (nameSuggestionContext != null && (nameSuggestionContext instanceof PsiSuggestionHolder)) {
-            String text = nameSuggestionContext.getText();
-            if (text != null) {
-                result.clear();
-                if (text.contains("\"")) {
-                    text = text.replace("\"", "");
+        if (nameSuggestionContext != null) {
+            if (nameSuggestionContext instanceof AnnotationSuggestionHolder) {
+                String text = nameSuggestionContext.getText();
+                if (text != null) {
+                    result.clear();
+                    if (text.contains("\"")) {
+                        text = text.replace("\"", "");
+                    }
+                    result.add(text);
+                    return SuggestedNameInfo.NULL_INFO;
                 }
-                result.add(text);
-                return SuggestedNameInfo.NULL_INFO;
+            } else {
+                if (nameSuggestionContext instanceof InjectSuggestionHolder ||
+                        nameSuggestionContext instanceof StepParameterSuggestionHolder) {
+                    String text = nameSuggestionContext.getText();
+                    if (text != null) {
+                        result.clear();
+                        result.add(text);
+                        return SuggestedNameInfo.NULL_INFO;
+                    }
+                }
             }
         }
         return null;

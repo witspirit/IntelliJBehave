@@ -37,6 +37,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.StringToken;
@@ -46,14 +47,13 @@ public class JBehaveAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
         if (psiElement instanceof ScenarioStep) {
             ScenarioStep step = (ScenarioStep) psiElement;
-            Iterator<JavaStepDefinition> it = JavaStepDefinitionsIndex.getInstance(
-                    step.getProject()).findStepDefinitions(
-                    step).iterator();
+            Iterator<JavaStepDefinition> it =
+                    JavaStepDefinitionsIndex.getInstance(step.getProject()).findStepDefinitions(step).iterator();
             if (it.hasNext()) {
                 annotateParameters(step, it.next(), annotationHolder);
             } else {
-                Annotation errorAnnotation = annotationHolder.createErrorAnnotation(step.getStoryStepLine(),
-                        "No definition found for the step");
+                Annotation errorAnnotation = annotationHolder
+                        .createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
                 errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
             }
 
@@ -108,23 +108,28 @@ public class JBehaveAnnotator implements Annotator {
                 Annotation infoAnnotation;
                 if (parType != null) {
                     infoAnnotation = annotationHolder.createInfoAnnotation(TextRange.from(offset, length),
-                            String.format("Parameter: <%s> %s", parType.getCanonicalText(), token1.value()));
+                                                                           String.format("Parameter: <%s> %s",
+                                                                                         parType.getCanonicalText(),
+                                                                                         token1.value()));
                 } else {
                     infoAnnotation = annotationHolder.createInfoAnnotation(TextRange.from(offset, length),
-                            String.format("Parameter: %s", token1.value()));
+                                                                           String.format("Parameter: %s",
+                                                                                         token1.value()));
 
                 }
-                PsiElement elementAt = step.getContainingFile().findElementAt(offset);
-                if (elementAt != null) {
-                    infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
-//                    ASTNode node = elementAt.getNode();
-//                    if (node != null) {
-//                        IElementType elementType = node.getElementType();
-//                        if (elementType == IJBehaveElementType.JB_TOKEN_WORD) {
-//                            infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
-//                        }
-//                    }
+                infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
+                List<String> stringList = ParametrizedString.split(token.getValue());
+                int running = offset;
+                PsiElement elementAt;
+                for (String s : stringList) {
+                    elementAt = step.getContainingFile().findElementAt(running);
+                    if (elementAt != null) {
+                        elementAt.putUserData(ParserRule.isStepParameter, true);
+                    }
+                    running += s.length() + 1;
                 }
+
+
             }
             ++i;
             offset += length;

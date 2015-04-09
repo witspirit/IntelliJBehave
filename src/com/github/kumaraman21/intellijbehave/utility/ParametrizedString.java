@@ -293,7 +293,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
     private static Pattern pattern = Pattern.compile("(\\w+|[\\W&&[^\\s]])", Pattern.DOTALL);
 
-    private static List<String> split(final String text) {
+    public static List<String> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
 
         List<String> result2 = new ArrayList<String>();

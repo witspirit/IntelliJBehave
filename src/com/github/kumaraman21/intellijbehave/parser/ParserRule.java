@@ -19,12 +19,15 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public class ParserRule extends ASTWrapperPsiElement implements JBehaveElement {
+    public static Key<Boolean> isStepParameter = Key.create("JBehave.IsStepParameter");
+
     public ParserRule(@NotNull ASTNode node) {
         super(node);
     }
