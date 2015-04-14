@@ -1,19 +1,19 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi;
 
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface JBehaveMetaElement extends PsiElement {
 
-    @NotNull
-    JBehaveMetaKey getMetaKey();
+  @Nullable
+  JBehaveMetaKey getMetaKey();
 
-    @Nullable
-    JBehaveMetaValue getMetaValue();
+  @Nullable
+  JBehaveMetaValue getMetaValue();
 
-    @Nullable
-    PsiElement getTokenNewline();
+  @Nullable
+  PsiElement getTokenSpace();
 
 }

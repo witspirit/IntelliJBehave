@@ -29,7 +29,6 @@ public interface IJBehaveElementType {
     IElementType JB_STEP_ARGUMENT = new JBehaveElementType("JB_STEP_ARGUMENT");
     IElementType JB_STEP_LINE = new JBehaveElementType("JB_STEP_LINE");
     IElementType JB_STEP_PAR = new JBehaveElementType("JB_STEP_PAR");
-    IElementType JB_STEP_POST_PARAMETER = new JBehaveElementType("JB_STEP_POST_PARAMETER");
     IElementType JB_STORY = new JBehaveElementType("JB_STORY");
     IElementType JB_STORY_PATH = new JBehaveElementType("JB_STORY_PATH");
     IElementType JB_STORY_PATHS = new JBehaveElementType("JB_STORY_PATHS");
@@ -48,6 +47,7 @@ public interface IJBehaveElementType {
     IElementType JB_TOKEN_BRACKET_CLOSE = new JBehaveTokenType(">");
     IElementType JB_TOKEN_BRACKET_OPEN = new JBehaveTokenType("<");
     IElementType JB_TOKEN_COLON = new JBehaveTokenType(":");
+    IElementType JB_TOKEN_COMMA = new JBehaveTokenType(",");
     IElementType JB_TOKEN_COMMENT = new JBehaveTokenType("TOKEN_COMMENT");
     IElementType JB_TOKEN_DBRACKET_CLOSE = new JBehaveTokenType(">>");
     IElementType JB_TOKEN_DBRACKET_OPEN = new JBehaveTokenType("<<");
@@ -61,7 +61,7 @@ public interface IJBehaveElementType {
     IElementType JB_TOKEN_NARRATIVE = new JBehaveTokenType("Narrative:");
     IElementType JB_TOKEN_NEWLINE = new JBehaveTokenType("TOKEN_NEWLINE");
     IElementType JB_TOKEN_PATH = new JBehaveTokenType("TOKEN_PATH");
-    IElementType JB_TOKEN_PIPE = new JBehaveTokenType("|");
+    IElementType JB_TOKEN_PIPE = new JBehaveTokenType("TOKEN_PIPE");
     IElementType JB_TOKEN_SCENARIO = new JBehaveTokenType("Scenario:");
     IElementType JB_TOKEN_SPACE = new JBehaveTokenType("TOKEN_SPACE");
     IElementType JB_TOKEN_THEN = new JBehaveTokenType("Then");
@@ -110,8 +110,6 @@ public interface IJBehaveElementType {
                 return new JBehaveStepLineImpl(node);
             } else if (type == JB_STEP_PAR) {
                 return new JBehaveStepParImpl(node);
-            } else if (type == JB_STEP_POST_PARAMETER) {
-                return new JBehaveStepPostParameterImpl(node);
             } else if (type == JB_STORY) {
                 return new JBehaveStoryImpl(node);
             } else if (type == JB_STORY_PATH) {
