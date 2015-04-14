@@ -47,7 +47,7 @@ public class StoryPath extends ASTWrapperPsiElement {
     }
 
     public String getValue() {
-        String text = getNode().getText().trim();
+        String text = getNode().getText().trim().replace('\\', '/');
         int i = text.lastIndexOf(',');
         if (i >= 0) {
             return text.substring(0, i);

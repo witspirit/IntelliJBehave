@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.spellchecker;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveElementType;
+import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -17,7 +17,7 @@ public class JBehaveSpellcheckerStrategy extends SpellcheckingStrategy {
     public Tokenizer getTokenizer(PsiElement element) {
         if (element instanceof LeafElement) {
             ASTNode node = element.getNode();
-            if (node != null && node.getElementType() instanceof JBehaveElementType) {
+            if (node != null && node.getElementType() instanceof IJBehaveElementType) {
                 return TEXT_TOKENIZER;
             }
         }

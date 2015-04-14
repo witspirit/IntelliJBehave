@@ -28,7 +28,7 @@ import static java.util.Arrays.asList;
 
 public class JavaStepDefinitionsIndex {
     private final PsiManager manager;
-    private TokenMap tokenMap = new TokenMap();
+    private Map<Module, TokenMap> tokenMaps = new HashMap<Module, TokenMap>();
     private AtomicBoolean needsUpdate = new AtomicBoolean(true);
     private ChangeListener changeListener = new ChangeListener(this);
 
@@ -63,6 +63,7 @@ public class JavaStepDefinitionsIndex {
     private synchronized void needsUpdate() {
         manager.removePsiTreeChangeListener(changeListener);
         needsUpdate.set(true);
+        tokenMaps.clear();
     }
 
     private synchronized void updated() {
@@ -72,16 +73,20 @@ public class JavaStepDefinitionsIndex {
 
     @NotNull
     public TokenMap findAllStepDefinitionsByType(@NotNull ScenarioStep step) {
-        if (needsUpdate.get()) {
-            Module module = ModuleUtilCore.findModuleForPsiElement(step);
+        Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
-            if (module == null) {
-                return new TokenMap();
-            }
-            this.tokenMap = loadStepsFor(module);
+        if (module == null) {
+            return new TokenMap();
+        }
+        if (needsUpdate.get()) {
             updated();
         }
-        return this.tokenMap;
+        TokenMap tokenMap = tokenMaps.get(module);
+        if (tokenMap == null) {
+            tokenMap = loadStepsFor(module);
+            tokenMaps.put(module, tokenMap);
+        }
+        return tokenMap;
     }
 
     @NotNull
@@ -102,8 +107,8 @@ public class JavaStepDefinitionsIndex {
         final List<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(text, true);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             if (stepDefinition != null && stepDefinition.matches(storyLine) && stepDefinition.supportsStep(step)) {
-                Integer currentHighestPriority = getPriorityByDefinition(
-                        definitionsByClass.get(stepDefinition.getClass()));
+                Integer currentHighestPriority =
+                        getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);
 
                 if (newPriority > currentHighestPriority) {
@@ -127,13 +132,13 @@ public class JavaStepDefinitionsIndex {
         return "";
     }
 
-//    private String getTableOffset(@NotNull final ScenarioStep step) {
-//        String storyLine = step.getAnnotatedStoryLine();
-//        if (step.hasStoryStepPostParameters()) {
-//            return storyLine + " dummy";
-//        }
-//        return storyLine;
-//    }
+    //    private String getTableOffset(@NotNull final ScenarioStep step) {
+    //        String storyLine = step.getAnnotatedStoryLine();
+    //        if (step.hasStoryStepPostParameters()) {
+    //            return storyLine + " dummy";
+    //        }
+    //        return storyLine;
+    //    }
 
     @NotNull
     public TokenMap loadStepsFor(@NotNull Module module) {
@@ -162,8 +167,8 @@ public class JavaStepDefinitionsIndex {
 
     @Nullable
     private PsiClass findStepAnnotation(String stepClass, Module module, GlobalSearchScope dependenciesScope) {
-        Collection<PsiClass> stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(
-                stepClass.hashCode(), module.getProject(), dependenciesScope);
+        Collection<PsiClass> stepDefAnnotationCandidates =
+                JavaFullClassNameIndex.getInstance().get(stepClass.hashCode(), module.getProject(), dependenciesScope);
 
         for (PsiClass stepDefAnnotations : stepDefAnnotationCandidates) {
             if (stepClass.equals(stepDefAnnotations.getQualifiedName())) {

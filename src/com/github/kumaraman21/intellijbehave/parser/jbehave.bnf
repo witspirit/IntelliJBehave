@@ -25,20 +25,22 @@
     TOKEN_AFTER="After:"
     TOKEN_COLON=":"
     TOKEN_AT="@"
+    TOKEN_COMMA=","
     TOKEN_DBRACKET_OPEN = "<<"
     TOKEN_DBRACKET_CLOSE = ">>"
     TOKEN_BRACKET_OPEN = "<"
     TOKEN_BRACKET_CLOSE = ">"
-    TOKEN_PIPE='|'
+    TOKEN_PIPE='regexp:\|'
     TOKEN_NEWLINE = "regexp:[ \t\f]*(\r|\n|\r\n|\Z)"
     TOKEN_SPACE='regexp:[ \t\f]+'
     TOKEN_COMMENT="regexp:\!--.*"
 
     TOKEN_USER_INJECT = 'regexp:<<\S+>>'
     TOKEN_INJECT = 'regexp:<\S+>'
-    TOKEN_PATH = 'regexp:([a-zA-Z0-9]|_|@|\.|-)+(/([a-zA-Z0-9]|_|@|\.|-)+)+'
+    TOKEN_PATH = 'regexp:([A-Z]:)?([a-zA-Z0-9]|(/|\\))([a-zA-Z0-9]|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-    TOKEN_WORD = "regexp:([a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
+    //TOKEN_WORD = "regexp:([:letter:]|[a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
+    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
@@ -50,50 +52,47 @@
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
-Story ::= Newline* Description? Newline? MetaStatement? Newline? Narrative? Newline? GivenStories? Newline? Lifecycle? Newline? Scenario+ Newline?
+Story ::= WhiteSpace Description? WhiteSpace MetaStatement? WhiteSpace Narrative? WhiteSpace GivenStories? WhiteSpace Lifecycle? WhiteSpace Scenario+ WhiteSpace
 Description ::= MultiTextLine
-MetaStatement ::= TOKEN_META (Newline|Space)? (MetaElement)* {pin=1 recoverWhile=RecoverMeta}
-MetaElement::= MetaKey Space MetaValue (Space|Newline) {pin=1 }
+MetaStatement ::= TOKEN_META (Newline)* (SpaceStar MetaElement (Space|Newline)*)* {pin=1 recoverWhile=RecoverMeta}
+MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue|MetaKey|MetaValue) {pin=2 }
 MetaKey::= TOKEN_AT (Word|TOKEN_COLON)+ {pin=1 }
-MetaValue::= (Word|TOKEN_COLON)+
+MetaValue::= Line //(Word|TOKEN_COLON)+ (Space (Word|TOKEN_COLON)+)+
 
 private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
 
-Narrative ::= TOKEN_NARRATIVE Newline? NarrativeText? {pin=1 }
+Narrative ::= TOKEN_NARRATIVE WhiteSpace NarrativeText? {pin=1 }
 NarrativeText ::= MultiTextLine
 
-GivenStories::= TOKEN_GIVEN_STORIES SpaceStar StoryPaths? Newline {pin=1}
-StoryPaths ::= StoryPath ( SpaceStar Newline? ',' Newline? SpaceStar StoryPath)* {pin=1}
+GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? Newline {pin=1}
+StoryPaths ::= StoryPath ( WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
 StoryPath ::= TOKEN_PATH {pin=1}
 
-Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter? {pin=1 recoverWhile=RecoverMeta}
-LifecycleBefore::= TOKEN_BEFORE Step+ {pin=2}
-LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
-//private RecoverLife ::= !TOKEN_SCENARIO
+Lifecycle::= TOKEN_LIFECYCLE WhiteSpace (LifecycleBefore)? LifecycleAfter? {pin=1}
+LifecycleBefore::= TOKEN_BEFORE WhiteSpace (Step Newline*)* {pin=1}
+LifecycleAfter::= TOKEN_AFTER WhiteSpace (Step Newline*)* {pin=1}
 
-Scenario ::= TOKEN_SCENARIO SpaceStar ScenarioTitle? Newline? MetaStatement? Newline? GivenStories? Newline? ((Step |StepComment)+ Examples?)* {pin=1 recoverWhile=RecoverMeta}
+//private RecoverLife ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
+
+Scenario ::= !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND) TOKEN_SCENARIO WhiteSpace ScenarioTitle? WhiteSpace MetaStatement? WhiteSpace GivenStories? Newline* ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace (SpaceStar Examples WhiteSpace)?)* {pin=2 recoverWhile=RecoverMeta}
 ScenarioTitle ::= Line
 
-Step ::=  StepPar SpaceStar StepArgument Newline* {pin=1 recoverWhile=RecoverMeta}
+Step ::=  !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER) StepPar SpaceStar StepArgument Newline? {pin=2 recoverWhile=RecoverMeta}
 StepPar ::= TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND
 
-private StepComment ::= TOKEN_COMMENT Newline+
+private StepComment ::= TOKEN_COMMENT WhiteSpace
 
-StepArgument ::=  StepLine SpaceStar StepPostParameter | StepLine
+StepArgument ::=  StepLine SpaceStar (WhiteSpace Table| StoryPaths) | StepLine
 
 private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
 private StepWord ::= StepSimpleWord+
 StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 
-StepPostParameter ::= Newline* Table| StoryPaths
-
-//private RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
-
-Examples ::= TOKEN_EXAMPLES (Table|StoryPath) {pin=1}
+Examples ::= TOKEN_EXAMPLES WhiteSpace (Table|StoryPath) {pin=1}
 
 Table ::= (SpaceStar TableRow Newline)+
-TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
-TableCell ::= Line
+TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* {pin=1}
+TableCell ::= Line|TOKEN_META|MetaElement
 TableCellEmpty ::= SpaceStar
 
 private MultiTextLine ::= (SpaceStar Line Newline)+
@@ -107,9 +106,9 @@ UriWord ::= Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
 UriIdentifier ::= IpAddress| (UriWord|'.')+
 Uri::= Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)? {pin=5}
 IpAddress ::= TOKEN_IP | Alnum ('.' Alnum)+
-private Alnum::=TOKEN_WORD //|TOKEN_NUMBER
+private Alnum::=TOKEN_WORD
 
 private Newline ::= TOKEN_NEWLINE
 private Space ::= TOKEN_SPACE
 private SpaceStar ::= TOKEN_SPACE*
-//private Punct ::= TOKEN_PUNCT | TOKEN_BRACKET_CLOSE|TOKEN_BRACKET_OPEN|TOKEN_COMMA|TOKEN_COLON|TOKEN_AMPERSAND
+private WhiteSpace ::= Newline* SpaceStar

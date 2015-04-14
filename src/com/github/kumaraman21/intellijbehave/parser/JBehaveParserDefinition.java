@@ -28,16 +28,17 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Reader;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 
 public class JBehaveParserDefinition implements ParserDefinition {
-    public static final TokenSet STEP_TYPES = TokenSet.create(IJBehaveElementType.JB_TOKEN_AND,
-            IJBehaveElementType.JB_TOKEN_WHEN, IJBehaveElementType.JB_TOKEN_THEN, IJBehaveElementType.JB_TOKEN_GIVEN);
+    public static final TokenSet STEP_TYPES =
+            TokenSet.create(IJBehaveElementType.JB_TOKEN_AND, IJBehaveElementType.JB_TOKEN_WHEN,
+                            IJBehaveElementType.JB_TOKEN_THEN, IJBehaveElementType.JB_TOKEN_GIVEN);
 
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
-        return new FlexAdapter(new _JBehaveLexer((Reader) null));
+        return new FlexAdapter(new _JBehaveLexer(null));
     }
 
     @Override
@@ -45,9 +46,11 @@ public class JBehaveParserDefinition implements ParserDefinition {
         return new JBehaveParser();
     }
 
+    public static final IFileElementType STORY_FILE = new IFileElementType(JBEHAVE_FILE_TYPE.getLanguage());
+
     @Override
     public IFileElementType getFileNodeType() {
-        return JBehaveElementType.STORY_FILE;
+        return STORY_FILE;
     }
 
     @NotNull

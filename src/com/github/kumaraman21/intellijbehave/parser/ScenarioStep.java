@@ -142,8 +142,8 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
 
     @Nullable
     private String getReferencedText(final PsiAnnotation annotation) {
-        final Iterator<PsiLiteralExpression> refLiteralIt = PsiTreeUtil.findChildrenOfType(annotation,
-                PsiLiteralExpression.class).iterator();
+        final Iterator<PsiLiteralExpression> refLiteralIt =
+                PsiTreeUtil.findChildrenOfType(annotation, PsiLiteralExpression.class).iterator();
         if (refLiteralIt.hasNext()) {
             String text = refLiteralIt.next().getText();
             if (text.contains("\"")) {
@@ -185,25 +185,37 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
                                 printWriter.print(" ");
                                 printWriter.print(newText);
                                 if (havePostParameters) {
-                                    Iterator<JBehaveStepPostParameter> it = getStoryStepPostParameters().iterator();
-                                    JBehaveStepPostParameter postParameter = it.next();
-                                    Collection<StoryPath> storyPaths = PsiTreeUtil.findChildrenOfType(this,
-                                            StoryPath.class);
-                                    //StoryStoryPaths storyPath = postParameter.getStoryPaths();
-                                    JBehaveTable table = postParameter.getTable();
-                                    if (!storyPaths.isEmpty() && table == null) {
-                                        printWriter.print(" ");
-                                        printWriter.print("dummy/story/story.story");
-                                    } else {
-                                        printWriter.println();
-                                        printWriter.print("|dummy|story|story|story|");
+                                    //
+                                    //                                    Iterator<JBehaveStepPostParameter> it = getStoryStepPostParameters().iterator();
+                                    //                                    JBehaveStepPostParameter postParameter = it.next();
+                                    //
+                                    JBehaveStepArgument stepArgument = ((JBehaveStep) this).getStepArgument();
+                                    if (stepArgument != null) {
+                                        JBehaveStoryPaths storyPaths1 = stepArgument.getStoryPaths();
+                                        JBehaveTable table1 = stepArgument.getTable();
+                                        //                                    Collection<StoryPath> storyPaths =
+                                        //                                            PsiTreeUtil.findChildrenOfType(this, StoryPath.class);
+                                        //                                    //StoryStoryPaths storyPath = postParameter.getStoryPaths();
+                                        //                                    JBehaveTable table = postParameter.getTable();
+                                        //if (!storyPaths.isEmpty() && table == null) {
+                                        if (storyPaths1 != null) {
+                                            printWriter.print(" ");
+                                            printWriter.print("dummy/story/story.story");
+                                        } else {
+                                            if (table1 != null) {
+                                                printWriter.println();
+                                                printWriter.print("|dummy|story|story|story|");
+                                            }
+                                        }
                                     }
                                 } else printWriter.println();
                                 printWriter.flush();
                                 printWriter.close();
                                 String newNodeAsText = stringWriter.toString();
-                                PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText(
-                                        "dummy.story", JBehaveFileType.JBEHAVE_FILE_TYPE, newNodeAsText);
+                                PsiFile psiFile = PsiFileFactory.getInstance(getProject())
+                                                                .createFileFromText("dummy.story",
+                                                                                    JBehaveFileType.JBEHAVE_FILE_TYPE,
+                                                                                    newNodeAsText);
                                 JBehaveStepLine newStepLine = getStoryStepLine(psiFile);
                                 JBehaveStepLine oldStepLine = getStoryStepLine();
                                 if (newStepLine != null && oldStepLine != null) {
@@ -242,12 +254,21 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
         return getStoryStepLine(this);
     }
 
-    private Collection<JBehaveStepPostParameter> getStoryStepPostParameters() {
-        return PsiTreeUtil.findChildrenOfType(this, JBehaveStepPostParameter.class);
-    }
+    //    private Collection<JBehaveStepPostParameter> getStoryStepPostParameters() {
+    //        return PsiTreeUtil.findChildrenOfType(this, JBehaveStepPostParameter.class);
+    //    }
 
     public boolean hasStoryStepPostParameters() {
-        return !getStoryStepPostParameters().isEmpty();
+        JBehaveStepArgument stepArgument = ((JBehaveStep) this).getStepArgument();
+        if (stepArgument != null) {
+            JBehaveStoryPaths storyPaths1 = stepArgument.getStoryPaths();
+            JBehaveTable table1 = stepArgument.getTable();
+            return storyPaths1 != null || table1 != null;
+        }
+        return false;
+        //        return !(PsiTreeUtil.findChildrenOfType(this, JBehaveTable.class).isEmpty() &&
+        //                PsiTreeUtil.findChildrenOfType(this, JBehaveStoryPath.class).isEmpty());
+        //return !getStoryStepPostParameters().isEmpty();
     }
 
     @Nullable

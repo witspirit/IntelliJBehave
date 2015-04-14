@@ -19,6 +19,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     private List<Token> tokens = new ArrayList<Token>();
     private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
     private static Pattern dollarPattern = Pattern.compile("(\\$\\w*)(\\W|\\Z)", Pattern.DOTALL);
+    private static Pattern bracketPattern = Pattern.compile("(<\\w*>)(\\W|\\Z)", Pattern.DOTALL);
 
     public ParametrizedString(String content) {
         this(content, "$");
@@ -31,7 +32,11 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
         this.content = content;
         this.parameterPrefix = parameterPrefix;
-        parse(compileParameterPattern(parameterPrefix));
+        if (!parse(compileParameterPattern(parameterPrefix), 0)) {
+            tokens.clear();
+            tokensWithoutIdentifier.clear();
+            parse(bracketPattern, 1);
+        }
     }
 
     private static Pattern compileParameterPattern(String parameterPrefix) {
@@ -58,7 +63,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return other.content.equals(content);
     }
 
-    private void parse(final Pattern parameterPattern) {
+    private boolean parse(final Pattern parameterPattern, int add) {
+        boolean foundIdentifier = false;
         final Matcher matcher = parameterPattern.matcher(content);
 
         int prev = 0;
@@ -70,12 +76,14 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             }
             end -= matcher.group(2).length();
             start += parameterPrefix.length(); // remove prefix from the identifier
-            add(new Token(start, end - start, true));
+            add(new Token(start, end - start - add, true));
+            foundIdentifier = true;
             prev = end;
         }
         if (prev < content.length()) {
             add(new Token(prev, content.length() - prev, false));
         }
+        return foundIdentifier;
     }
 
     private void add(Token token) {
@@ -256,8 +264,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 if (!match) return "";
             } else {
                 String tokenValue = token.getValue();
-                match = (!myInputIt.hasNext() && tokenValue.startsWith(
-                        currentInput)) || (myInputIt.hasNext() && tokenValue.equals(currentInput));
+                match = (!myInputIt.hasNext() && tokenValue.startsWith(currentInput)) ||
+                        (myInputIt.hasNext() && tokenValue.equals(currentInput));
                 if (!match) return "";
             }
         }
@@ -395,8 +403,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 if (!match) return null;
             } else {
                 String tokenValue = token.getValue();
-                match = (inputTokens.isEmpty() && tokenValue.startsWith(
-                        currentInput)) || (!inputTokens.isEmpty() && tokenValue.equals(currentInput));
+                match = (inputTokens.isEmpty() && tokenValue.startsWith(currentInput)) ||
+                        (!inputTokens.isEmpty() && tokenValue.equals(currentInput));
                 if (!match) return null;
                 subs.add(currentInput);
             }

@@ -36,12 +36,14 @@ public class StoryTableBlock extends StoryIgnoreBlock {
             Arrays.fill(columnWidths, 0);
             for (JBehaveTableRow row : rows) {
                 int i = 0;
-                for (PsiElement cell : PsiTreeUtil.findChildrenOfAnyType(row, JBehaveTableCell.class,
-                        JBehaveTableCellEmpty.class)) {
+                for (PsiElement cell : PsiTreeUtil
+                        .findChildrenOfAnyType(row, JBehaveTableCell.class, JBehaveTableCellEmpty.class)) {
                     String cellText = cell.getText().trim();
                     int length = cellText.length();
-                    if (length > columnWidths[i]) {
-                        columnWidths[i] = length;
+                    if (i < columnWidths.length) {
+                        if (length > columnWidths[i]) {
+                            columnWidths[i] = length;
+                        }
                     }
                     ++i;
                 }

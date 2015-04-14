@@ -222,7 +222,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         //        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_ARGUMENT, JB_STEP_ARGUMENT);
         ATTRIBUTES.put(IJBehaveElementType.JB_STEP_LINE, JB_STEP_LINE);
         //        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_PAR, JB_STEP_PAR);
-        ATTRIBUTES.put(IJBehaveElementType.JB_STEP_POST_PARAMETER, JB_STEP_POST_PARAMETER);
+        //ATTRIBUTES.put(IJBehaveElementType.JB_STEP_POST_PARAMETER, JB_STEP_POST_PARAMETER);
         //ATTRIBUTES.put(IJBehaveElementType.JB_JBEHAVE, JB_JBEHAVE);
         ATTRIBUTES.put(IJBehaveElementType.JB_TABLE, JB_TABLE);
         ATTRIBUTES.put(IJBehaveElementType.JB_TABLE_CELL, JB_TABLE_CELL);

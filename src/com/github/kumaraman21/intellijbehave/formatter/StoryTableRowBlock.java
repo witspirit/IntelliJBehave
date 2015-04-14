@@ -31,7 +31,7 @@ public class StoryTableRowBlock extends StoryIgnoreBlock {
         ASTNode node = getNode();
         ASTNode[] children = node.getChildren(
                 TokenSet.create(IJBehaveElementType.JB_TOKEN_PIPE, IJBehaveElementType.JB_TABLE_CELL,
-                        IJBehaveElementType.JB_TABLE_CELL_EMPTY));
+                                IJBehaveElementType.JB_TABLE_CELL_EMPTY));
         for (ASTNode child : children) {
             IElementType elementType = child.getElementType();
             if (elementType == IJBehaveElementType.JB_TABLE_CELL_EMPTY) {
@@ -66,7 +66,11 @@ public class StoryTableRowBlock extends StoryIgnoreBlock {
             StoryTableCellBlock cell = (StoryTableCellBlock) child1;
             String text = cell.getText();
             int length = text.length();
-            int width = columnWidths[cell.getColumnNr()] + 1;
+            int columnNr = cell.getColumnNr();
+            int width = length;
+            if (columnNr < columnWidths.length) {
+                width = columnWidths[columnNr] + 1;
+            }
             int diff = width - length;
             return Spacing.createSpacing(diff, diff, 0, true, 0);
         }

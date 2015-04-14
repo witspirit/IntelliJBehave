@@ -17,14 +17,16 @@ import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*
 %function advance
 %type IElementType
 %unicode
+
+TOKEN_PIPE=\|
 TOKEN_NEWLINE=[ \t\f]*(\r|\n|\r\n|\Z)
 TOKEN_SPACE=[ \t\f]+
 TOKEN_COMMENT=\!--.*
 TOKEN_USER_INJECT=<<[^ \t\n\x0B\f\r]+>>
 TOKEN_INJECT=<[^ \t\n\x0B\f\r]+>
-TOKEN_PATH=([a-zA-Z0-9]|_|@|\.|-)+("/"([a-zA-Z0-9]|_|@|\.|-)+)+
+TOKEN_PATH=([A-Z]:)?([a-zA-Z0-9]|("/"|\\))([a-zA-Z0-9]|_|@|\.|-)+(("/"|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
-TOKEN_WORD=([a-zA-Z0-9_-]|&|\!|\\|\"|#|\$|%|\(|'|\)|\*|\+|"/"|;|=|\?|\[|\]|\^|`|\{|\}|\~)+
+TOKEN_WORD=[^ \t\n\x0B\f\r\|]+
 
 %%
 <YYINITIAL> {
@@ -42,12 +44,13 @@ TOKEN_WORD=([a-zA-Z0-9_-]|&|\!|\\|\"|#|\$|%|\(|'|\)|\*|\+|"/"|;|=|\?|\[|\]|\^|`|
   "After:"                 { return JB_TOKEN_AFTER; }
   ":"                      { return JB_TOKEN_COLON; }
   "@"                      { return JB_TOKEN_AT; }
+  ","                      { return JB_TOKEN_COMMA; }
   "<<"                     { return JB_TOKEN_DBRACKET_OPEN; }
   ">>"                     { return JB_TOKEN_DBRACKET_CLOSE; }
   "<"                      { return JB_TOKEN_BRACKET_OPEN; }
   ">"                      { return JB_TOKEN_BRACKET_CLOSE; }
-  "|"                      { return JB_TOKEN_PIPE; }
 
+  {TOKEN_PIPE}             { return JB_TOKEN_PIPE; }
   {TOKEN_NEWLINE}          { return JB_TOKEN_NEWLINE; }
   {TOKEN_SPACE}            { return JB_TOKEN_SPACE; }
   {TOKEN_COMMENT}          { return JB_TOKEN_COMMENT; }
