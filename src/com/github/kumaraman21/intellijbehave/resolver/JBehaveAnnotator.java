@@ -17,7 +17,6 @@ package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighter;
 import com.github.kumaraman21.intellijbehave.parser.*;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveScenarioTitle;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
@@ -54,19 +53,26 @@ public class JBehaveAnnotator implements Annotator {
             }
 
         } else if (psiElement instanceof StoryPath) {
-            PsiElement parent = psiElement.getParent();
-            if (parent != null && !(parent instanceof JBehaveScenarioTitle)) {
-                StoryPath storyPath = (StoryPath) psiElement;
-                PsiReference[] references = storyPath.getReferences();
-                if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
-                    return;
-                }
-                StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
+            StoryPath storyPath = (StoryPath) psiElement;
+            PsiReference[] references = storyPath.getReferences();
+            if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
+                return;
+            }
+            StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
 
-                if (reference.multiResolve(false).length == 0) {
-                    Annotation errorAnnotation = annotationHolder.createErrorAnnotation(psiElement, "File not found");
-                    errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
+            if (reference.multiResolve(false).length == 0) {
+                PsiElement parent1 = psiElement.getParent();
+                if (parent1 != null) {
+                    PsiElement parent = parent1.getParent();
+                    if (parent != null && parent.getNode().getElementType() == IJBehaveElementType.JB_GIVEN_STORIES) {
+                        Annotation errorAnnotation =
+                                annotationHolder.createErrorAnnotation(psiElement, "File not found");
+                        errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
+                    }
                 }
+            } else {
+                Annotation infoAnnotation = annotationHolder.createInfoAnnotation(psiElement, null);
+                infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_STORY_PATH);
             }
         } else if (psiElement instanceof ParserRule) {
             ASTNode node = psiElement.getNode();

@@ -41,7 +41,7 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Line comment", JBehaveSyntaxHighlighter.JB_TOKEN_COMMENT),//
             //new AttributesDescriptor("Bad Character", StorySyntaxHighlighter.BAD_CHARACTER),//
             new AttributesDescriptor("Given Stories", JBehaveSyntaxHighlighter.JB_TOKEN_GIVEN_STORIES),//
-            new AttributesDescriptor("Story path", JBehaveSyntaxHighlighter.JB_TOKEN_PATH),//
+            new AttributesDescriptor("Story path", JBehaveSyntaxHighlighter.JB_STORY_PATH),//
             //new AttributesDescriptor("Story path2", StorySyntaxHighlighter.JB_JB_PATH),//
             new AttributesDescriptor("System parameter inject", JBehaveSyntaxHighlighter.JB_TOKEN_INJECT),//
             new AttributesDescriptor("User parameter inject", JBehaveSyntaxHighlighter.JB_TOKEN_USERINJECT),//
@@ -88,7 +88,8 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
                 "As a player\n" + //
                 "I want to be able to create and manage my account\n</narrativeText>" + //
                 "\n" + //
-                "GivenStories: product/wire/ConfigStory.story, <errorFile>product/wire/Unknown.story</errorFile>\n\n" + //
+                "GivenStories: <storyPath>product/wire/ConfigStory.story</storyPath>, <errorFile>product/wire/Unknown.story</errorFile>\n\n" +
+                //
                 "Scenario: <scenText>An unknown user cannot be logged</scenText>\n" + //
                 "\n" + //
                 "Meta:\n" + //
@@ -116,7 +117,7 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         Map<String, TextAttributesKey> result = new HashMap<String, TextAttributesKey>();
         result.put("scenText", JBehaveSyntaxHighlighter.JB_SCENARIO_TITLE);
-        //result.put("storyPath", StorySyntaxHighlighter.STORY_STORY_PATH);
+        result.put("storyPath", JBehaveSyntaxHighlighter.JB_STORY_PATH);
         result.put("stepText", JBehaveSyntaxHighlighter.JB_STEP_LINE);
         result.put("stepParameter", JBehaveSyntaxHighlighter.JB_STEP_POST_PARAMETER);
         result.put("table", JBehaveSyntaxHighlighter.JB_TABLE);

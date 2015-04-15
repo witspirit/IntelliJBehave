@@ -643,7 +643,7 @@ public class JBehaveParser implements PsiParser {
             if (!Newline(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "MultiTextLine_0_2", c)) break;
             c = current_position_(b);
-        }
+    }
         exit_section_(b, m, null, r);
         return r;
     }

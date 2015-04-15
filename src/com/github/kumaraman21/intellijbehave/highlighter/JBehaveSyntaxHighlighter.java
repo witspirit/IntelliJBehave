@@ -92,8 +92,9 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final String JB_TOKEN_USER_INJECT_ID = "JBEHAVE.JB_TOKEN_USER_INJECT";
     public static final String JB_TOKEN_COMMENT_ID = "JBEHAVE.JB_COMMENT_ID";
     public static final String STEP_PARAMETER_ID = "JBEHAVE.STEP_PARAMETER";
-    public static final String JB_TOKEN_PATH_ID = "JBEHAVE.JB_TOKEN_PATH";
+    //public static final String JB_TOKEN_PATH_ID = "JBEHAVE.JB_TOKEN_PATH";
     public static final String JB_DEFAULT_TEXT_ID = "JBEHAVE.JB_DEFAULT_TEXT";
+    public static final String JB_STORY_PATH_ID = "JBEHAVE.JB_STORY_PATH";
 
     // Registering TextAttributes
     static {
@@ -120,6 +121,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(JB_TABLE_CELL_ID, DefaultLanguageHighlighterColors.STRING);
         //createKey(JB_URI_ID, CodeInsightColors.HYPERLINK_ATTRIBUTES);
         createKey(STEP_PARAMETER_ID, DefaultLanguageHighlighterColors.STRING);
+        createKey(JB_STORY_PATH_ID, DefaultLanguageHighlighterColors.STRING);
 
 
         createKey(JB_TOKEN_AFTER_ID, DefaultLanguageHighlighterColors.KEYWORD);
@@ -137,7 +139,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         createKey(JB_TOKEN_PIPE_ID, DefaultLanguageHighlighterColors.KEYWORD);
         createKey(JB_TOKEN_INJECT_ID, DefaultLanguageHighlighterColors.LABEL);
         createKey(JB_TOKEN_USER_INJECT_ID, DefaultLanguageHighlighterColors.LABEL);
-        createKey(JB_TOKEN_PATH_ID, DefaultLanguageHighlighterColors.STRING);
+        //createKey(JB_TOKEN_PATH_ID, DefaultLanguageHighlighterColors.STRING);
         createKey(JB_TOKEN_COMMENT_ID, DefaultLanguageHighlighterColors.LINE_COMMENT);
     }
 
@@ -169,6 +171,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey JB_JBEHAVE = createTextAttributesKey(JB_JB_ID);
     //public static TextAttributesKey JB_TOKEN_PATH = createTextAttributesKey(JB_JB_PATH_ID);
     //    public static TextAttributesKey JB_JB_PATHS = createTextAttributesKey(JB_JB_PATHS_ID);
+    public static TextAttributesKey JB_STORY_PATH = createTextAttributesKey(JB_STORY_PATH_ID);
     public static TextAttributesKey JB_TABLE = createTextAttributesKey(JB_TABLE_ID);
     public static TextAttributesKey JB_TABLE_CELL = createTextAttributesKey(JB_TABLE_CELL_ID);
     //    public static TextAttributesKey JB_TABLE_CELL_EMPTY = createTextAttributesKey(JB_TABLE_CELL_EMPTY_ID);
@@ -193,7 +196,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
     public static TextAttributesKey JB_TOKEN_INJECT = createTextAttributesKey(JB_TOKEN_INJECT_ID);
     public static TextAttributesKey JB_TOKEN_USERINJECT = createTextAttributesKey(JB_TOKEN_USER_INJECT_ID);
     public static TextAttributesKey JB_TOKEN_COMMENT = createTextAttributesKey(JB_TOKEN_COMMENT_ID);
-    public static TextAttributesKey JB_TOKEN_PATH = createTextAttributesKey(JB_TOKEN_PATH_ID);
+    //public static TextAttributesKey JB_TOKEN_PATH = createTextAttributesKey(JB_TOKEN_PATH_ID);
     public static TextAttributesKey JB_ERROR_NO_DEF_FOUND = createTextAttributesKey(JB_ERROR_NO_DEF_FOUND_ID);
     public static TextAttributesKey JB_ERROR_FILE_NOT_FOUND = createTextAttributesKey(JB_ERROR_FILE_NOT_FOUND_ID);
 
@@ -232,6 +235,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_IDENTIFIER, JB_URI_IDENTIFIER);
         //        ATTRIBUTES.put(IJBehaveElementType.JB_URI_WORD, JB_URI_WORD);
         //ATTRIBUTES.put(IJBehaveElementType.JB_USER_INJECT, JB_USER_INJECT);
+        ATTRIBUTES.put(IJBehaveElementType.JB_STORY_PATH, JB_STORY_PATH);
 
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_AFTER, JB_TOKEN_AFTER);
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_AND, JB_TOKEN_AND);
@@ -249,7 +253,7 @@ public class JBehaveSyntaxHighlighter extends SyntaxHighlighterBase {
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_INJECT, JB_TOKEN_INJECT);
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_USER_INJECT, JB_TOKEN_USERINJECT);
         ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_COMMENT, JB_TOKEN_COMMENT);
-        ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_PATH, JB_TOKEN_PATH);
+        //ATTRIBUTES.put(IJBehaveElementType.JB_TOKEN_PATH, JB_TOKEN_PATH);
     }
 
     static public TextAttributesKey getTextAttribute(IElementType elementType) {
