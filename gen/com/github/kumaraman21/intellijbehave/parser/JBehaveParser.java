@@ -163,7 +163,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? Newline
+  // TOKEN_GIVEN_STORIES WhiteSpace StoryPaths?
   public static boolean GivenStories(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "GivenStories")) return false;
     boolean r, p;
@@ -171,8 +171,7 @@ public class JBehaveParser implements PsiParser {
     r = consumeToken(b, JB_TOKEN_GIVEN_STORIES);
     p = r; // pin = 1
     r = r && report_error_(b, WhiteSpace(b, l + 1));
-    r = p && report_error_(b, GivenStories_2(b, l + 1)) && r;
-    r = p && Newline(b, l + 1) && r;
+      r = p && GivenStories_2(b, l + 1) && r;
       exit_section_(b, l, m, JB_GIVEN_STORIES, r, p, RecoverMeta_parser_);
     return r || p;
   }
@@ -605,7 +604,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (SpaceStar Line Newline)+
+  // (SpaceStar Line Newline+)+
   static boolean MultiTextLine(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MultiTextLine")) return false;
     boolean r;
@@ -621,17 +620,33 @@ public class JBehaveParser implements PsiParser {
     return r;
   }
 
-  // SpaceStar Line Newline
+    // SpaceStar Line Newline+
   private static boolean MultiTextLine_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MultiTextLine_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
     r = r && Line(b, l + 1);
-    r = r && Newline(b, l + 1);
+      r = r && MultiTextLine_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
+
+    // Newline+
+    private static boolean MultiTextLine_0_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "MultiTextLine_0_2")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
+        r = Newline(b, l + 1);
+        int c = current_position_(b);
+        while (r) {
+            if (!Newline(b, l + 1)) break;
+            if (!empty_element_parsed_guard_(b, "MultiTextLine_0_2", c)) break;
+            c = current_position_(b);
+        }
+        exit_section_(b, m, null, r);
+        return r;
+    }
 
   /* ********************************************************** */
   // TOKEN_NARRATIVE WhiteSpace NarrativeText?

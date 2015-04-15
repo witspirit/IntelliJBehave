@@ -100,7 +100,7 @@ TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_P
 TableCell ::= Line|TOKEN_META|MetaElement
 TableCellEmpty ::= SpaceStar
 
-private MultiTextLine ::= (SpaceStar Line Newline)+
+private MultiTextLine ::= (SpaceStar Line Newline+)+
 
 private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON
 private Word ::= SimpleWord+
