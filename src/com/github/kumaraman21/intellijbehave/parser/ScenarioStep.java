@@ -170,7 +170,8 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
                         final String oldPlainText = havePostParameters ? getStepText() + " TABLE" : getStepText();
                         final ParametrizedString pNewText = new ParametrizedString(name);
                         final ParametrizedString pRefText = new ParametrizedString(refText);
-                        List<Pair<String, String>> oldTextTokens = pRefText.getTokensOf(oldPlainText);
+                        List<Pair<ParametrizedString.ContentToken, String>> oldTextTokens =
+                                pRefText.getTokensOf(oldPlainText);
                         if (oldTextTokens != null) {
                             List<String> tokensNewText = pNewText.textAccordingTo(oldTextTokens);
                             if (!tokensNewText.isEmpty()) {

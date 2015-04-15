@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class TokenMap {
     private Map<String, TokenMap> nextTokens = new HashMap<String, TokenMap>();
     private JavaStepDefinition leafToken;// = new ArrayList<JavaStepDefinition>();
-    private static Pattern pattern = Pattern.compile("(\\w+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    private static Pattern pattern = Pattern.compile("((\\w|<|>|\\|)+|[\\W&&[^\\s]])", Pattern.DOTALL);
 
     private static List<String> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
@@ -31,8 +31,8 @@ public class TokenMap {
         final Set<ParametrizedString> parametrizedStrings = def.toPString();
         for (ParametrizedString parametrizedString : parametrizedStrings) {
             final String stringWithoutIdentifiers = parametrizedString.toStringWithoutIdentifiers();
-            final List<String> split = split(
-                    String.format("%s %s", def.getAnnotationTypeAsString(), stringWithoutIdentifiers));
+            final List<String> split =
+                    split(String.format("%s %s", def.getAnnotationTypeAsString(), stringWithoutIdentifiers));
             put(split, 0, def);
         }
     }
@@ -61,11 +61,25 @@ public class TokenMap {
         return getConcerned(split, 0, strict);
     }
 
+    private String unwrapInject(String maybeInject) {
+        if (maybeInject.startsWith("<") && maybeInject.endsWith(">")) {
+            int start = maybeInject.indexOf("|") + 1;
+            int end = maybeInject.indexOf(">", start);
+            return maybeInject.substring(start, end);
+        }
+        return maybeInject;
+    }
+
     private List<JavaStepDefinition> getConcerned(List<String> split, int count, boolean strict) {
         int it = count;
         while (it < split.size()) {
             String next = split.get(it);
             TokenMap tokenMap = nextTokens.get(next);
+            if (tokenMap == null) {
+                //maybe it's a user inject
+                String tryToken = unwrapInject(next);
+                tokenMap = nextTokens.get(tryToken);
+            }
             if (tokenMap != null) {
                 List<JavaStepDefinition> concerned = tokenMap.getConcerned(split, it + 1, strict);
                 if (!concerned.isEmpty()) {

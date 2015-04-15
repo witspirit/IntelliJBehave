@@ -26,7 +26,7 @@ TOKEN_USER_INJECT=<<[^ \t\n\x0B\f\r]+>>
 TOKEN_INJECT=<[^ \t\n\x0B\f\r]+>
 TOKEN_PATH=([A-Z]:)?([a-zA-Z0-9]|("/"|\\))([a-zA-Z0-9]|_|@|\.|-)+(("/"|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
-TOKEN_WORD=[^ \t\n\x0B\f\r\|]+
+TOKEN_WORD=[^ \t\n\x0B\f\r\|,]+
 
 %%
 <YYINITIAL> {

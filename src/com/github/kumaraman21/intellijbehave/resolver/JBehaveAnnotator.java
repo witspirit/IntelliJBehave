@@ -26,6 +26,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -36,8 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static com.github.kumaraman21.intellijbehave.utility.ParametrizedString.StringToken;
 
 public class JBehaveAnnotator implements Annotator {
     @Override
@@ -98,37 +97,38 @@ public class JBehaveAnnotator implements Annotator {
 
     private void annotateParameters(ScenarioStep step, JavaStepDefinition javaStepDefinition,
                                     AnnotationHolder annotationHolder) {
-        String stepText = step.getStepText();
-        String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-        if (annotationText == null) {
-            stepText = stepText + " dummy";
-            annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-            if (annotationText == null) return;
+        String storyStepText = step.getStepText();
+        String javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
+        if (javaStepText == null) {
+            storyStepText = storyStepText + " dummy";
+            javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
+            if (javaStepText == null) return;
         }
-        ParametrizedString pString = new ParametrizedString(annotationText);
+        ParametrizedString pString = new ParametrizedString(javaStepText);
 
         Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
 
         int offset = step.getTextOffset() + step.getStepTextOffset();
-        final List<StringToken> tokenize = pString.tokenize(stepText);
-        final int lastToken = tokenize.size() - 1;
+        List<Pair<ParametrizedString.ContentToken, String>> tokensOf = pString.getTokensOf(storyStepText);
+        final int lastToken = tokensOf.size() - 1;
         int i = 0;
         final boolean hasStoryStepPostParameters = step.hasStoryStepPostParameters();
-        for (StringToken token : tokenize) {
-            int length = token.getValue().length();
-            if (token.isIdentifier()) {
+
+        for (Pair<ParametrizedString.ContentToken, String> pair : tokensOf) {
+            ParametrizedString.ContentToken contentToken = pair.first;
+            String value = contentToken.value();
+            if (pair.second != null) {
                 ParametrizedString.Token token1 = pString.getToken(i);
                 PsiType parType = mapNameToType.get(token1.value());
                 Annotation infoAnnotation;
                 if (parType != null) {
-                    infoAnnotation = annotationHolder.createInfoAnnotation(TextRange.from(offset, length),
-                                                                           String.format("Parameter: <%s> %s",
-                                                                                         parType.getCanonicalText(),
-                                                                                         token1.value()));
+                    infoAnnotation = annotationHolder.createInfoAnnotation(
+                            TextRange.from(offset + contentToken.getStart(), contentToken.getLength()),
+                            String.format("Parameter: <%s> %s", parType.getCanonicalText(), token1.value()));
                 } else {
-                    infoAnnotation = annotationHolder.createInfoAnnotation(TextRange.from(offset, length),
-                                                                           String.format("Parameter: %s",
-                                                                                         token1.value()));
+                    infoAnnotation = annotationHolder.createInfoAnnotation(
+                            TextRange.from(offset + contentToken.getStart(), contentToken.getLength()),
+                            String.format("Parameter: %s", token1.value()));
 
                 }
                 if (!(hasStoryStepPostParameters && i == lastToken))
@@ -136,20 +136,17 @@ public class JBehaveAnnotator implements Annotator {
                 else {
                     infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_DEFAULT_TEXT);
                 }
-                List<String> stringList = ParametrizedString.split(token.getValue());
-                int running = offset;
+                List<ParametrizedString.ContentToken> stringList = ParametrizedString.split(value);
                 PsiElement elementAt;
-                for (String s : stringList) {
-                    elementAt = step.getContainingFile().findElementAt(running);
+                for (ParametrizedString.ContentToken s : stringList) {
+                    elementAt = step.getContainingFile().findElementAt(offset + s.getStart());
                     if (elementAt != null &&
                             elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
                         elementAt.putUserData(ParserRule.isStepParameter, true);
                     }
-                    running += s.length() + 1;
                 }
             }
             ++i;
-            offset += length;
         }
     }
 

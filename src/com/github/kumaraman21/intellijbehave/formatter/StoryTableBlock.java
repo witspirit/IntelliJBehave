@@ -59,7 +59,7 @@ public class StoryTableBlock extends StoryIgnoreBlock {
     @Nullable
     @Override
     public Spacing getSpacing(Block child1, Block child2) {
-        return Spacing.createSpacing(0, 0, 0, true, 1);
+        return Spacing.createSpacing(0, 0, 1, false, 0);
     }
 
     @Override

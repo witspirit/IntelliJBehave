@@ -67,6 +67,7 @@ public class JBehaveParserDefinition implements ParserDefinition {
         //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_COMMENT);
         //return TokenSet.create(IStoryPegElementType.STORY_STEP_COMMENT);
         return TokenSet.EMPTY;
+        //return TokenSet.create(IJBehaveElementType.JB_TOKEN_COMMENT);
     }
 
     @NotNull

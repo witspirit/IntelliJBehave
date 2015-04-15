@@ -219,20 +219,20 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     }
 
     public String complete(String input, boolean hasPostParameter) {
-        List<String> builder = new ArrayList<String>();
+        List<ContentToken> builder = new ArrayList<ContentToken>();
         List<StringToken> myTokens = new ArrayList<StringToken>();
-        ArrayList<String> inputTokens = new ArrayList<String>();
+        ArrayList<ContentToken> inputTokens = new ArrayList<ContentToken>();
 
         putInWordTokens(myTokens);
 
-        putInStringTokens(input, inputTokens);
+        inputTokens.addAll(split(input));
 
         Iterator<StringToken> myTokenIt = myTokens.iterator();
-        Iterator<String> myInputIt = inputTokens.iterator();
+        Iterator<ContentToken> myInputIt = inputTokens.iterator();
         boolean match = false;
         while (myInputIt.hasNext()) {
             StringToken token = myTokenIt.next();
-            String currentInput = myInputIt.next();
+            ContentToken currentInput = myInputIt.next();
             if (token.isIdentifier()) {
                 if (!myTokenIt.hasNext() || !myInputIt.hasNext()) {
                     builder.add(currentInput);
@@ -246,15 +246,15 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 String value = lookAheadToken.getValue();
                 //find a matching input token
                 match = false;
-                List<String> subs = new ArrayList<String>();
+                List<ContentToken> subs = new ArrayList<ContentToken>();
 
                 do {
                     subs.add(currentInput);
                     currentInput = myInputIt.next();
-                    boolean b1 = !myInputIt.hasNext() && value.startsWith(currentInput);
-                    boolean b2 = myInputIt.hasNext() && value.equals(currentInput);
+                    boolean b1 = !myInputIt.hasNext() && value.startsWith(currentInput.value());
+                    boolean b2 = myInputIt.hasNext() && value.equals(currentInput.value());
                     if (b1 || b2) {
-                        builder.add(StringUtils.join(subs, " "));
+                        builder.add(new ContentToken(subs));
                         //builder.add(value);
                         match = true;
                         break;
@@ -264,8 +264,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 if (!match) return "";
             } else {
                 String tokenValue = token.getValue();
-                match = (!myInputIt.hasNext() && tokenValue.startsWith(currentInput)) ||
-                        (myInputIt.hasNext() && tokenValue.equals(currentInput));
+                match = (!myInputIt.hasNext() && tokenValue.startsWith(currentInput.value())) ||
+                        (myInputIt.hasNext() && tokenValue.equals(currentInput.value()));
                 if (!match) return "";
             }
         }
@@ -274,11 +274,11 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             StringToken token = myTokenIt.next();
             String tokenValue = token.getValue();
             if (token.isIdentifier()) {
-                builder.add("$" + tokenValue);
+                builder.add(new ContentToken("$" + tokenValue));
             }
         }
         StringBuilder sb = new StringBuilder();
-        Iterator<String> parameterIt = builder.iterator();
+        Iterator<ContentToken> parameterIt = builder.iterator();
         List<Token> tokens1 = this.tokens;
         for (int i = 0; i < tokens1.size() - 1; i++) {
             Token token = tokens1.get(i);
@@ -299,16 +299,16 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return sb.toString();
     }
 
-    private static Pattern pattern = Pattern.compile("(\\w+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    private static Pattern pattern = Pattern.compile("(\\S+|[\\W&&[^\\s]])", Pattern.DOTALL);
 
-    public static List<String> split(final String text) {
+    public static List<ContentToken> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
 
-        List<String> result2 = new ArrayList<String>();
+        List<ContentToken> result2 = new ArrayList<ContentToken>();
         while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
-            result2.add(text.substring(start, end));
+            result2.add(new ContentToken(text, start, end));
         }
         return result2;
     }
@@ -319,16 +319,10 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             if (token.isIdentifier) {
                 myTokens.add(new StringToken(value.trim(), true));
             } else {
-                for (String tok : split(value)) {
-                    myTokens.add(new StringToken(tok.trim(), false));
+                for (ContentToken tok : split(value)) {
+                    myTokens.add(new StringToken(tok.value().trim(), false));
                 }
             }
-        }
-    }
-
-    private void putInStringTokens(String input, Collection<String> inputTokens) {
-        for (String s : split(input)) {
-            inputTokens.add(s.trim());
         }
     }
 
@@ -344,24 +338,23 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
      * @param input
      * @return
      */
-    public List<Pair<String, String>> getTokensOf(String input) {
-        List<Pair<String, String>> retVal = new ArrayList<Pair<String, String>>();
+    public List<Pair<ContentToken, String>> getTokensOf(String input) {
+        List<Pair<ContentToken, String>> retVal = new ArrayList<Pair<ContentToken, String>>();
         Deque<StringToken> myTokens = new ArrayDeque<StringToken>();
 
         putInWordTokens(myTokens);
 
-        Deque<String> inputTokens = new ArrayDeque<String>();
-
-        putInStringTokens(input, inputTokens);
+        Deque<ContentToken> inputTokens = new ArrayDeque<ContentToken>();
+        inputTokens.addAll(split(input));
 
         boolean match = false;
-        final List<String> subs = new ArrayList<String>();
+        final List<ContentToken> subs = new ArrayList<ContentToken>();
         while (!inputTokens.isEmpty()) {
             StringToken token = myTokens.removeFirst();
-            String currentInput = inputTokens.removeFirst();
+            ContentToken currentInput = inputTokens.removeFirst();
             if (token.isIdentifier()) {
                 if (!subs.isEmpty()) {
-                    retVal.add(Pair.create(StringUtils.join(subs, " "), (String) null));
+                    retVal.add(Pair.create(new ContentToken(subs), (String) null));
                     subs.clear();
                 }
                 if (myTokens.isEmpty()) {
@@ -370,7 +363,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                         currentInput = inputTokens.removeFirst();
                         subs.add(currentInput);
                     }
-                    retVal.add(Pair.create(StringUtils.join(subs, " "), token.getValue()));
+                    retVal.add(Pair.create(new ContentToken(subs), token.getValue()));
                     subs.clear();
                     break;
                 }
@@ -388,10 +381,10 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 do {
                     subs.add(currentInput);
                     currentInput = inputTokens.removeFirst();
-                    boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput);
-                    boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput);
+                    boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput.value());
+                    boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput.value());
                     if (b1 || b2) {
-                        retVal.add(Pair.create(StringUtils.join(subs, " "), token.getValue()));
+                        retVal.add(Pair.create(new ContentToken(subs), token.getValue()));
                         match = true;
                         myTokens.addFirst(lookAheadToken);
                         inputTokens.addFirst(currentInput);
@@ -403,27 +396,42 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
                 if (!match) return null;
             } else {
                 String tokenValue = token.getValue();
-                match = (inputTokens.isEmpty() && tokenValue.startsWith(currentInput)) ||
-                        (!inputTokens.isEmpty() && tokenValue.equals(currentInput));
+                match = (inputTokens.isEmpty() && tokenValue.startsWith(currentInput.value())) ||
+                        (!inputTokens.isEmpty() && tokenValue.equals(currentInput.value()));
+                if (!match) {
+                    //maybe an inject
+                    String inject = unwrapInject(currentInput.value());
+                    match = (inputTokens.isEmpty() && tokenValue.startsWith(inject)) ||
+                            (!inputTokens.isEmpty() && tokenValue.equals(inject));
+                }
                 if (!match) return null;
                 subs.add(currentInput);
             }
         }
         if (!match || !myTokens.isEmpty()) return null;
         if (!subs.isEmpty()) {
-            retVal.add(Pair.create(StringUtils.join(subs, " "), (String) null));
+            retVal.add(Pair.create(new ContentToken(subs), (String) null));
             subs.clear();
         }
 
         return retVal;
     }
 
-    public List<String> textAccordingTo(List<Pair<String, String>> actualText) {
+    private String unwrapInject(String maybeInject) {
+        if (maybeInject.startsWith("<") && maybeInject.endsWith(">")) {
+            int start = maybeInject.indexOf("|") + 1;
+            int end = maybeInject.indexOf(">", start);
+            return maybeInject.substring(start, end);
+        }
+        return maybeInject;
+    }
+
+    public List<String> textAccordingTo(List<Pair<ContentToken, String>> actualText) {
         Map<String, String> parameters = new HashMap<String, String>();
 
-        for (Pair<String, String> pair : actualText) {
+        for (Pair<ContentToken, String> pair : actualText) {
             if (pair.second != null) {
-                parameters.put(pair.second, pair.first);
+                parameters.put(pair.second, pair.first.value());
             }
         }
         List<String> retval = new ArrayList<String>();
@@ -582,6 +590,63 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
         public boolean isIdentifier() {
             return isIdentifier;
+        }
+    }
+
+    public static class ContentToken {
+        private String content;
+        private final int start;
+        private final int end;
+
+        public ContentToken(String content) {
+            this(content, 0, content.length() - 1);
+        }
+
+        public ContentToken(String content, int start, int end) {
+            this.content = content;
+            this.start = start;
+            this.end = end;
+        }
+
+        public ContentToken(Collection<ContentToken> tokens) {
+            Iterator<ContentToken> it = tokens.iterator();
+            if (it.hasNext()) {
+                ContentToken next = it.next();
+                content = next.getContent();
+                start = next.start;
+                while (it.hasNext()) {
+                    next = it.next();
+                }
+                end = next.end;
+            } else {
+                start = 0;
+                end = 0;
+            }
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getLength() {
+            return end - start + 1;
+        }
+
+        public String value() {
+            return content.substring(getStart(), getEnd());
+        }
+
+        @Override
+        public String toString() {
+            return value();
         }
     }
 }

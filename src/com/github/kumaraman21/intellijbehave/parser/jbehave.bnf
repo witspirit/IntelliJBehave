@@ -40,7 +40,7 @@
     TOKEN_PATH = 'regexp:([A-Z]:)?([a-zA-Z0-9]|(/|\\))([a-zA-Z0-9]|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     //TOKEN_WORD = "regexp:([:letter:]|[a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
-    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|]+"
+    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
@@ -52,7 +52,12 @@
 
 }
 root ::= !<<eof>> (Story|Table) {pin=1}
-Story ::= WhiteSpace Description? WhiteSpace MetaStatement? WhiteSpace Narrative? WhiteSpace GivenStories? WhiteSpace Lifecycle? WhiteSpace Scenario+ WhiteSpace
+Story ::=   WhiteSpace StepComment? Description?
+            WhiteSpace StepComment? MetaStatement?
+            WhiteSpace StepComment? Narrative?
+            WhiteSpace StepComment? GivenStories?
+            WhiteSpace StepComment? Lifecycle?
+            WhiteSpace StepComment? Scenario+ WhiteSpace
 Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Newline)* (SpaceStar MetaElement (Space|Newline)*)* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue|MetaKey|MetaValue) {pin=2 }
@@ -64,8 +69,8 @@ private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TO
 Narrative ::= TOKEN_NARRATIVE WhiteSpace NarrativeText? {pin=1 }
 NarrativeText ::= MultiTextLine
 
-GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? Newline {pin=1}
-StoryPaths ::= StoryPath ( WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
+GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? {pin=1 recoverWhile=RecoverMeta}
+StoryPaths ::= StoryPath (WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
 StoryPath ::= TOKEN_PATH {pin=1}
 
 Lifecycle::= TOKEN_LIFECYCLE WhiteSpace (LifecycleBefore)? LifecycleAfter? {pin=1}
@@ -90,7 +95,7 @@ StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 
 Examples ::= TOKEN_EXAMPLES WhiteSpace (Table|StoryPath) {pin=1}
 
-Table ::= (SpaceStar TableRow Newline)+
+Table ::= (SpaceStar TableRow Newline*)+
 TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* {pin=1}
 TableCell ::= Line|TOKEN_META|MetaElement
 TableCellEmpty ::= SpaceStar

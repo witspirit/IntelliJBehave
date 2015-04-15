@@ -106,7 +106,7 @@ public class JavaStepDefinitionsIndex {
 
         final List<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(text, true);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
-            if (stepDefinition != null && stepDefinition.matches(storyLine) && stepDefinition.supportsStep(step)) {
+            if (stepDefinition != null /*&& stepDefinition.matches(storyLine) && stepDefinition.supportsStep(step)*/) {
                 Integer currentHighestPriority =
                         getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);
