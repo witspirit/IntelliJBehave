@@ -18,10 +18,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -32,7 +29,7 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
     }
 
     @Override
-    public boolean canProcessElement(PsiElement element) {
+    public boolean canProcessElement(@NotNull PsiElement element) {
         PsiElement help = element;
         while (!(help instanceof PsiLiteralExpression) && !(help instanceof PsiFile) && help != null) {
             help = help.getParent();
@@ -62,6 +59,7 @@ public class JBehaveRenameAnnotationProcessor extends RenamePsiElementProcessor 
     @Override
     public Collection<PsiReference> findReferences(PsiElement element) {
         PsiMethod method = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
+        if (method == null) return Collections.emptyList();
         PsiAnnotation annotation = PsiTreeUtil.getParentOfType(element, PsiAnnotation.class);
         GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope
                 .getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()),
