@@ -30,17 +30,69 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
 
     @Override
     public String getCodeSample(@NotNull SettingsType settingsType) {
-        return "# You are reading the \".properties\" entry.\n" +
-                "! The exclamation mark can also mark text as comments.\n" +
-                "website = http://en.wikipedia.org/\n" +
-                "language = English\n" +
-                "# The backslash below tells the application to continue reading\n" +
-                "# the value onto the next line.\n" +
-                "message = Welcome to \\\n" +
-                "          Wikipedia!\n" +
-                "# Add spaces to the key\n" +
-                "key\\ with\\ spaces = This is the value that could be looked up with the key \"key with spaces\".\n" +
-                "# Unicode\n" +
-                "tab : \\u0009";
+        return "Meta: @type smoke\n" +
+                "      @speed fast\n" +
+                "      @PROFILES: <<PROFILE|DEMO>> 3\n" +
+                "\n" +
+                "Narrative:\n" +
+                "As a user\n" +
+                "I want to perform an action\n" +
+                "So that I can achieve a business goal\n" +
+                "\n" +
+                "Scenario: Toggle application status\n" +
+                "Given named timeouts in seconds:\n" +
+                "| named   | delay |\n" +
+                "| delay 1 | 2     |\n" +
+                "| delay 2 | 3     |\n" +
+                "| delay 3 | 4     |\n" +
+                "\n" +
+                "Given using profiles the status is idle within defined timeout:\n" +
+                "| profile            | named-data |\n" +
+                "| <<PROFILE|DEMO>> 1 | delay 1    |\n" +
+                "| <<PROFILE|DEMO>> 2 | delay 2    |\n" +
+                "| <<PROFILE|DEMO>> 3 | delay 3    |\n" +
+                "\n" +
+                "When using profiles the active toggle button is clicked:\n" +
+                "| profile            |\n" +
+                "| <<PROFILE|DEMO>> 1 |\n" +
+                "| <<PROFILE|DEMO>> 2 |\n" +
+                "| <<PROFILE|DEMO>> 3 |\n" +
+                "\n" +
+                "Then using profiles the halted status is verified:\n" +
+                "| profile            |\n" +
+                "| <<PROFILE|DEMO>> 1 |\n" +
+                "| <<PROFILE|DEMO>> 2 |\n" +
+                "| <<PROFILE|DEMO>> 3 |\n" +
+                "\n" +
+                "And using profile <<PROFILE|DEMO>> 1 the input fields are disabled\n" +
+                "!--  And the status label is colored red\n" +
+                "\n" +
+                "When using profile <<PROFILE|DEMO>> 1 the window is resized randomly\n" +
+                "And the active toggle button is clicked\n" +
+                "Then the status is idle\n" +
+                "And the input fields are enabled\n" +
+                "!--  And the status label is colored green\n" +
+                "\n" +
+                "Scenario: Clear button\n" +
+                "Given using profile <<PROFILE|DEMO>> 1 the status is idle\n" +
+                "When the plane form is cleared\n" +
+                "Then the plane form is empty\n" +
+                "\n" +
+                "When a new plane WEFISE-123 manufactured by Boing used as Civil piloted by Sarah Bing is entered\n" +
+                "And the window is moved randomly\n" +
+                "And the plane form is cleared\n" +
+                "Then the status is idle\n" +
+                "And the plane form is empty\n" +
+                "\n" +
+                "When using profiles the active toggle button is clicked:\n" +
+                "| profile            |\n" +
+                "| <<PROFILE|DEMO>> 2 |\n" +
+                "| <<PROFILE|DEMO>> 3 |\n" +
+                "\n" +
+                "Then using profiles the idle status is verified:\n" +
+                "| profile            |\n" +
+                "| <<PROFILE|DEMO>> 1 |\n" +
+                "| <<PROFILE|DEMO>> 2 |\n" +
+                "| <<PROFILE|DEMO>> 3 |";
     }
 }

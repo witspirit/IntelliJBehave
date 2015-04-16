@@ -7,12 +7,9 @@ import com.github.kumaraman21.intellijbehave.psi.JBehaveStepArgument;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveStepPar;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveVisitor;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.JB_TOKEN_NEWLINE;
 
 public class JBehaveStepImpl extends ScenarioStep implements JBehaveStep {
 
@@ -35,12 +32,6 @@ public class JBehaveStepImpl extends ScenarioStep implements JBehaveStep {
     @NotNull
     public JBehaveStepPar getStepPar() {
         return findNotNullChildByClass(JBehaveStepPar.class);
-    }
-
-    @Override
-    @Nullable
-    public PsiElement getTokenNewline() {
-        return findChildByType(JB_TOKEN_NEWLINE);
     }
 
 }

@@ -73,16 +73,23 @@ GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? {pin=1 recoverWhile=R
 StoryPaths ::= StoryPath (WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
 StoryPath ::= TOKEN_PATH {pin=1}
 
-Lifecycle::= TOKEN_LIFECYCLE WhiteSpace (LifecycleBefore)? LifecycleAfter? {pin=1}
+Lifecycle::= TOKEN_LIFECYCLE WhiteSpace LifecycleBefore? WhiteSpace LifecycleAfter? {pin=1}
 LifecycleBefore::= TOKEN_BEFORE WhiteSpace (Step Newline*)* {pin=1}
 LifecycleAfter::= TOKEN_AFTER WhiteSpace (Step Newline*)* {pin=1}
 
 //private RecoverLife ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
 
-Scenario ::= !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND) TOKEN_SCENARIO WhiteSpace ScenarioTitle? WhiteSpace MetaStatement? WhiteSpace GivenStories? Newline* ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace (SpaceStar Examples WhiteSpace)?)* {pin=2 recoverWhile=RecoverMeta}
+Scenario ::= !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+             TOKEN_SCENARIO WhiteSpace ScenarioTitle?
+             WhiteSpace StepComment?
+             WhiteSpace MetaStatement?
+             WhiteSpace StepComment?
+             WhiteSpace GivenStories? Newline*
+             ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace
+             (SpaceStar Examples WhiteSpace)?)* {pin=2 recoverWhile=RecoverMeta}
 ScenarioTitle ::= Line
 
-Step ::=  !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER) StepPar SpaceStar StepArgument Newline? {pin=2 recoverWhile=RecoverMeta}
+Step ::=  !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER) StepPar SpaceStar StepArgument {pin=2 recoverWhile=RecoverMeta}
 StepPar ::= TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND
 
 private StepComment ::= TOKEN_COMMENT WhiteSpace

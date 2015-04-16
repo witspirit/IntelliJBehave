@@ -235,7 +235,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_LIFECYCLE WhiteSpace (LifecycleBefore)? LifecycleAfter?
+  // TOKEN_LIFECYCLE WhiteSpace LifecycleBefore? WhiteSpace LifecycleAfter?
   public static boolean Lifecycle(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Lifecycle")) return false;
     if (!nextTokenIs(b, JB_TOKEN_LIFECYCLE)) return false;
@@ -245,31 +245,22 @@ public class JBehaveParser implements PsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, WhiteSpace(b, l + 1));
     r = p && report_error_(b, Lifecycle_2(b, l + 1)) && r;
-    r = p && Lifecycle_3(b, l + 1) && r;
+      r = p && report_error_(b, WhiteSpace(b, l + 1)) && r;
+      r = p && Lifecycle_4(b, l + 1) && r;
     exit_section_(b, l, m, JB_LIFECYCLE, r, p, null);
     return r || p;
   }
 
-  // (LifecycleBefore)?
+    // LifecycleBefore?
   private static boolean Lifecycle_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Lifecycle_2")) return false;
-    Lifecycle_2_0(b, l + 1);
+      LifecycleBefore(b, l + 1);
     return true;
   }
 
-  // (LifecycleBefore)
-  private static boolean Lifecycle_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Lifecycle_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = LifecycleBefore(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
   // LifecycleAfter?
-  private static boolean Lifecycle_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Lifecycle_3")) return false;
+  private static boolean Lifecycle_4(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Lifecycle_4")) return false;
     LifecycleAfter(b, l + 1);
     return true;
   }
@@ -719,7 +710,14 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND) TOKEN_SCENARIO WhiteSpace ScenarioTitle? WhiteSpace MetaStatement? WhiteSpace GivenStories? Newline* ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace (SpaceStar Examples WhiteSpace)?)*
+  // !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND)
+  //              TOKEN_SCENARIO WhiteSpace ScenarioTitle?
+  //              WhiteSpace StepComment?
+  //              WhiteSpace MetaStatement?
+  //              WhiteSpace StepComment?
+  //              WhiteSpace GivenStories? Newline*
+  //              ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace
+  //              (SpaceStar Examples WhiteSpace)?)*
   public static boolean Scenario(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Scenario")) return false;
     boolean r, p;
@@ -733,8 +731,12 @@ public class JBehaveParser implements PsiParser {
     r = p && report_error_(b, Scenario_5(b, l + 1)) && r;
     r = p && report_error_(b, WhiteSpace(b, l + 1)) && r;
     r = p && report_error_(b, Scenario_7(b, l + 1)) && r;
-    r = p && report_error_(b, Scenario_8(b, l + 1)) && r;
-    r = p && Scenario_9(b, l + 1) && r;
+      r = p && report_error_(b, WhiteSpace(b, l + 1)) && r;
+      r = p && report_error_(b, Scenario_9(b, l + 1)) && r;
+      r = p && report_error_(b, WhiteSpace(b, l + 1)) && r;
+      r = p && report_error_(b, Scenario_11(b, l + 1)) && r;
+      r = p && report_error_(b, Scenario_12(b, l + 1)) && r;
+      r = p && Scenario_13(b, l + 1) && r;
     exit_section_(b, l, m, JB_SCENARIO, r, p, RecoverMeta_parser_);
     return r || p;
   }
@@ -772,66 +774,82 @@ public class JBehaveParser implements PsiParser {
     return true;
   }
 
-  // MetaStatement?
+    // StepComment?
   private static boolean Scenario_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Scenario_5")) return false;
-    MetaStatement(b, l + 1);
+      StepComment(b, l + 1);
     return true;
   }
 
-  // GivenStories?
+    // MetaStatement?
   private static boolean Scenario_7(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Scenario_7")) return false;
+      MetaStatement(b, l + 1);
+      return true;
+  }
+
+    // StepComment?
+    private static boolean Scenario_9(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Scenario_9")) return false;
+        StepComment(b, l + 1);
+        return true;
+    }
+
+    // GivenStories?
+    private static boolean Scenario_11(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Scenario_11")) return false;
     GivenStories(b, l + 1);
     return true;
   }
 
   // Newline*
-  private static boolean Scenario_8(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_8")) return false;
+  private static boolean Scenario_12(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_12")) return false;
     int c = current_position_(b);
     while (true) {
       if (!Newline(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "Scenario_8", c)) break;
+        if (!empty_element_parsed_guard_(b, "Scenario_12", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  // ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace (SpaceStar Examples WhiteSpace)?)*
-  private static boolean Scenario_9(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9")) return false;
+    // ((SpaceStar Step |SpaceStar StepComment)+ WhiteSpace
+    //              (SpaceStar Examples WhiteSpace)?)*
+    private static boolean Scenario_13(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Scenario_13")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!Scenario_9_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "Scenario_9", c)) break;
+        if (!Scenario_13_0(b, l + 1)) break;
+        if (!empty_element_parsed_guard_(b, "Scenario_13", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  // (SpaceStar Step |SpaceStar StepComment)+ WhiteSpace (SpaceStar Examples WhiteSpace)?
-  private static boolean Scenario_9_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0")) return false;
+    // (SpaceStar Step |SpaceStar StepComment)+ WhiteSpace
+    //              (SpaceStar Examples WhiteSpace)?
+    private static boolean Scenario_13_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "Scenario_13_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Scenario_9_0_0(b, l + 1);
+        r = Scenario_13_0_0(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
-    r = r && Scenario_9_0_2(b, l + 1);
+        r = r && Scenario_13_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // (SpaceStar Step |SpaceStar StepComment)+
-  private static boolean Scenario_9_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_0")) return false;
+  private static boolean Scenario_13_0_0(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Scenario_9_0_0_0(b, l + 1);
+      r = Scenario_13_0_0_0(b, l + 1);
     int c = current_position_(b);
     while (r) {
-      if (!Scenario_9_0_0_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "Scenario_9_0_0", c)) break;
+        if (!Scenario_13_0_0_0(b, l + 1)) break;
+        if (!empty_element_parsed_guard_(b, "Scenario_13_0_0", c)) break;
       c = current_position_(b);
     }
     exit_section_(b, m, null, r);
@@ -839,19 +857,19 @@ public class JBehaveParser implements PsiParser {
   }
 
   // SpaceStar Step |SpaceStar StepComment
-  private static boolean Scenario_9_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_0_0")) return false;
+  private static boolean Scenario_13_0_0_0(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Scenario_9_0_0_0_0(b, l + 1);
-    if (!r) r = Scenario_9_0_0_0_1(b, l + 1);
+      r = Scenario_13_0_0_0_0(b, l + 1);
+      if (!r) r = Scenario_13_0_0_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // SpaceStar Step
-  private static boolean Scenario_9_0_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_0_0_0")) return false;
+  private static boolean Scenario_13_0_0_0_0(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_0_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
@@ -861,8 +879,8 @@ public class JBehaveParser implements PsiParser {
   }
 
   // SpaceStar StepComment
-  private static boolean Scenario_9_0_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_0_0_1")) return false;
+  private static boolean Scenario_13_0_0_0_1(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_0_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
@@ -872,15 +890,15 @@ public class JBehaveParser implements PsiParser {
   }
 
   // (SpaceStar Examples WhiteSpace)?
-  private static boolean Scenario_9_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_2")) return false;
-    Scenario_9_0_2_0(b, l + 1);
+  private static boolean Scenario_13_0_2(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_2")) return false;
+      Scenario_13_0_2_0(b, l + 1);
     return true;
   }
 
   // SpaceStar Examples WhiteSpace
-  private static boolean Scenario_9_0_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Scenario_9_0_2_0")) return false;
+  private static boolean Scenario_13_0_2_0(PsiBuilder b, int l) {
+      if (!recursion_guard_(b, l, "Scenario_13_0_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = SpaceStar(b, l + 1);
@@ -934,7 +952,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER) StepPar SpaceStar StepArgument Newline?
+  // !(TOKEN_LIFECYCLE|TOKEN_BEFORE|TOKEN_AFTER) StepPar SpaceStar StepArgument
   public static boolean Step(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Step")) return false;
     boolean r, p;
@@ -943,8 +961,7 @@ public class JBehaveParser implements PsiParser {
     r = r && StepPar(b, l + 1);
     p = r; // pin = 2
     r = r && report_error_(b, SpaceStar(b, l + 1));
-    r = p && report_error_(b, StepArgument(b, l + 1)) && r;
-    r = p && Step_4(b, l + 1) && r;
+      r = p && StepArgument(b, l + 1) && r;
     exit_section_(b, l, m, JB_STEP, r, p, RecoverMeta_parser_);
     return r || p;
   }
@@ -969,13 +986,6 @@ public class JBehaveParser implements PsiParser {
     if (!r) r = consumeToken(b, JB_TOKEN_AFTER);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // Newline?
-  private static boolean Step_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Step_4")) return false;
-    Newline(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
