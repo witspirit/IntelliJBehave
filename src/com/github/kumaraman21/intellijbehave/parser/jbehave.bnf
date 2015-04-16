@@ -24,7 +24,6 @@
     TOKEN_BEFORE="Before:"
     TOKEN_AFTER="After:"
     TOKEN_COLON=":"
-    TOKEN_AT="@"
     TOKEN_COMMA=","
     TOKEN_DBRACKET_OPEN = "<<"
     TOKEN_DBRACKET_CLOSE = ">>"
@@ -39,7 +38,7 @@
     TOKEN_INJECT = 'regexp:<\S+>'
     TOKEN_PATH = 'regexp:([A-Z]:)?([a-zA-Z0-9]|(/|\\))([a-zA-Z0-9]|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-    //TOKEN_WORD = "regexp:([:letter:]|[a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
+    TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r]+"
     TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
@@ -57,11 +56,11 @@ Story ::=   WhiteSpace StepComment? Description?
             WhiteSpace StepComment? Narrative?
             WhiteSpace StepComment? GivenStories?
             WhiteSpace StepComment? Lifecycle?
-            WhiteSpace StepComment? Scenario+ WhiteSpace
+            WhiteSpace StepComment? (Scenario)+ WhiteSpace
 Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Newline)* (SpaceStar MetaElement (Space|Newline)*)* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue|MetaKey|MetaValue) {pin=2 }
-MetaKey::= TOKEN_AT (Word|TOKEN_COLON)+ {pin=1 }
+MetaKey::= TOKEN_MKEY {pin=1 }
 MetaValue::= Line //(Word|TOKEN_COLON)+ (Space (Word|TOKEN_COLON)+)+
 
 private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
@@ -71,7 +70,7 @@ NarrativeText ::= MultiTextLine
 
 GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? {pin=1 recoverWhile=RecoverMeta}
 StoryPaths ::= StoryPath (WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
-StoryPath ::= TOKEN_PATH {pin=1}
+StoryPath ::= (TOKEN_PATH|TOKEN_INJECT|TOKEN_USER_INJECT)+ {pin=1}
 
 Lifecycle::= TOKEN_LIFECYCLE WhiteSpace LifecycleBefore? WhiteSpace LifecycleAfter? {pin=1}
 LifecycleBefore::= TOKEN_BEFORE WhiteSpace (Step Newline*)* {pin=1}
@@ -94,7 +93,7 @@ StepPar ::= TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND
 
 private StepComment ::= TOKEN_COMMENT WhiteSpace
 
-StepArgument ::=  StepLine SpaceStar (WhiteSpace Table| StoryPaths) | StepLine
+StepArgument ::=  StepLine SpaceStar (WhiteSpace Table WhiteSpace| StoryPaths) | StepLine
 
 private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
 private StepWord ::= StepSimpleWord+
@@ -109,7 +108,7 @@ TableCellEmpty ::= SpaceStar
 
 private MultiTextLine ::= (SpaceStar Line Newline+)+
 
-private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON
+private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY
 private Word ::= SimpleWord+
 private WordSeparator ::= Space+
 private Line ::= Word (WordSeparator Word)*

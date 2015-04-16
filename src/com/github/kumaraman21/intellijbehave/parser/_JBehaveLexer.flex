@@ -26,7 +26,8 @@ TOKEN_USER_INJECT=<<[^ \t\n\x0B\f\r]+>>
 TOKEN_INJECT=<[^ \t\n\x0B\f\r]+>
 TOKEN_PATH=([A-Z]:)?([a-zA-Z0-9]|("/"|\\))([a-zA-Z0-9]|_|@|\.|-)+(("/"|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
-TOKEN_WORD=[^ \t\n\x0B\f\r\|,]+
+TOKEN_MKEY=@[^ \t\n\x0B\f\r]+
+TOKEN_WORD=[^ \t\n\x0B\f\r\|,|@]+
 
 %%
 <YYINITIAL> {
@@ -43,12 +44,12 @@ TOKEN_WORD=[^ \t\n\x0B\f\r\|,]+
   "Before:"                { return JB_TOKEN_BEFORE; }
   "After:"                 { return JB_TOKEN_AFTER; }
   ":"                      { return JB_TOKEN_COLON; }
-  "@"                      { return JB_TOKEN_AT; }
   ","                      { return JB_TOKEN_COMMA; }
   "<<"                     { return JB_TOKEN_DBRACKET_OPEN; }
   ">>"                     { return JB_TOKEN_DBRACKET_CLOSE; }
   "<"                      { return JB_TOKEN_BRACKET_OPEN; }
   ">"                      { return JB_TOKEN_BRACKET_CLOSE; }
+  "TOKEN_AT"               { return JB_TOKEN_AT; }
 
   {TOKEN_PIPE}             { return JB_TOKEN_PIPE; }
   {TOKEN_NEWLINE}          { return JB_TOKEN_NEWLINE; }
@@ -58,6 +59,7 @@ TOKEN_WORD=[^ \t\n\x0B\f\r\|,]+
   {TOKEN_INJECT}           { return JB_TOKEN_INJECT; }
   {TOKEN_PATH}             { return JB_TOKEN_PATH; }
   {TOKEN_IP}               { return JB_TOKEN_IP; }
+  {TOKEN_MKEY}             { return JB_TOKEN_MKEY; }
   {TOKEN_WORD}             { return JB_TOKEN_WORD; }
 
   [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
