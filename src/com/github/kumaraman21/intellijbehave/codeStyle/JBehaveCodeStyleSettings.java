@@ -13,24 +13,11 @@ public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
     //
     public int SPACE_KEYWORD_AFTER = 1;
     //
-    public LineFeeds LINEFEED_META = new LineFeeds(0, false, 0);
+    public int META_LINEFEED = 0;
+    public boolean META_KEEPLINEBREAKS = false;
+    public int META_KEEPEMPTYLINES = 0;
 
     protected JBehaveCodeStyleSettings(CodeStyleSettings settings) {
         super("JBehave", settings);
-        settings.OTHER_INDENT_OPTIONS.CONTINUATION_INDENT_SIZE = 0;
-        settings.OTHER_INDENT_OPTIONS.INDENT_SIZE = 0;
-        settings.OTHER_INDENT_OPTIONS.TAB_SIZE = 0;
-    }
-
-    public static class LineFeeds {
-        public int LINEFEED = 0;
-        public boolean KEEPLINEBREAKS = false;
-        public int KEEPEMPTYLINES = 0;
-
-        public LineFeeds(int KEEPEMPTYLINES, boolean KEEPLINEBREAKS, int LINEFEED) {
-            this.KEEPEMPTYLINES = KEEPEMPTYLINES;
-            this.KEEPLINEBREAKS = KEEPLINEBREAKS;
-            this.LINEFEED = LINEFEED;
-        }
     }
 }

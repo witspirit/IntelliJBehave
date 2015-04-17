@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,6 +25,12 @@ public class IndentChildrenBlock extends AbstractBlock {
             TokenSet.create(IJBehaveElementType.JB_TOKEN_NEWLINE, IJBehaveElementType.JB_TOKEN_SPACE,
                             TokenType.WHITE_SPACE);
 
+    protected static TokenSet leaf = TokenSet.create(IJBehaveElementType.JB_STEP_LINE, IJBehaveElementType.JB_STEP_PAR,
+                                                     IJBehaveElementType.JB_DESCRIPTION,
+                                                     IJBehaveElementType.JB_META_ELEMENT,
+                                                     IJBehaveElementType.JB_NARRATIVE_TEXT,
+                                                     IJBehaveElementType.JB_STORY_PATH,
+                                                     IJBehaveElementType.JB_SCENARIO_TITLE);
 
     protected IndentingMappings indentingMappings;
     protected SpacingBuilder spacingBuilder;
@@ -37,7 +44,9 @@ public class IndentChildrenBlock extends AbstractBlock {
 
     @Override
     protected List<Block> buildChildren() {
+        if (leaf.contains(myNode.getElementType())) return Collections.emptyList();
         List<Block> retVal = new ArrayList<Block>();
+
         ASTNode node = myNode.getFirstChildNode();
         while (node != null) {
             IElementType elementType = node.getElementType();
@@ -57,11 +66,12 @@ public class IndentChildrenBlock extends AbstractBlock {
 
     @Override
     public Indent getIndent() {
-        return Indent.getSpaceIndent(indentingMappings.getIndent(getNode().getElementType()));
+        IElementType elementType = getNode().getElementType();
+        return Indent.getSpaceIndent(indentingMappings.getIndent(elementType));
     }
 
     @Override
     public boolean isLeaf() {
-        return myNode.getFirstChildNode() == null;
+        return myNode.getFirstChildNode() == null || leaf.contains(myNode.getElementType());
     }
 }

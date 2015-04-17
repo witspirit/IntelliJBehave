@@ -22,7 +22,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
 
     @Override
     public boolean hasSettingsPage() {
-        return false;
+        return true;
     }
 
     @Nullable
@@ -52,5 +52,15 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
         public JBehaveCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
             super(JBehaveLanguage.JBEHAVE_LANGUAGE, currentSettings, settings);
         }
+
+        protected void initTabs(CodeStyleSettings settings) {
+            addIndentOptionsTab(settings);
+            //addSpacesTab(settings);
+            addBlankLinesTab(settings);
+
+            //addWrappingAndBracesTab(settings);
+            //addTab(new JsonCodeStylePanel(settings));
+        }
+
     }
 }

@@ -24,5 +24,9 @@ public class IndentingMappings {
         Integer integer = indents.get(child);
         return integer == null ? defaultIndent : integer;
     }
+
+    public boolean hasIndent(IElementType child) {
+        return indents.containsKey(child);
+    }
 }
 

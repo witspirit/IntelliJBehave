@@ -15,25 +15,25 @@ import java.util.List;
 
 public class JBehaveStepLineImpl extends ParserRule implements JBehaveStepLine {
 
-    public JBehaveStepLineImpl(ASTNode node) {
-        super(node);
-    }
+  public JBehaveStepLineImpl(ASTNode node) {
+    super(node);
+  }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStepLine(this);
-        else super.accept(visitor);
-    }
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStepLine(this);
+    else super.accept(visitor);
+  }
 
-    @Override
-    @NotNull
-    public List<JBehaveIpAddress> getIpAddressList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveIpAddress.class);
-    }
+  @Override
+  @NotNull
+  public List<JBehaveIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveIpAddress.class);
+  }
 
-    @Override
-    @NotNull
-    public List<JBehaveUri> getUriList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveUri.class);
-    }
+  @Override
+  @NotNull
+  public List<JBehaveUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveUri.class);
+  }
 
 }

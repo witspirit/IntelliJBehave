@@ -29,17 +29,17 @@
     TOKEN_DBRACKET_CLOSE = ">>"
     TOKEN_BRACKET_OPEN = "<"
     TOKEN_BRACKET_CLOSE = ">"
-    TOKEN_PIPE='regexp:\|'
     TOKEN_NEWLINE = "regexp:[ \t\f]*(\r|\n|\r\n|\Z)"
     TOKEN_SPACE='regexp:[ \t\f]+'
     TOKEN_COMMENT="regexp:\!--.*"
 
-    TOKEN_USER_INJECT = 'regexp:<<\S+>>'
-    TOKEN_INJECT = 'regexp:<\S+>'
-    TOKEN_PATH = 'regexp:([A-Z]:)?([a-zA-Z0-9]|(/|\\))([a-zA-Z0-9]|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|_|@|\.|-|\ )+)+[a-zA-Z0-9]'
+    TOKEN_USER_INJECT = 'regexp:<<.+>>'
+    TOKEN_INJECT = 'regexp:<.+>'
+    TOKEN_PIPE='regexp:\|'
+    TOKEN_PATH = 'regexp:([A-Z]:|<.+>|<<.+>>)?([a-zA-Z0-9]|<.+>|<<.+>>|(/|\\))([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-|\ )+)+([a-zA-Z0-9]|_|@|\.|-|/)'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r]+"
-    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,]+"
+    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,|@]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
@@ -70,7 +70,7 @@ NarrativeText ::= MultiTextLine
 
 GivenStories::= TOKEN_GIVEN_STORIES WhiteSpace StoryPaths? {pin=1 recoverWhile=RecoverMeta}
 StoryPaths ::= StoryPath (WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
-StoryPath ::= (TOKEN_PATH|TOKEN_INJECT|TOKEN_USER_INJECT)+ {pin=1}
+StoryPath ::= TOKEN_PATH {pin=1}
 
 Lifecycle::= TOKEN_LIFECYCLE WhiteSpace LifecycleBefore? WhiteSpace LifecycleAfter? {pin=1}
 LifecycleBefore::= TOKEN_BEFORE WhiteSpace (Step Newline*)* {pin=1}
@@ -106,7 +106,7 @@ TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_P
 TableCell ::= Line|TOKEN_META|MetaElement
 TableCellEmpty ::= SpaceStar
 
-private MultiTextLine ::= (SpaceStar Line Newline+)+
+private MultiTextLine ::= (SpaceStar Line Newline)+
 
 private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY
 private Word ::= SimpleWord+

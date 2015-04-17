@@ -35,10 +35,9 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
                                                                        null);
     }
 
-    private static void spacingTokens(IElementType token, IElementType within, int space,
-                                      JBehaveCodeStyleSettings.LineFeeds lf, SpacingBuilder spacingBuilder) {
-        spacingBuilder.afterInside(token, within)
-                      .spacing(space, space, lf.LINEFEED, lf.KEEPLINEBREAKS, lf.KEEPEMPTYLINES);
+    private static void spacingTokens(IElementType token, IElementType within, int space, SpacingBuilder spacingBuilder,
+                                      int lf, boolean keepLineBreaks, int keepEmptyLines) {
+        spacingBuilder.afterInside(token, within).spacing(space, space, lf, keepLineBreaks, keepEmptyLines);
     }
 
     public static SpacingBuilder createSpaceBuilder(JBehaveCodeStyleSettings settings) {
@@ -52,8 +51,8 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
         spacingBuilder.afterInside(JB_TOKEN_NARRATIVE, JB_NARRATIVE)
                       .spacing(settings.SPACE_KEYWORD_AFTER, settings.SPACE_KEYWORD_AFTER, 1, false, 0);
         //
-        spacingTokens(JB_TOKEN_META, JB_META_STATEMENT, settings.SPACE_KEYWORD_AFTER, settings.LINEFEED_META,
-                      spacingBuilder);
+        spacingTokens(JB_TOKEN_META, JB_META_STATEMENT, settings.SPACE_KEYWORD_AFTER, spacingBuilder,
+                      settings.META_LINEFEED, settings.META_KEEPLINEBREAKS, settings.META_KEEPEMPTYLINES);
         //        spacingBuilder.afterInside(JB_TOKEN_META, JB_META_STATEMENT)
         //                      .spacing(settings.SPACE_KEYWORD_AFTER, settings.SPACE_KEYWORD_AFTER, 0, false, 0);
         //

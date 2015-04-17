@@ -13,19 +13,19 @@ import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.J
 
 public class JBehaveStoryPathImpl extends StoryPath implements JBehaveStoryPath {
 
-    public JBehaveStoryPathImpl(ASTNode node) {
-        super(node);
-    }
+  public JBehaveStoryPathImpl(ASTNode node) {
+    super(node);
+  }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStoryPath(this);
-        else super.accept(visitor);
-    }
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStoryPath(this);
+    else super.accept(visitor);
+  }
 
-    @Override
-    @NotNull
-    public PsiElement getTokenPath() {
-        return findNotNullChildByType(JB_TOKEN_PATH);
-    }
+  @Override
+  @NotNull
+  public PsiElement getTokenPath() {
+    return findNotNullChildByType(JB_TOKEN_PATH);
+  }
 
 }

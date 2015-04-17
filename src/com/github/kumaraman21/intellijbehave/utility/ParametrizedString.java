@@ -300,6 +300,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     }
 
     private static Pattern pattern = Pattern.compile("(\\S+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    //private static Pattern injectPattern = Pattern.compile("(<.+>)", Pattern.DOTALL);
 
     public static List<ContentToken> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
@@ -311,6 +312,38 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             result2.add(new ContentToken(text, start, end));
         }
         return result2;
+    }
+
+    public static List<ContentToken> splitOnInject(final String text) {
+        Pattern injectPattern = Pattern.compile("(<.+>)", Pattern.DOTALL);
+        final Matcher matcher = injectPattern.matcher(text);
+
+        List<ContentToken> result = new ArrayList<ContentToken>();
+        int unmatchedStart = 0;
+        while (matcher.find()) {
+            int start = matcher.start();
+            int end = matcher.end();
+            if (unmatchedStart != start) {
+                result.add(new ContentToken(text, unmatchedStart, start));
+            }
+            result.add(new ContentToken(text, start, end));
+            unmatchedStart = end;
+        }
+        if (unmatchedStart < text.length()) result.add(new ContentToken(text, unmatchedStart, text.length()));
+        return result;
+    }
+
+    public static String unwrapInject(String maybeInject) {
+        if (maybeInject.startsWith("<") && maybeInject.endsWith(">")) {
+            int start = maybeInject.indexOf("|");
+            if (start >= 0) {
+                ++start;
+                int end = maybeInject.indexOf(">", start);
+                return maybeInject.substring(start, end);
+            }
+            return "";
+        }
+        return maybeInject;
     }
 
     public void putInWordTokens(Collection<StringToken> myTokens) {
@@ -417,15 +450,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return retVal;
     }
 
-    private String unwrapInject(String maybeInject) {
-        if (maybeInject.startsWith("<") && maybeInject.endsWith(">")) {
-            int start = maybeInject.indexOf("|") + 1;
-            int end = maybeInject.indexOf(">", start);
-            return maybeInject.substring(start, end);
-        }
-        return maybeInject;
-    }
-
     public List<String> textAccordingTo(List<Pair<ContentToken, String>> actualText) {
         Map<String, String> parameters = new HashMap<String, String>();
 
@@ -503,10 +527,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
 
         public boolean hasMoreWeightThan(WeightChain pair) {
-            if (weight > pair.weight) {
-                return true;
-            }
-            return false;
+            return weight > pair.weight;
         }
 
         @Override

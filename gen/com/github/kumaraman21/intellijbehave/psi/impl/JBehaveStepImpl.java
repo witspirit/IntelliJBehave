@@ -13,25 +13,25 @@ import org.jetbrains.annotations.Nullable;
 
 public class JBehaveStepImpl extends ScenarioStep implements JBehaveStep {
 
-    public JBehaveStepImpl(ASTNode node) {
-        super(node);
-    }
+  public JBehaveStepImpl(ASTNode node) {
+    super(node);
+  }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStep(this);
-        else super.accept(visitor);
-    }
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStep(this);
+    else super.accept(visitor);
+  }
 
-    @Override
-    @Nullable
-    public JBehaveStepArgument getStepArgument() {
-        return findChildByClass(JBehaveStepArgument.class);
-    }
+  @Override
+  @Nullable
+  public JBehaveStepArgument getStepArgument() {
+    return findChildByClass(JBehaveStepArgument.class);
+  }
 
-    @Override
-    @NotNull
-    public JBehaveStepPar getStepPar() {
-        return findNotNullChildByClass(JBehaveStepPar.class);
-    }
+  @Override
+  @NotNull
+  public JBehaveStepPar getStepPar() {
+    return findNotNullChildByClass(JBehaveStepPar.class);
+  }
 
 }

@@ -16,6 +16,7 @@
 package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
+import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.InvalidPathException;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -46,8 +49,17 @@ public class StoryPath extends ASTWrapperPsiElement {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
 
+    private String unwrapInjects(String text) {
+        List<ParametrizedString.ContentToken> contentTokens = ParametrizedString.splitOnInject(text);
+        StringBuilder sb = new StringBuilder();
+        for (ParametrizedString.ContentToken token : contentTokens) {
+            sb.append(ParametrizedString.unwrapInject(token.value()));
+        }
+        return sb.toString();
+    }
+
     public String getValue() {
-        String text = getNode().getText().trim().replace('\\', '/');
+        String text = unwrapInjects(getNode().getText().trim().replace('\\', '/'));
         int i = text.lastIndexOf(',');
         if (i >= 0) {
             return text.substring(0, i);
@@ -87,8 +99,9 @@ public class StoryPath extends ASTWrapperPsiElement {
         if (!isMyFilesValid()) {
             myFiles.clear();
             Project project = getProject();
-            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
-                    GlobalSearchScope.projectScope(project), JBehaveFileType.JBEHAVE_FILE_TYPE);
+            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope
+                    .getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project),
+                                                   JBehaveFileType.JBEHAVE_FILE_TYPE);
             PsiFile[] filesByName = FilenameIndex.getFilesByName(project, getFileName(), scopeRestrictedByFileTypes);
             for (final PsiFile psiFile : filesByName) {
                 if (hasSameFileNamePart(psiFile)) myFiles.add(psiFile);
@@ -99,12 +112,17 @@ public class StoryPath extends ASTWrapperPsiElement {
 
     @Nullable
     public PsiDirectory getStoriesRootDirectories(PsiFile file) {
-        String myRoot = new File(getText()).toPath().getName(0).toString();
+        try {
+            String myRoot = new File(getText()).toPath().getName(0).toString();
 
-        PsiDirectory parent = file.getOriginalFile().getParent();
-        while (parent != null && !parent.getName().equals(myRoot)) {
-            parent = parent.getParent();
+            PsiDirectory parent = file.getOriginalFile().getParent();
+            while (parent != null && !parent.getName().equals(myRoot)) {
+                parent = parent.getParent();
+            }
+            return parent != null ? parent.getParent() : null;
+        } catch (InvalidPathException p) {
+
         }
-        return parent != null ? parent.getParent() : null;
+        return null;
     }
 }

@@ -12,31 +12,31 @@ import java.util.List;
 
 public class JBehaveDescriptionImpl extends ParserRule implements JBehaveDescription {
 
-    public JBehaveDescriptionImpl(ASTNode node) {
-        super(node);
-    }
+  public JBehaveDescriptionImpl(ASTNode node) {
+    super(node);
+  }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitDescription(this);
-        else super.accept(visitor);
-    }
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitDescription(this);
+    else super.accept(visitor);
+  }
 
-    @Override
-    @NotNull
-    public List<JBehaveIpAddress> getIpAddressList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveIpAddress.class);
-    }
+  @Override
+  @NotNull
+  public List<JBehaveIpAddress> getIpAddressList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveIpAddress.class);
+  }
 
-    @Override
-    @NotNull
-    public List<JBehaveStoryPath> getStoryPathList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveStoryPath.class);
-    }
+  @Override
+  @NotNull
+  public List<JBehaveStoryPath> getStoryPathList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveStoryPath.class);
+  }
 
-    @Override
-    @NotNull
-    public List<JBehaveUri> getUriList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveUri.class);
-    }
+  @Override
+  @NotNull
+  public List<JBehaveUri> getUriList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveUri.class);
+  }
 
 }
