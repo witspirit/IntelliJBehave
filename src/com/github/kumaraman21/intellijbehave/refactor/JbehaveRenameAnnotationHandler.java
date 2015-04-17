@@ -69,20 +69,22 @@ public class JBehaveRenameAnnotationHandler extends PsiElementRenameHandler {
     }
 
     private PsiElement getPsiAnnotation(Editor editor, PsiFile psiFile) {
-        final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
-        IElementType type = elementAtCaret.getNode().getElementType();
-        if (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT) {
-            return null;
-        }
-        if (type == IJBehaveElementType.JB_TOKEN_WORD) {
-            Boolean userData = elementAtCaret.getUserData(ParserRule.isStepParameter);
-            if (userData != null && userData) return null;
-        }
-        if (psiFile.getLanguage() == JavaLanguage.INSTANCE) {
-            return getPsiAnnotationFromJava(elementAtCaret);
-        }
-        if (psiFile.getLanguage() == JBehaveLanguage.JBEHAVE_LANGUAGE) {
-            return getPsiAnnotationFromScenarioStep(elementAtCaret);
+        if (editor != null && psiFile != null) {
+            final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
+            IElementType type = elementAtCaret.getNode().getElementType();
+            if (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT) {
+                return null;
+            }
+            if (type == IJBehaveElementType.JB_TOKEN_WORD) {
+                Boolean userData = elementAtCaret.getUserData(ParserRule.isStepParameter);
+                if (userData != null && userData) return null;
+            }
+            if (psiFile.getLanguage() == JavaLanguage.INSTANCE) {
+                return getPsiAnnotationFromJava(elementAtCaret);
+            }
+            if (psiFile.getLanguage() == JBehaveLanguage.JBEHAVE_LANGUAGE) {
+                return getPsiAnnotationFromScenarioStep(elementAtCaret);
+            }
         }
         return null;
     }
@@ -93,7 +95,7 @@ public class JBehaveRenameAnnotationHandler extends PsiElementRenameHandler {
     //    }
 
     @Override
-    public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement psiAnnotation = getPsiAnnotation(editor, file);
         if (psiAnnotation != null) {
             editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
@@ -107,7 +109,7 @@ public class JBehaveRenameAnnotationHandler extends PsiElementRenameHandler {
     }
 
     @Override
-    public void invoke(Project project, PsiElement[] elements, DataContext dataContext) {
+    public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
         PsiElement psiAnnotation = getPsiAnnotation(dataContext);
         if (psiAnnotation == null) {
             super.invoke(project, elements, dataContext);
