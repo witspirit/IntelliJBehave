@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,8 +20,9 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
     @Override
     protected void buildLanguageFoldRegions(List<FoldingDescriptor> descriptors, PsiElement root, Document document,
                                             boolean quick) {
-        Collection<PsiElement> elementCollection = PsiTreeUtil.findChildrenOfAnyType(root, JBehaveDescription.class,
-                JBehaveScenario.class, JBehaveTable.class, JBehaveMetaStatement.class, JBehaveNarrative.class);
+        Collection<PsiElement> elementCollection = PsiTreeUtil
+                .findChildrenOfAnyType(root, JBehaveDescription.class, JBehaveScenario.class, JBehaveTable.class,
+                                       JBehaveMetaStatement.class, JBehaveNarrative.class);
         for (PsiElement element : elementCollection) {
             if (element instanceof JBehaveScenario) {
                 foldScenario(descriptors, (JBehaveScenario) element);
@@ -46,8 +46,8 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
         if (firstChildNode != null) {
             TextRange textRange = firstChildNode.getTextRange();
             TextRange elementTextRange = element.getTextRange();
-            descriptors.add(new FoldingDescriptor(element,
-                    new TextRange(textRange.getEndOffset(), elementTextRange.getEndOffset())));
+            descriptors.add(new FoldingDescriptor(element, new TextRange(textRange.getEndOffset(),
+                                                                         elementTextRange.getEndOffset())));
         }
     }
 
@@ -56,12 +56,13 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
     }
 
     private void foldScenario(List<FoldingDescriptor> descriptors, JBehaveScenario scenario) {
-        Iterator<JBehaveScenarioTitle> itTitle = PsiTreeUtil.findChildrenOfType(scenario,
-                JBehaveScenarioTitle.class).iterator();
-        if (itTitle.hasNext()) {
-            JBehaveScenarioTitle title = itTitle.next();
-            descriptors.add(new FoldingDescriptor(scenario,
-                    new TextRange(title.getTextRange().getEndOffset(), scenario.getTextRange().getEndOffset() - 1)));
+        //        Iterator<JBehaveScenarioTitle> itTitle = PsiTreeUtil.findChildrenOfType(scenario,
+        //                JBehaveScenarioTitle.class).iterator();
+        JBehaveScenarioTitle scenarioTitle = scenario.getScenarioTitle();
+        if (scenarioTitle != null) {
+            int endOffset = scenarioTitle.getTextRange().getEndOffset();
+            int endOffset1 = scenario.getTextRange().getEndOffset();
+            descriptors.add(new FoldingDescriptor(scenario, new TextRange(endOffset, endOffset1)));
         }
     }
 

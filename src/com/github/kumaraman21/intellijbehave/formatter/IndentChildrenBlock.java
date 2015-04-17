@@ -32,6 +32,7 @@ public class IndentChildrenBlock extends AbstractBlock {
                                                      IJBehaveElementType.JB_STORY_PATH,
                                                      IJBehaveElementType.JB_SCENARIO_TITLE);
 
+
     protected IndentingMappings indentingMappings;
     protected SpacingBuilder spacingBuilder;
 
