@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
+import com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettings;
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.Spacing;
@@ -16,9 +17,10 @@ import java.util.List;
  * Created by DeBritoD on 20.03.2015.
  */
 public class StoryBlock extends IndentChildrenBlock {
-    protected StoryBlock(ASTNode node, @NotNull SpacingBuilder spacingBuilder,
-                         @NotNull IndentingMappings indentingMappings) {
-        super(node, spacingBuilder, indentingMappings);
+    public StoryBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings, @NotNull SpacingBuilder spacingBuilder,
+                      @NotNull IndentingMappings indentingMappings) {
+
+        super(node, settings, spacingBuilder, indentingMappings);
     }
 
     @Override
@@ -34,10 +36,10 @@ public class StoryBlock extends IndentChildrenBlock {
                 if (elementType != IJBehaveElementType.JB_TOKEN_NEWLINE &&
                         elementType != IJBehaveElementType.JB_TOKEN_SPACE) {
                     if (elementType == IJBehaveElementType.JB_SCENARIO) {
-                        retVal.add(new StoryScenarioBlock(node, spacingBuilder, indentingMappings));
+                        retVal.add(new StoryScenarioBlock(node, settings, spacingBuilder, indentingMappings));
                     } else if (elementType == IJBehaveElementType.JB_TABLE) {
                         retVal.add(new StoryTableBlock(node, null, null));
-                    } else retVal.add(new IndentChildrenBlock(node, spacingBuilder, indentingMappings));
+                    } else retVal.add(new IndentChildrenBlock(node, settings, spacingBuilder, indentingMappings));
                 }
                 node = node.getTreeNext();
             }

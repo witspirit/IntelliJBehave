@@ -58,7 +58,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
             //addSpacesTab(settings);
             addBlankLinesTab(settings);
 
-            //addWrappingAndBracesTab(settings);
+            addWrappingAndBracesTab(settings);
             //addTab(new JsonCodeStylePanel(settings));
         }
 

@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
+import com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettings;
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.formatting.Block;
 import com.intellij.formatting.Indent;
@@ -35,10 +36,12 @@ public class IndentChildrenBlock extends AbstractBlock {
 
     protected IndentingMappings indentingMappings;
     protected SpacingBuilder spacingBuilder;
+    protected JBehaveCodeStyleSettings settings;
 
-    public IndentChildrenBlock(ASTNode node, @NotNull SpacingBuilder spacingBuilder,
-                               @NotNull IndentingMappings indentingMappings) {
+    public IndentChildrenBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
+                               @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
         super(node, null, null);
+        this.settings = settings;
         this.indentingMappings = indentingMappings;
         this.spacingBuilder = spacingBuilder;
     }
@@ -52,7 +55,7 @@ public class IndentChildrenBlock extends AbstractBlock {
         while (node != null) {
             IElementType elementType = node.getElementType();
             if (!ignore.contains(elementType)) {
-                retVal.add(new IndentChildrenBlock(node, spacingBuilder, indentingMappings));
+                retVal.add(new IndentChildrenBlock(node, settings, spacingBuilder, indentingMappings));
             }
             node = node.getTreeNext();
         }
