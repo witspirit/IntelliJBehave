@@ -167,7 +167,7 @@
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"/>
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
-        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler"/>
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JbehaveRenameAnnotationHandler"/>
         <renamePsiElementProcessor id="annotation"
                                    implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationProcessor"
                                    order="last"/>

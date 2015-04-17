@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Created by DeBritoD on 18.03.2015.
  */
-public class JBehaveRenameAnnotationHandler extends PsiElementRenameHandler {
+public class JbehaveRenameAnnotationHandler extends PsiElementRenameHandler {
     @Override
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         return getPsiAnnotation(dataContext) != null;
