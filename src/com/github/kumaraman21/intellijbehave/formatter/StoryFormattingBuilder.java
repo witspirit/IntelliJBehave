@@ -34,7 +34,7 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
                                                                                       createSpaceBuilder(
                                                                                               jbehaveSettings),
                                                                                       createIndents(jbehaveSettings)),
-                                                                       null);
+                                                                       settings);
     }
 
     private static void spacingTokens(IElementType token, IElementType within, int space, SpacingBuilder spacingBuilder,
@@ -129,8 +129,8 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
 
     private static IndentingMappings createIndents(JBehaveCodeStyleSettings settings) {
         IndentingMappings indentingMappings = new IndentingMappings(settings.INDENT_DEFAULT);
-        indentingMappings.putIndent(JB_STORY_PATH, settings.INDENT_STORY_PATH);
-        indentingMappings.putIndent(JB_META_ELEMENT, settings.INDENT_META_ELEMENT);
+        if (settings.ALIGN_META_KEY) indentingMappings.putIndent(JB_META_ELEMENT, settings.INDENT_META_ELEMENT);
+        if (settings.ALIGN_STORY_PATH) indentingMappings.putIndent(JB_STORY_PATH, settings.INDENT_STORY_PATH);
         return indentingMappings;
     }
 

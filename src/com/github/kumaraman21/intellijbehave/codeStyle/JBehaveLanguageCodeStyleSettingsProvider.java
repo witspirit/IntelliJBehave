@@ -27,149 +27,71 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
             //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "DESCRIPTION_LINEFEED", "Description",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "DESCRIPTION_KEEPEMPTYLINES", "Description",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "META_LINEFEED", "Meta",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "META_KEEPEMPTYLINES", "Meta",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_META_LINEFEED", "Meta: Keyword",
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_META_LINEFEED", "Keyword Meta:",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_META_KEEPEMPTYLINES", "Meta: Keyword",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "NARRATIVE_LINEFEED", "Narrative",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "NARRATIVE_KEEPEMPTYLINES", "Narrative",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-
-            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_NARRATIVE_LINEFEED", "Narrative: Keyword",
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_NARRATIVE_LINEFEED", "Keyword Narrative:",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_NARRATIVE_KEEPEMPTYLINES",
-            //                                      "Narrative: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVENSTORIES_LINEFEED", "GivenStories",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVENSTORIES_KEEPEMPTYLINES", "GivenStories",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_GIVENSTORIES_LINEFEED",
-                                      "GivenStories: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_GIVENSTORIES_KEEPEMPTYLINES",
-            //                                      "GivenStories: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
+                                      "Keyword GivenStories:", CodeStyleSettingsCustomizable.BLANK_LINES);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_LINEFEED", "Lifecycle",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_KEEPEMPTYLINES", "Lifecycle",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_LINEFEED", "Lifecycle: Keyword",
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_LINEFEED", "Keyword Lifecycle:",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_KEEPEMPTYLINES",
-            //                                      "Lifecycle: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_AFTER_LINEFEED", "Lifecycle After",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_AFTER_KEEPEMPTYLINES",
-            //                                      "Lifecycle After", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_AFTER_LINEFEED",
                                       "Lifecycle After: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_AFTER_KEEPEMPTYLINES",
-            //                                      "Lifecycle After: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_BEFORE_LINEFEED", "Lifecycle Before",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_BEFORE_KEEPEMPTYLINES",
-            //                                      "Lifecycle Before", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_BEFORE_LINEFEED",
                                       "Lifecycle Before: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_BEFORE_KEEPEMPTYLINES",
-            //                                      "Lifecycle Before: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_LINEFEED", "Scenario",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_KEEPEMPTYLINES", "Scenario",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_SCENARIO_LINEFEED", "Scenario: Keyword",
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_SCENARIO_LINEFEED", "Keyword Scenario:",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_SCENARIO_KEEPEMPTYLINES",
-            //                                      "Scenario: Keyword", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_TITLE_LINEFEED", "Scenario Title",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_TITLE_KEEPEMPTYLINES", "Scenario Title",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
-            //
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "FIRST_STEP_LINEFEED", "Before First Step",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "FIRST_STEP_KEEPEMPTYLINES", "Before First Step",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVEN_STEP_LINEFEED", "Before Given Step",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVEN_STEP_KEEPEMPTYLINES", "Before Given Step",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "WHEN_STEP_LINEFEED", "Before When Step",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "WHEN_STEP_KEEPEMPTYLINES", "Before When Step",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "THEN_STEP_LINEFEED", "Before Then Step",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "THEN_STEP_KEEPEMPTYLINES", "Before Then Step",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "AND_STEP_LINEFEED", "Before And Step",
                                       CodeStyleSettingsCustomizable.BLANK_LINES);
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "AND_STEP_KEEPEMPTYLINES", "Before And Step",
-            //                                      CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
         }
         if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "DESCRIPTION_KEEPLINEBREAKS", "Description",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "META_KEEPLINEBREAKS", "Meta", "Newline after:");
-            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_META_KEEPLINEBREAKS", "Meta: Keyword",
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_META_KEEPLINEBREAKS", "Keyword Meta:",
                                       "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "NARRATIVE_KEEPLINEBREAKS", "Narrative",
-            //                                      "Newline after:");
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_NARRATIVE_KEEPLINEBREAKS",
-                                      "Narrative: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVENSTORIES_KEEPLINEBREAKS", "GivenStories",
-            //                                      "Newline after:");
+                                      "Keyword Narrative:", "Newline after:");
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_GIVENSTORIES_KEEPLINEBREAKS",
-                                      "GivenStories: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_KEEPLINEBREAKS", "Lifecycle",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_KEEPLINEBREAKS",
-            //                                      "Lifecycle: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_AFTER_KEEPLINEBREAKS",
-            //                                      "Lifecycle After", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_AFTER_KEEPLINEBREAKS",
-            //                                      "Lifecycle After: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "LIFECYCLE_BEFORE_KEEPLINEBREAKS",
-            //                                      "Lifecycle Before", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_LIFECYCLE_BEFORE_KEEPLINEBREAKS",
-            //                                      "Lifecycle Before: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_KEEPLINEBREAKS", "Scenario",
-            //                                      "Newline after:");
+                                      "Keyword GivenStories:", "Newline after:");
             consumer.showCustomOption(JBehaveCodeStyleSettings.class, "TOKEN_SCENARIO_KEEPLINEBREAKS",
-                                      "Scenario: Keyword", "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "SCENARIO_TITLE_KEEPLINEBREAKS", "Scenario Title",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "FIRST_STEP_KEEPLINEBREAKS", "Before First Step",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "GIVEN_STEP_KEEPLINEBREAKS", "Before Given Step",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "WHEN_STEP_KEEPLINEBREAKS", "Before When Step",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "THEN_STEP_KEEPLINEBREAKS", "Before Then Step",
-            //                                      "Newline after:");
-            //            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "AND_STEP_KEEPLINEBREAKS", "Before And Step",
-            //                                      "Newline after:");
+                                      "Keyword Scenario:", "Newline after:");
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "ALIGN_META_KEY", "Align meta keys", "Alignment");
+            consumer.showCustomOption(JBehaveCodeStyleSettings.class, "ALIGN_STORY_PATH", "Align story paths",
+                                      "Alignment");
         }
     }
 
     @Override
     public IndentOptionsEditor getIndentOptionsEditor() {
         JBehaveIndentOptionsEditor editor = new JBehaveIndentOptionsEditor();
-        editor.addIndentField(
-                new JBehaveIndentOptionsEditor.IndentField("Meta element indent", "INDENT_META_ELEMENT", 6));
-        editor.addIndentField(new JBehaveIndentOptionsEditor.IndentField("Story path indent", "INDENT_STORY_PATH", 14));
+        //        editor.addIndentField("Meta element indent", "INDENT_META_ELEMENT", 6)
+        //              .addIndentField("Story path indent", "INDENT_STORY_PATH", 14);
+        editor.addIndentField("Indent parents", "INDENT_PARENTS", 0)
+              .addIndentField("Indent children", "INDENT_LEAFS", 0);
         return editor;
     }
 

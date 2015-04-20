@@ -16,11 +16,17 @@ import java.util.List;
 public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
     private List<IndentField> indentFields = new ArrayList<IndentField>();
 
-    public void addIndentField(IndentField field) {
+    public JBehaveIndentOptionsEditor addIndentField(IndentField field) {
         indentFields.add(field);
+        return this;
+    }
+
+    public JBehaveIndentOptionsEditor addIndentField(String labelText, String fieldName, int defaultValue) {
+        return addIndentField(new IndentField(labelText, fieldName, defaultValue));
     }
 
     protected void addComponents() {
+        //super.addComponents();
         for (IndentField field : indentFields) {
             field.createUi();
             add(field.label, field.textField);
@@ -28,6 +34,7 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
     }
 
     public boolean isModified(final CodeStyleSettings settings, final CommonCodeStyleSettings.IndentOptions options) {
+        //if (super.isModified(settings, options)) return true;
         try {
             JBehaveCodeStyleSettings customSettings = settings.getCustomSettings(JBehaveCodeStyleSettings.class);
             for (IndentField field : indentFields) {
@@ -42,6 +49,7 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
     }
 
     public void apply(final CodeStyleSettings settings, final CommonCodeStyleSettings.IndentOptions options) {
+        //super.apply(settings, options);
         try {
             JBehaveCodeStyleSettings customSettings = settings.getCustomSettings(JBehaveCodeStyleSettings.class);
             for (IndentField field : indentFields) {
@@ -57,12 +65,22 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
 
     public void reset(@NotNull final CodeStyleSettings settings,
                       @NotNull final CommonCodeStyleSettings.IndentOptions options) {
-        for (IndentField field : indentFields) {
-            field.reset();
+        //super.reset(settings, options);
+        JBehaveCodeStyleSettings customSettings = settings.getCustomSettings(JBehaveCodeStyleSettings.class);
+
+        try {
+            for (IndentField field : indentFields) {
+                field.reset(customSettings);
+            }
+        } catch (NoSuchFieldException n) {
+
+        } catch (IllegalAccessException i) {
+
         }
     }
 
     public void setEnabled(final boolean enabled) {
+        //super.setEnabled(enabled);
         for (IndentField field : indentFields) {
             field.setEnabled(enabled);
         }
@@ -94,8 +112,11 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
             return isFieldModified(textField, currentValue);
         }
 
-        public void reset() {
-            textField.setText(String.valueOf(defaultValue));
+        public void reset(JBehaveCodeStyleSettings settings) throws NoSuchFieldException, IllegalAccessException {
+            Class<? extends JBehaveCodeStyleSettings> settingsClass = settings.getClass();
+            Field field = settingsClass.getField(fieldName);
+            Integer currentValue = (Integer) field.get(settings);
+            textField.setText(String.valueOf(currentValue));
         }
 
         public void setEnabled(final boolean enabled) {

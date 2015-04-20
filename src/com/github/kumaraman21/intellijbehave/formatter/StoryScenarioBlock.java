@@ -59,28 +59,25 @@ public class StoryScenarioBlock extends IndentChildrenBlock {
                     ASTNode childNode2 = node2.getFirstChildNode().getFirstChildNode();
                     IElementType elementType = childNode2.getElementType();
                     if (elementType == IJBehaveElementType.JB_TOKEN_GIVEN) {
-                        return Spacing
-                                .createSpacing(0, 1, settings.GIVEN_STEP_LINEFEED, settings.GIVEN_STEP_KEEPLINEBREAKS,
-                                               settings.ALL_KEEPEMPTYLINES);
+                        return getSpacing(settings.GIVEN_STEP_LINEFEED, settings.GIVEN_STEP_KEEPLINEBREAKS);
                     } else if (elementType == IJBehaveElementType.JB_TOKEN_AND) {
-                        return Spacing.createSpacing(0, 1, settings.AND_STEP_LINEFEED, settings.AND_STEP_KEEPLINEBREAKS,
-                                                     settings.ALL_KEEPEMPTYLINES);
+                        return getSpacing(settings.AND_STEP_LINEFEED, settings.AND_STEP_KEEPLINEBREAKS);
                     } else if (elementType == IJBehaveElementType.JB_TOKEN_WHEN) {
-                        return Spacing
-                                .createSpacing(0, 1, settings.WHEN_STEP_LINEFEED, settings.WHEN_STEP_KEEPLINEBREAKS,
-                                               settings.ALL_KEEPEMPTYLINES);
+                        return getSpacing(settings.WHEN_STEP_LINEFEED, settings.WHEN_STEP_KEEPLINEBREAKS);
                     } else if (elementType == IJBehaveElementType.JB_TOKEN_THEN) {
-                        return Spacing
-                                .createSpacing(0, 1, settings.THEN_STEP_LINEFEED, settings.THEN_STEP_KEEPLINEBREAKS,
-                                               settings.ALL_KEEPEMPTYLINES);
+                        return getSpacing(settings.THEN_STEP_LINEFEED, settings.THEN_STEP_KEEPLINEBREAKS);
                     }
                 } else {
-                    return Spacing.createSpacing(0, 1, settings.FIRST_STEP_LINEFEED, settings.FIRST_STEP_KEEPLINEBREAKS,
-                                                 settings.ALL_KEEPEMPTYLINES);
+                    return getSpacing(settings.FIRST_STEP_LINEFEED, settings.FIRST_STEP_KEEPLINEBREAKS);
                 }
             }
         }
         return spacingBuilder.getSpacing(this, child1, child2);
+    }
+
+    private Spacing getSpacing(int given_step_linefeed, boolean given_step_keeplinebreaks) {
+        return Spacing
+                .createSpacing(0, 1, given_step_linefeed + 1, given_step_keeplinebreaks, settings.ALL_KEEPEMPTYLINES);
     }
     //
     //    @Override

@@ -7,10 +7,15 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
  * Created by DeBritoD on 30.03.2015.
  */
 public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
+    public boolean ALIGN_META_KEY = true;
+    public boolean ALIGN_STORY_PATH = true;
     public int INDENT_DEFAULT = 0;
     //
     public int INDENT_STORY_PATH = 14;
     public int INDENT_META_ELEMENT = 6;
+    //
+    public int INDENT_PARENTS = 0;
+    public int INDENT_LEAFS = 2;
     //
     public int SPACE_KEYWORD_AFTER = 1;
     //

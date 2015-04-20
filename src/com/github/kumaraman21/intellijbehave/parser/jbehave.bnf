@@ -73,8 +73,8 @@ StoryPaths ::= StoryPath (WhiteSpace TOKEN_COMMA WhiteSpace StoryPath)* {pin=1}
 StoryPath ::= TOKEN_PATH {pin=1}
 
 Lifecycle::= TOKEN_LIFECYCLE WhiteSpace LifecycleBefore? WhiteSpace LifecycleAfter? {pin=1}
-LifecycleBefore::= TOKEN_BEFORE WhiteSpace (Newline* Step)* {pin=1}
-LifecycleAfter::= TOKEN_AFTER WhiteSpace (Newline* Step)* {pin=1}
+LifecycleBefore::= TOKEN_BEFORE WhiteSpace (WhiteSpace Step)* {pin=1}
+LifecycleAfter::= TOKEN_AFTER WhiteSpace (WhiteSpace Step)* {pin=1}
 
 //private RecoverLife ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
 
@@ -101,7 +101,7 @@ StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 
 Examples ::= TOKEN_EXAMPLES WhiteSpace (Table|StoryPath) {pin=1}
 
-Table ::= (Newline* TableRow)+
+Table ::= (WhiteSpace TableRow)+
 TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* {pin=1}
 TableCell ::= Line|TOKEN_META|MetaElement
 TableCellEmpty ::= SpaceStar
