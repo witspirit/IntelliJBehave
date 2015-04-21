@@ -34,7 +34,7 @@ public class MetaStatement extends ParserRule {
                     if (!elements.isEmpty()) {
                         text = elements.get(0).getText();
                     } else text = "";
-                    text = text.replace("\n", " ");
+                    text = text.replaceAll("\\s+", " ");
                 } catch (NullPointerException e) {
                     text = "";
                 }

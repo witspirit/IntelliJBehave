@@ -39,7 +39,7 @@ public class ParserRule extends ASTWrapperPsiElement implements JBehaveElement {
             @Nullable
             @Override
             public String getPresentableText() {
-                return getText();
+                return getText().replaceAll("\\s+", " ");
             }
 
             @Nullable

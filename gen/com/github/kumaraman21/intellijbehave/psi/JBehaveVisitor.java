@@ -103,10 +103,6 @@ public class JBehaveVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTableCellEmpty(@NotNull JBehaveTableCellEmpty o) {
-    visitPsiElement(o);
-  }
-
   public void visitTableRow(@NotNull JBehaveTableRow o) {
     visitPsiElement(o);
   }

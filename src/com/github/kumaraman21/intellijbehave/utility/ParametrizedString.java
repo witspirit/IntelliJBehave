@@ -4,6 +4,7 @@ package com.github.kumaraman21.intellijbehave.utility;
 import com.intellij.openapi.util.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -299,7 +300,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return sb.toString();
     }
 
-    private static Pattern pattern = Pattern.compile("(\\S+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    private static Pattern pattern = Pattern.compile("([\\S&&[^:]]+|[\\W&&[^\\s]])", Pattern.DOTALL);
     //private static Pattern injectPattern = Pattern.compile("(<.+>)", Pattern.DOTALL);
 
     public static List<ContentToken> split(final String text) {
@@ -371,6 +372,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
      * @param input
      * @return
      */
+    @Nullable
     public List<Pair<ContentToken, String>> getTokensOf(String input) {
         List<Pair<ContentToken, String>> retVal = new ArrayList<Pair<ContentToken, String>>();
         Deque<StringToken> myTokens = new ArrayDeque<StringToken>();

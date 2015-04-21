@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
 import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
 import static com.github.kumaraman21.intellijbehave.parser.JBehaveParserUtil.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class JBehaveParser implements PsiParser {
@@ -93,9 +93,6 @@ public class JBehaveParser implements PsiParser {
     }
     else if (t == JB_TABLE_CELL) {
       r = TableCell(b, 0);
-    }
-    else if (t == JB_TABLE_CELL_EMPTY) {
-      r = TableCellEmpty(b, 0);
     }
     else if (t == JB_TABLE_ROW) {
       r = TableRow(b, 0);
@@ -1074,7 +1071,7 @@ public class JBehaveParser implements PsiParser {
   //             WhiteSpace StepComment? Narrative?
   //             WhiteSpace StepComment? GivenStories?
   //             WhiteSpace StepComment? Lifecycle?
-  //             WhiteSpace StepComment? (WhiteSpace Scenario)+
+  //             WhiteSpace StepComment? (WhiteSpace Scenario)+ WhiteSpace
   public static boolean Story(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story")) return false;
     boolean r;
@@ -1097,6 +1094,7 @@ public class JBehaveParser implements PsiParser {
     r = r && WhiteSpace(b, l + 1);
     r = r && Story_16(b, l + 1);
     r = r && Story_17(b, l + 1);
+    r = r && WhiteSpace(b, l + 1);
     exit_section_(b, l, m, JB_STORY, r, false, null);
     return r;
   }
@@ -1298,18 +1296,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // SpaceStar
-  public static boolean TableCellEmpty(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableCellEmpty")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<table cell empty>");
-    r = SpaceStar(b, l + 1);
-    exit_section_(b, l, m, JB_TABLE_CELL_EMPTY, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
+  // TOKEN_PIPE SpaceStar (TableCell SpaceStar)? TOKEN_PIPE (SpaceStar (TableCell SpaceStar)?  TOKEN_PIPE)*
   public static boolean TableRow(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableRow")) return false;
     if (!nextTokenIs(b, JB_TOKEN_PIPE)) return false;
@@ -1317,77 +1304,69 @@ public class JBehaveParser implements PsiParser {
     Marker m = enter_section_(b, l, _NONE_, null);
     r = consumeToken(b, JB_TOKEN_PIPE);
     p = r; // pin = 1
-    r = r && report_error_(b, TableRow_1(b, l + 1));
+    r = r && report_error_(b, SpaceStar(b, l + 1));
+    r = p && report_error_(b, TableRow_2(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, JB_TOKEN_PIPE)) && r;
-    r = p && TableRow_3(b, l + 1) && r;
+    r = p && TableRow_4(b, l + 1) && r;
     exit_section_(b, l, m, JB_TABLE_ROW, r, p, null);
     return r || p;
   }
 
-  // SpaceStar TableCell SpaceStar | TableCellEmpty
-  private static boolean TableRow_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = TableRow_1_0(b, l + 1);
-    if (!r) r = TableCellEmpty(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+  // (TableCell SpaceStar)?
+  private static boolean TableRow_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_2")) return false;
+    TableRow_2_0(b, l + 1);
+    return true;
   }
 
-  // SpaceStar TableCell SpaceStar
-  private static boolean TableRow_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_1_0")) return false;
+  // TableCell SpaceStar
+  private static boolean TableRow_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = SpaceStar(b, l + 1);
-    r = r && TableCell(b, l + 1);
+    r = TableCell(b, l + 1);
     r = r && SpaceStar(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)*
-  private static boolean TableRow_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_3")) return false;
+  // (SpaceStar (TableCell SpaceStar)?  TOKEN_PIPE)*
+  private static boolean TableRow_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_4")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!TableRow_3_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "TableRow_3", c)) break;
+      if (!TableRow_4_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "TableRow_4", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  // (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE
-  private static boolean TableRow_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_3_0")) return false;
+  // SpaceStar (TableCell SpaceStar)?  TOKEN_PIPE
+  private static boolean TableRow_4_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_4_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = TableRow_3_0_0(b, l + 1);
+    r = SpaceStar(b, l + 1);
+    r = r && TableRow_4_0_1(b, l + 1);
     r = r && consumeToken(b, JB_TOKEN_PIPE);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // SpaceStar TableCell SpaceStar | TableCellEmpty
-  private static boolean TableRow_3_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_3_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = TableRow_3_0_0_0(b, l + 1);
-    if (!r) r = TableCellEmpty(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+  // (TableCell SpaceStar)?
+  private static boolean TableRow_4_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_4_0_1")) return false;
+    TableRow_4_0_1_0(b, l + 1);
+    return true;
   }
 
-  // SpaceStar TableCell SpaceStar
-  private static boolean TableRow_3_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "TableRow_3_0_0_0")) return false;
+  // TableCell SpaceStar
+  private static boolean TableRow_4_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableRow_4_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = SpaceStar(b, l + 1);
-    r = r && TableCell(b, l + 1);
+    r = TableCell(b, l + 1);
     r = r && SpaceStar(b, l + 1);
     exit_section_(b, m, null, r);
     return r;

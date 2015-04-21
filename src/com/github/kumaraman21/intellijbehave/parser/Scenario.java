@@ -42,7 +42,7 @@ public class Scenario extends ASTWrapperPsiElement {
             @Nullable
             @Override
             public String getPresentableText() {
-                return getTitle();
+                return getTitle().replaceAll("\\s+", " ");
             }
 
             @Nullable

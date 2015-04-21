@@ -36,7 +36,7 @@ public class StoryScenarioBlock extends IndentChildrenBlock {
             IElementType elementType = node.getElementType();
             if (!ignore.contains(elementType)) {
                 if (elementType == IJBehaveElementType.JB_TABLE) {
-                    retVal.add(new StoryTableBlock(node, null, null));
+                    retVal.add(new StoryTableBlock(node, settings, spacingBuilder, indentingMappings));
                 } else retVal.add(new StoryScenarioBlock(node, settings, spacingBuilder, indentingMappings));
             }
             node = node.getTreeNext();

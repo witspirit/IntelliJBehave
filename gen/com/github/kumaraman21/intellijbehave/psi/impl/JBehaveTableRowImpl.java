@@ -28,10 +28,4 @@ public class JBehaveTableRowImpl extends ParserRule implements JBehaveTableRow {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveTableCell.class);
   }
 
-  @Override
-  @NotNull
-  public List<JBehaveTableCellEmpty> getTableCellEmptyList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveTableCellEmpty.class);
-  }
-
 }

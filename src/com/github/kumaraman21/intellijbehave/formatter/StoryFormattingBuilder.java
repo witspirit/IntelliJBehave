@@ -28,13 +28,12 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
         final JBehaveCodeStyleSettings jbehaveSettings = settings.getCustomSettings(JBehaveCodeStyleSettings.class);
-        return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(),
-                                                                       new StoryBlock(element.getNode(),
-                                                                                      jbehaveSettings,
-                                                                                      createSpaceBuilder(
-                                                                                              jbehaveSettings),
-                                                                                      createIndents(jbehaveSettings)),
-                                                                       settings);
+        PsiFile file = element.getContainingFile();
+        SpacingBuilder spaceBuilder = createSpaceBuilder(jbehaveSettings);
+        IndentingMappings indents = createIndents(jbehaveSettings);
+        StoryBlock storyBlock = new StoryBlock(element.getNode(), jbehaveSettings, spaceBuilder, indents);
+        FormattingModel model = FormattingModelProvider.createFormattingModelForPsiFile(file, storyBlock, settings);
+        return model;
     }
 
     private static void spacingTokens(IElementType token, IElementType within, int space, SpacingBuilder spacingBuilder,

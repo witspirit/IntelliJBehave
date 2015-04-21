@@ -28,7 +28,7 @@ public class StoryBlock extends IndentChildrenBlock {
         List<Block> retVal = new ArrayList<Block>();
         ASTNode firstChildNode = myNode.getFirstChildNode();
         if (firstChildNode.getElementType() == IJBehaveElementType.JB_TABLE) {
-            retVal.add(new StoryTableBlock(firstChildNode, null, null));
+            retVal.add(new StoryTableBlock(firstChildNode, settings, spacingBuilder, indentingMappings));
         } else {
             ASTNode node = firstChildNode.getFirstChildNode();
             while (node != null) {
@@ -38,7 +38,7 @@ public class StoryBlock extends IndentChildrenBlock {
                     if (elementType == IJBehaveElementType.JB_SCENARIO) {
                         retVal.add(new StoryScenarioBlock(node, settings, spacingBuilder, indentingMappings));
                     } else if (elementType == IJBehaveElementType.JB_TABLE) {
-                        retVal.add(new StoryTableBlock(node, null, null));
+                        retVal.add(new StoryTableBlock(node, settings, spacingBuilder, indentingMappings));
                     } else retVal.add(new IndentChildrenBlock(node, settings, spacingBuilder, indentingMappings));
                 }
                 node = node.getTreeNext();

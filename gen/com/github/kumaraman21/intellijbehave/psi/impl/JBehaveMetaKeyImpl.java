@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import com.github.kumaraman21.intellijbehave.parser.ParserRule;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveMetaKey;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveVisitor;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.NotNull;
-
-import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.JB_TOKEN_MKEY;
+import com.intellij.psi.util.PsiTreeUtil;
+import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
+import com.github.kumaraman21.intellijbehave.parser.ParserRule;
+import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class JBehaveMetaKeyImpl extends ParserRule implements JBehaveMetaKey {
 
@@ -18,7 +18,7 @@ public class JBehaveMetaKeyImpl extends ParserRule implements JBehaveMetaKey {
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitMetaKey(this);
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor)visitor).visitMetaKey(this);
     else super.accept(visitor);
   }
 

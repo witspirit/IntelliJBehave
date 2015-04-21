@@ -10,7 +10,4 @@ public interface JBehaveTableRow extends PsiElement {
   @NotNull
   List<JBehaveTableCell> getTableCellList();
 
-  @NotNull
-  List<JBehaveTableCellEmpty> getTableCellEmptyList();
-
 }

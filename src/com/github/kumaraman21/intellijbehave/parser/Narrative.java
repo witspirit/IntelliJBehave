@@ -28,7 +28,7 @@ public class Narrative extends ParserRule {
 
                 try {
                     text = ((JBehaveNarrative) getOriginalElement()).getNarrativeText().getText();
-                    text = text.replace("\n", " ");
+                    text = text.replaceAll("\\s+", " ");
                 } catch (NullPointerException e) {
                     text = "";
                 }

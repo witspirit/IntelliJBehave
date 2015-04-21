@@ -91,8 +91,9 @@ public class GivenStories extends ParserRule {
         if (!isMyFilesValid()) {
             myFiles.clear();
             Project project = getProject();
-            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope.getScopeRestrictedByFileTypes(
-                    GlobalSearchScope.projectScope(project), JBehaveFileType.JBEHAVE_FILE_TYPE);
+            GlobalSearchScope scopeRestrictedByFileTypes = GlobalSearchScope
+                    .getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(project),
+                                                   JBehaveFileType.JBEHAVE_FILE_TYPE);
             PsiFile[] filesByName = FilenameIndex.getFilesByName(project, getFileName(), scopeRestrictedByFileTypes);
             for (final PsiFile psiFile : filesByName) {
                 if (hasSameFileNamePart(psiFile)) myFiles.add(psiFile);
@@ -156,7 +157,7 @@ public class GivenStories extends ParserRule {
 
                 try {
                     text = ((JBehaveGivenStories) getOriginalElement()).getStoryPaths().getText();
-                    text = text.replace("\n", " ");
+                    text = text.replaceAll("\\s+", " ");
                 } catch (NullPointerException e) {
                     text = "";
                 }

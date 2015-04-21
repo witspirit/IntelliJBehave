@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.folding;
 
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.CustomFoldingBuilder;
@@ -8,9 +9,9 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,51 +19,54 @@ import java.util.List;
  */
 public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
     @Override
-    protected void buildLanguageFoldRegions(List<FoldingDescriptor> descriptors, PsiElement root, Document document,
-                                            boolean quick) {
-        Collection<PsiElement> elementCollection = PsiTreeUtil
-                .findChildrenOfAnyType(root, JBehaveDescription.class, JBehaveScenario.class, JBehaveTable.class,
-                                       JBehaveMetaStatement.class, JBehaveNarrative.class);
-        for (PsiElement element : elementCollection) {
-            if (element instanceof JBehaveScenario) {
-                foldScenario(descriptors, (JBehaveScenario) element);
-            } else {
-                if (element instanceof JBehaveDescription) {
-                    foldWholeRegion(descriptors, element);
-                } else {
-                    if (element instanceof JBehaveTable) {
-                        foldWholeRegion(descriptors, element);
-                    } else {
-                        foldAfterToken(descriptors, element);
+    protected void buildLanguageFoldRegions(@NotNull List<FoldingDescriptor> descriptors, @NotNull PsiElement root,
+                                            @NotNull Document document, boolean quick) {
+        JBehaveFile file = (JBehaveFile) root;
+        JBehaveStory story = (JBehaveStory) file.getStory();
+        foldWholeRegion(descriptors, story.getDescription());
+        foldAfterToken(descriptors, story.getMetaStatement());
+        foldAfterToken(descriptors, story.getNarrative());
+        foldAfterToken(descriptors, story.getLifecycle());
+        for (JBehaveScenario scenario : story.getScenarioList()) {
+            foldScenario(descriptors, scenario);
+            for (JBehaveStep step : scenario.getStepList()) {
+                JBehaveStepArgument stepArgument = step.getStepArgument();
+                if (stepArgument != null) {
+                    JBehaveTable table = stepArgument.getTable();
+                    if (table != null) {
+                        foldWholeRegion(descriptors, table);
                     }
-
                 }
             }
         }
     }
 
-    private void foldAfterToken(List<FoldingDescriptor> descriptors, PsiElement element) {
-        ASTNode firstChildNode = element.getNode().getFirstChildNode();
-        if (firstChildNode != null) {
-            TextRange textRange = firstChildNode.getTextRange();
-            TextRange elementTextRange = element.getTextRange();
-            descriptors.add(new FoldingDescriptor(element, new TextRange(textRange.getEndOffset(),
-                                                                         elementTextRange.getEndOffset())));
+    private void foldAfterToken(List<FoldingDescriptor> descriptors, @Nullable PsiElement element) {
+        if (element != null) {
+            ASTNode firstChildNode = element.getNode().getFirstChildNode();
+            if (firstChildNode != null) {
+                TextRange textRange = firstChildNode.getTextRange();
+                TextRange elementTextRange = element.getTextRange();
+                descriptors.add(new FoldingDescriptor(element, new TextRange(textRange.getEndOffset(),
+                                                                             elementTextRange.getEndOffset())));
+            }
         }
     }
 
-    private void foldWholeRegion(List<FoldingDescriptor> descriptors, PsiElement element) {
-        descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
+    private void foldWholeRegion(List<FoldingDescriptor> descriptors, @Nullable PsiElement element) {
+        if (element != null) descriptors.add(new FoldingDescriptor(element, element.getTextRange()));
     }
 
-    private void foldScenario(List<FoldingDescriptor> descriptors, JBehaveScenario scenario) {
+    private void foldScenario(List<FoldingDescriptor> descriptors, @Nullable JBehaveScenario scenario) {
         //        Iterator<JBehaveScenarioTitle> itTitle = PsiTreeUtil.findChildrenOfType(scenario,
         //                JBehaveScenarioTitle.class).iterator();
-        JBehaveScenarioTitle scenarioTitle = scenario.getScenarioTitle();
-        if (scenarioTitle != null) {
-            int endOffset = scenarioTitle.getTextRange().getEndOffset();
-            int endOffset1 = scenario.getTextRange().getEndOffset();
-            descriptors.add(new FoldingDescriptor(scenario, new TextRange(endOffset, endOffset1)));
+        if (scenario != null) {
+            JBehaveScenarioTitle scenarioTitle = scenario.getScenarioTitle();
+            if (scenarioTitle != null) {
+                int endOffset = scenarioTitle.getTextRange().getEndOffset();
+                int endOffset1 = scenario.getTextRange().getEndOffset();
+                descriptors.add(new FoldingDescriptor(scenario, new TextRange(endOffset, endOffset1)));
+            }
         }
     }
 

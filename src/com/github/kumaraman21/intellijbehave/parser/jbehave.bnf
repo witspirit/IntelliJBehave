@@ -43,7 +43,7 @@
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
-  extends("ScenarioTitle|TableCell|Table|TableRow|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
+  extends("ScenarioTitle|TableCell|Table|TableRow|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue|Lifecycle")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
   extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.Scenario"
   extends("MetaStatement")="com.github.kumaraman21.intellijbehave.parser.MetaStatement"
   extends("Narrative")="com.github.kumaraman21.intellijbehave.parser.Narrative"
@@ -56,12 +56,12 @@ Story ::=   WhiteSpace StepComment? Description?
             WhiteSpace StepComment? Narrative?
             WhiteSpace StepComment? GivenStories?
             WhiteSpace StepComment? Lifecycle?
-            WhiteSpace StepComment? (WhiteSpace Scenario)+
+            WhiteSpace StepComment? (WhiteSpace Scenario)+ WhiteSpace
 Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Newline)* ((Space|Newline)* MetaElement)* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue |MetaKey | MetaValue) {pin=2 }
 MetaKey::= TOKEN_MKEY {pin=1 }
-MetaValue::= Line //(Word|TOKEN_COLON)+ (Space (Word|TOKEN_COLON)+)+
+MetaValue::= Line
 
 private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|Newline|TOKEN_COMMENT|TOKEN_EXAMPLES)
 
@@ -102,9 +102,8 @@ StepLine ::= StepWord (WordSeparator StepWord)* Space* TOKEN_COLON?
 Examples ::= TOKEN_EXAMPLES WhiteSpace (Table|StoryPath) {pin=1}
 
 Table ::= (WhiteSpace TableRow)+
-TableRow ::= TOKEN_PIPE (SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE ((SpaceStar TableCell SpaceStar | TableCellEmpty) TOKEN_PIPE)* {pin=1}
-TableCell ::= Line|TOKEN_META|MetaElement
-TableCellEmpty ::= SpaceStar
+TableRow ::= TOKEN_PIPE SpaceStar (TableCell SpaceStar)? TOKEN_PIPE (SpaceStar (TableCell SpaceStar)?  TOKEN_PIPE)* {pin=1}
+TableCell ::=  Line|TOKEN_META|MetaElement
 
 private MultiTextLine ::= (WhiteSpace Line)+
 

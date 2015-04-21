@@ -16,7 +16,7 @@ public class StructureViewModel extends StructureViewModelBase {
         super(psiFile, editor, new StructureViewElement(psiFile));
         withSorters(Sorter.ALPHA_SORTER);
         withSuitableClasses(JBehaveDescription.class, JBehaveScenario.class, JBehaveStep.class,
-                JBehaveMetaStatement.class, JBehaveNarrative.class);
+                            JBehaveMetaStatement.class, JBehaveNarrative.class, JBehaveLifecycle.class);
     }
 
 }

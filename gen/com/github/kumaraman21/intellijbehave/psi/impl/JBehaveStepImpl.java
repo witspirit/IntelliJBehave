@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.psi.impl;
 
-import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveStepArgument;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveStepPar;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveVisitor;
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.util.PsiTreeUtil;
+import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.psi.*;
 
 public class JBehaveStepImpl extends ScenarioStep implements JBehaveStep {
 
@@ -18,7 +18,7 @@ public class JBehaveStepImpl extends ScenarioStep implements JBehaveStep {
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor) visitor).visitStep(this);
+    if (visitor instanceof JBehaveVisitor) ((JBehaveVisitor)visitor).visitStep(this);
     else super.accept(visitor);
   }
 

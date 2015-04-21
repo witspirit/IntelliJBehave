@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.kumaraman21.intellijbehave.parser.ParserRule;
 import com.github.kumaraman21.intellijbehave.psi.*;
 
-public class JBehaveLifecycleImpl extends ASTWrapperPsiElement implements JBehaveLifecycle {
+public class JBehaveLifecycleImpl extends ParserRule implements JBehaveLifecycle {
 
   public JBehaveLifecycleImpl(ASTNode node) {
     super(node);

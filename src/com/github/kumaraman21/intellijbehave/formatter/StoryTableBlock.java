@@ -1,56 +1,57 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.github.kumaraman21.intellijbehave.psi.JBehaveTableCell;
-import com.github.kumaraman21.intellijbehave.psi.JBehaveTableCellEmpty;
+import com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettings;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveTable;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveTableRow;
-import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
-import com.intellij.formatting.Wrap;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryTableBlock extends StoryIgnoreBlock {
-    protected StoryTableBlock(ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
-        super(node, wrap, alignment);
+public class StoryTableBlock extends IndentChildrenBlock {
+    public StoryTableBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
+                           @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
+        super(node, settings, spacingBuilder, indentingMappings);
     }
 
     @Override
     protected List<Block> buildChildren() {
         List<Block> retVal = new ArrayList<Block>();
-        PsiElement psiElement = myNode.getPsi();
-        Collection<JBehaveTableRow> rows = PsiTreeUtil.findChildrenOfType(psiElement, JBehaveTableRow.class);
-        int[] columnWidths = new int[0];
+        JBehaveTable table = (JBehaveTable) myNode.getPsi();
+        List<JBehaveTableRow> rows = table.getTableRowList();
+
+        int[] columnWidths = null;
         Iterator<JBehaveTableRow> rowIt = rows.iterator();
         if (rowIt.hasNext()) {
             JBehaveTableRow headerRow = rowIt.next();
-            Collection<JBehaveTableCell> cells = PsiTreeUtil.findChildrenOfType(headerRow, JBehaveTableCell.class);
-            columnWidths = new int[cells.size()];
-            Arrays.fill(columnWidths, 0);
-            for (JBehaveTableRow row : rows) {
-                int i = 0;
-                for (PsiElement cell : PsiTreeUtil
-                        .findChildrenOfAnyType(row, JBehaveTableCell.class, JBehaveTableCellEmpty.class)) {
-                    String cellText = cell.getText().trim();
-                    int length = cellText.length();
-                    if (i < columnWidths.length) {
-                        if (length > columnWidths[i]) {
-                            columnWidths[i] = length;
-                        }
-                    }
-                    ++i;
+            StoryTableRowBlock firstBlock =
+                    new StoryTableRowBlock(headerRow.getNode(), settings, spacingBuilder, indentingMappings);
+            retVal.add(firstBlock);
+            //List<JBehaveTableCell> cells = headerRow.getTableCellList();
+            columnWidths = firstBlock.getTrimmedColumnWidths();
+            while (rowIt.hasNext()) {
+                StoryTableRowBlock block =
+                        new StoryTableRowBlock(rowIt.next().getNode(), settings, spacingBuilder, indentingMappings);
+                retVal.add(block);
+                int[] trimmedColumnWidths = block.getTrimmedColumnWidths();
+                for (int i = 0; i < columnWidths.length; ++i) {
+                    columnWidths[i] = Math.max(columnWidths[i], trimmedColumnWidths[i]);
                 }
+
             }
         }
-        for (JBehaveTableRow row : rows) {
-            retVal.add(new StoryTableRowBlock(columnWidths, row.getNode(), null, null));
+        for (Block block : retVal) {
+            ((StoryTableRowBlock) block).setColumnWidths(columnWidths);
         }
 
         return retVal;
@@ -66,4 +67,10 @@ public class StoryTableBlock extends StoryIgnoreBlock {
     public boolean isLeaf() {
         return false;
     }
+
+    @Override
+    public Indent getIndent() {
+        return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
+    }
+
 }

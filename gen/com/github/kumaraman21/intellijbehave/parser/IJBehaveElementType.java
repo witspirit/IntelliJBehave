@@ -1,12 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.PsiElement;
+import com.intellij.lang.ASTNode;
 import com.github.kumaraman21.intellijbehave.highlighter.JBehaveElementType;
 import com.github.kumaraman21.intellijbehave.highlighter.JBehaveTokenType;
 import com.github.kumaraman21.intellijbehave.psi.impl.*;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 
 public interface IJBehaveElementType {
 
@@ -34,7 +34,6 @@ public interface IJBehaveElementType {
   IElementType JB_STORY_PATHS = new JBehaveElementType("JB_STORY_PATHS");
   IElementType JB_TABLE = new JBehaveElementType("JB_TABLE");
   IElementType JB_TABLE_CELL = new JBehaveElementType("JB_TABLE_CELL");
-  IElementType JB_TABLE_CELL_EMPTY = new JBehaveElementType("JB_TABLE_CELL_EMPTY");
   IElementType JB_TABLE_ROW = new JBehaveElementType("JB_TABLE_ROW");
   IElementType JB_URI = new JBehaveElementType("JB_URI");
   IElementType JB_URI_IDENTIFIER = new JBehaveElementType("JB_URI_IDENTIFIER");
@@ -73,63 +72,88 @@ public interface IJBehaveElementType {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-      if (type == JB_DESCRIPTION) {
+       if (type == JB_DESCRIPTION) {
         return new JBehaveDescriptionImpl(node);
-      } else if (type == JB_EXAMPLES) {
+      }
+      else if (type == JB_EXAMPLES) {
         return new JBehaveExamplesImpl(node);
-      } else if (type == JB_GIVEN_STORIES) {
+      }
+      else if (type == JB_GIVEN_STORIES) {
         return new JBehaveGivenStoriesImpl(node);
-      } else if (type == JB_IP_ADDRESS) {
+      }
+      else if (type == JB_IP_ADDRESS) {
         return new JBehaveIpAddressImpl(node);
-      } else if (type == JB_LIFECYCLE) {
+      }
+      else if (type == JB_LIFECYCLE) {
         return new JBehaveLifecycleImpl(node);
-      } else if (type == JB_LIFECYCLE_AFTER) {
+      }
+      else if (type == JB_LIFECYCLE_AFTER) {
         return new JBehaveLifecycleAfterImpl(node);
-      } else if (type == JB_LIFECYCLE_BEFORE) {
+      }
+      else if (type == JB_LIFECYCLE_BEFORE) {
         return new JBehaveLifecycleBeforeImpl(node);
-      } else if (type == JB_META_ELEMENT) {
+      }
+      else if (type == JB_META_ELEMENT) {
         return new JBehaveMetaElementImpl(node);
-      } else if (type == JB_META_KEY) {
+      }
+      else if (type == JB_META_KEY) {
         return new JBehaveMetaKeyImpl(node);
-      } else if (type == JB_META_STATEMENT) {
+      }
+      else if (type == JB_META_STATEMENT) {
         return new JBehaveMetaStatementImpl(node);
-      } else if (type == JB_META_VALUE) {
+      }
+      else if (type == JB_META_VALUE) {
         return new JBehaveMetaValueImpl(node);
-      } else if (type == JB_NARRATIVE) {
+      }
+      else if (type == JB_NARRATIVE) {
         return new JBehaveNarrativeImpl(node);
-      } else if (type == JB_NARRATIVE_TEXT) {
+      }
+      else if (type == JB_NARRATIVE_TEXT) {
         return new JBehaveNarrativeTextImpl(node);
-      } else if (type == JB_SCENARIO) {
+      }
+      else if (type == JB_SCENARIO) {
         return new JBehaveScenarioImpl(node);
-      } else if (type == JB_SCENARIO_TITLE) {
+      }
+      else if (type == JB_SCENARIO_TITLE) {
         return new JBehaveScenarioTitleImpl(node);
-      } else if (type == JB_STEP) {
+      }
+      else if (type == JB_STEP) {
         return new JBehaveStepImpl(node);
-      } else if (type == JB_STEP_ARGUMENT) {
+      }
+      else if (type == JB_STEP_ARGUMENT) {
         return new JBehaveStepArgumentImpl(node);
-      } else if (type == JB_STEP_LINE) {
+      }
+      else if (type == JB_STEP_LINE) {
         return new JBehaveStepLineImpl(node);
-      } else if (type == JB_STEP_PAR) {
+      }
+      else if (type == JB_STEP_PAR) {
         return new JBehaveStepParImpl(node);
-      } else if (type == JB_STORY) {
+      }
+      else if (type == JB_STORY) {
         return new JBehaveStoryImpl(node);
-      } else if (type == JB_STORY_PATH) {
+      }
+      else if (type == JB_STORY_PATH) {
         return new JBehaveStoryPathImpl(node);
-      } else if (type == JB_STORY_PATHS) {
+      }
+      else if (type == JB_STORY_PATHS) {
         return new JBehaveStoryPathsImpl(node);
-      } else if (type == JB_TABLE) {
+      }
+      else if (type == JB_TABLE) {
         return new JBehaveTableImpl(node);
-      } else if (type == JB_TABLE_CELL) {
+      }
+      else if (type == JB_TABLE_CELL) {
         return new JBehaveTableCellImpl(node);
-      } else if (type == JB_TABLE_CELL_EMPTY) {
-        return new JBehaveTableCellEmptyImpl(node);
-      } else if (type == JB_TABLE_ROW) {
+      }
+      else if (type == JB_TABLE_ROW) {
         return new JBehaveTableRowImpl(node);
-      } else if (type == JB_URI) {
+      }
+      else if (type == JB_URI) {
         return new JBehaveUriImpl(node);
-      } else if (type == JB_URI_IDENTIFIER) {
+      }
+      else if (type == JB_URI_IDENTIFIER) {
         return new JBehaveUriIdentifierImpl(node);
-      } else if (type == JB_URI_WORD) {
+      }
+      else if (type == JB_URI_WORD) {
         return new JBehaveUriWordImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);

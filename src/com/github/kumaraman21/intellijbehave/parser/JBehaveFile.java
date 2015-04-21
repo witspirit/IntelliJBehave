@@ -92,7 +92,7 @@ public class JBehaveFile extends PsiFileBase implements JBehaveElement, Comparab
         return transform(asList(scenarioNodes), new NodeToPsiElement());
     }
 
-    private PsiElement getStory() {
+    public PsiElement getStory() {
         ASTNode[] storyNodes = this.getNode().getChildren(TokenSet.create(IJBehaveElementType.JB_STORY));
 
         if (storyNodes.length > 0) {

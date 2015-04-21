@@ -1,10 +1,12 @@
 package com.github.kumaraman21.intellijbehave.formatter;
 
-import com.intellij.formatting.Alignment;
+import com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettings;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
-import com.intellij.formatting.Wrap;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -12,11 +14,13 @@ import java.util.List;
 /**
  * Created by DeBritoD on 20.03.2015.
  */
-public class StoryTableDelimiterBlock extends StoryIgnoreBlock {
+public class StoryTableDelimiterBlock extends IndentChildrenBlock {
     private int columnNr;
 
-    protected StoryTableDelimiterBlock(int columnNr, ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment) {
-        super(node, wrap, alignment);
+    public StoryTableDelimiterBlock(int columnNr, ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
+                                    @NotNull SpacingBuilder spacingBuilder,
+                                    @NotNull IndentingMappings indentingMappings) {
+        super(node, settings, spacingBuilder, indentingMappings);
         this.columnNr = columnNr;
     }
 
@@ -39,4 +43,10 @@ public class StoryTableDelimiterBlock extends StoryIgnoreBlock {
     public boolean isLeaf() {
         return true;
     }
+
+    @Override
+    public Indent getIndent() {
+        return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
+    }
+
 }
