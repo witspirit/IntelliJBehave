@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave.formatter;
 import com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettings;
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
@@ -73,6 +74,22 @@ public class StoryScenarioBlock extends IndentChildrenBlock {
             }
         }
         return spacingBuilder.getSpacing(this, child1, child2);
+    }
+
+    @Override
+    public Indent getIndent() {
+        //return Indent.getSpaceIndent(indentingMappings.getIndent(getNode().getElementType()));
+        IElementType elementType = getNode().getElementType();
+
+        if (indentingMappings.hasIndent(elementType)) {
+            return Indent.getSpaceIndent(indentingMappings.getIndent(elementType));
+        }
+        //        if (isLeaf()) return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
+        //        return Indent.getSpaceIndent(settings.INDENT_PARENTS, true);
+        if (isLeaf() || elementType == IJBehaveElementType.JB_SCENARIO ||
+                elementType == IJBehaveElementType.JB_STORY_PATHS || elementType == IJBehaveElementType.JB_META_KEY ||
+                elementType == IJBehaveElementType.JB_META_VALUE) return Indent.getSpaceIndent(0, true);
+        return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
     }
 
     private Spacing getSpacing(int given_step_linefeed, boolean given_step_keeplinebreaks) {

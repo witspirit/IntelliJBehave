@@ -54,7 +54,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
         }
 
         protected void initTabs(CodeStyleSettings settings) {
-            //addIndentOptionsTab(settings);
+            addIndentOptionsTab(settings);
             //addSpacesTab(settings);
             addBlankLinesTab(settings);
 

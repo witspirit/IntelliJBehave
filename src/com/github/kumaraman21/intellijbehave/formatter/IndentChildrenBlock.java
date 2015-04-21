@@ -70,14 +70,18 @@ public class IndentChildrenBlock extends AbstractBlock {
 
     @Override
     public Indent getIndent() {
-        //return Indent.getSpaceIndent(indentingMappings.getIndent(getNode().getElementType()));
-        IElementType elementType = getNode().getElementType();
+        final IElementType elementType = getNode().getElementType();
 
         if (indentingMappings.hasIndent(elementType)) {
             return Indent.getSpaceIndent(indentingMappings.getIndent(elementType));
         }
-        //        if (isLeaf()) return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
-        //        return Indent.getSpaceIndent(settings.INDENT_PARENTS, true);
+        if (elementType == IJBehaveElementType.JB_STEP || elementType == IJBehaveElementType.JB_LIFECYCLE_AFTER ||
+                elementType == IJBehaveElementType.JB_LIFECYCLE_BEFORE) {
+            return Indent.getSpaceIndent(settings.INDENT_LEAFS, true);
+        }
+        if (elementType == IJBehaveElementType.JB_NARRATIVE_TEXT) {
+            return Indent.getSpaceIndent(settings.INDENT_NARRATIVE_TEXT, true);
+        }
         return Indent.getSpaceIndent(0, true);
     }
 
