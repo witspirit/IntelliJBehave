@@ -62,6 +62,14 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
                               RefactoringElementListener listener) throws IncorrectOperationException {
         PsiFile psiFile = PsiFileFactory.getInstance(element.getProject())
                                         .createFileFromText("dummy.story", JBehaveFileType.JBEHAVE_FILE_TYPE, newName);
+        List<PsiElement> stepParameters = getElements(psiFile);
+        if (element instanceof StepParameterSuggestionHolder) {
+            ((StepParameterSuggestionHolder) element).replace(stepParameters);
+        }
+    }
+
+    @NotNull
+    private List<PsiElement> getElements(PsiFile psiFile) {
         List<PsiElement> stepParameters = new ArrayList<PsiElement>();
         PsiElement firstChild = psiFile.getFirstChild().getFirstChild();
         PsiElement firstChild1 = firstChild.getFirstChild();
@@ -69,19 +77,7 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
             stepParameters.add(firstChild1);
             firstChild1 = firstChild1.getNextSibling();
         }
-        if (element instanceof StepParameterSuggestionHolder) {
-            ((StepParameterSuggestionHolder) element).replace(stepParameters);
-        }
-    }
-
-    private PsiElement[] getAll(PsiFile containingFile) {
-        return PsiTreeUtil.collectElements(containingFile, new PsiElementFilter() {
-            @Override
-            public boolean isAccepted(PsiElement element) {
-                return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD ||
-                        element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_SPACE;
-            }
-        });
+        return stepParameters;
     }
 
     @NotNull
