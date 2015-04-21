@@ -56,7 +56,7 @@ Story ::=   WhiteSpace StepComment? Description?
             WhiteSpace StepComment? Narrative?
             WhiteSpace StepComment? GivenStories?
             WhiteSpace StepComment? Lifecycle?
-            WhiteSpace StepComment? (WhiteSpace Scenario)+ WhiteSpace
+            WhiteSpace StepComment? (WhiteSpace Scenario)* WhiteSpace
 Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Newline)* ((Space|Newline)* MetaElement)* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue |MetaKey | MetaValue) {pin=2 }
@@ -118,7 +118,7 @@ Uri::= Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)? {pin=5
 IpAddress ::= TOKEN_IP | Alnum ('.' Alnum)+
 private Alnum::=TOKEN_WORD
 
-private Newline ::= TOKEN_NEWLINE
-private Space ::= TOKEN_SPACE
-private SpaceStar ::= TOKEN_SPACE*
-private WhiteSpace ::= Newline* SpaceStar
+private Newline ::= TOKEN_NEWLINE {name="newline"}
+private Space ::= TOKEN_SPACE {name="space"}
+private SpaceStar ::= TOKEN_SPACE* {name="spaces"}
+private WhiteSpace ::= Newline* SpaceStar {name="whitespace"}
