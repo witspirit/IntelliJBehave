@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.refactor;
 
 import com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType;
 import com.github.kumaraman21.intellijbehave.parser.ParserRule;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
@@ -14,11 +15,18 @@ import java.util.*;
  * Created by DeBritoD on 08.04.2015.
  */
 public class StepParameterSuggestionHolder extends SuggestionHolder {
-    private final Collection<PsiElement> siblings;
+    private final Deque<PsiElement> siblings;
 
     public StepParameterSuggestionHolder(PsiElement value) {
         super(value);
         this.siblings = getSiblings(getPsiElement());
+    }
+
+    @Nullable
+    @Override
+    public TextRange getTextRange() {
+        return new TextRange(siblings.getFirst().getTextRange().getStartOffset(),
+                             siblings.getLast().getTextRange().getEndOffset());
     }
 
     public boolean isSame(StepParameterSuggestionHolder other) {
@@ -46,7 +54,7 @@ public class StepParameterSuggestionHolder extends SuggestionHolder {
         return sb.toString();
     }
 
-    public static Collection<PsiElement> getSiblings(PsiElement element) {
+    public static Deque<PsiElement> getSiblings(PsiElement element) {
         Deque<PsiElement> elements = new LinkedList<PsiElement>();
         elements.add(element);
         addTillFirstSibling(element, elements);
@@ -106,24 +114,19 @@ public class StepParameterSuggestionHolder extends SuggestionHolder {
         return null;
     }
 
-    public PsiElement replace(PsiElement[] newElement) throws IncorrectOperationException {
-        Iterator<PsiElement> newIt = Arrays.asList(newElement).iterator();
+    public PsiElement replace(List<PsiElement> newElement) throws IncorrectOperationException {
+        Iterator<PsiElement> newIt = newElement.iterator();
         Iterator<PsiElement> myIt = siblings.iterator();
         PsiElement parent = getParent();
         PsiElement last = null;
-        while (myIt.hasNext() && newIt.hasNext()) {
-            last = myIt.next().replace(newIt.next());
+        PsiElement siblingFirst = siblings.getFirst();
+        while (newIt.hasNext()) {
+            last = parent.addBefore(newIt.next(), siblingFirst);
         }
         while (myIt.hasNext()) {
             myIt.next().delete();
         }
-        if (newIt.hasNext() && last != null) {
-            if (parent != null) {
-                while (newIt.hasNext()) {
-                    last = parent.addAfter(newIt.next(), last);
-                }
-            }
-        }
+
         return last;
     }
 }

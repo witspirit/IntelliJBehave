@@ -143,7 +143,8 @@ public class JBehaveAnnotator implements Annotator {
                     List<ParametrizedString.ContentToken> stringList = ParametrizedString.split(value);
                     PsiElement elementAt;
                     for (ParametrizedString.ContentToken s : stringList) {
-                        elementAt = step.getContainingFile().findElementAt(offset + s.getStart());
+                        elementAt =
+                                step.getContainingFile().findElementAt(offset + contentToken.getStart() + s.getStart());
                         if (elementAt != null &&
                                 elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
                             elementAt.putUserData(ParserRule.isStepParameter, true);

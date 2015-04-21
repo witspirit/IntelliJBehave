@@ -23,9 +23,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -64,7 +62,13 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
                               RefactoringElementListener listener) throws IncorrectOperationException {
         PsiFile psiFile = PsiFileFactory.getInstance(element.getProject())
                                         .createFileFromText("dummy.story", JBehaveFileType.JBEHAVE_FILE_TYPE, newName);
-        PsiElement[] stepParameters = getAll(psiFile);
+        List<PsiElement> stepParameters = new ArrayList<PsiElement>();
+        PsiElement firstChild = psiFile.getFirstChild().getFirstChild();
+        PsiElement firstChild1 = firstChild.getFirstChild();
+        while (firstChild1 != null) {
+            stepParameters.add(firstChild1);
+            firstChild1 = firstChild1.getNextSibling();
+        }
         if (element instanceof StepParameterSuggestionHolder) {
             ((StepParameterSuggestionHolder) element).replace(stepParameters);
         }
