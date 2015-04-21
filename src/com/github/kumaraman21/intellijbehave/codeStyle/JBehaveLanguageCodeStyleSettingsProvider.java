@@ -108,7 +108,7 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
 
     @Override
     public String getCodeSample(@NotNull SettingsType settingsType) {
-        return "This is a descrtiption.\n" +
+        return "This is a description.\n" +
                 "\n" +
                 "One more line\n" +
                 "Meta: @type smoke\n" +
@@ -155,12 +155,7 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
                 "Scenario: Clear button\n" +
                 "Given using profile <<PROFILE|DEMO>> 1 the status is idle\n" +
                 "When the plane form is cleared\n" +
-                "Then the plane form is empty\n" +
-                "Scenario: Clear button\n" +
-                "Given using profile <<PROFILE|DEMO>> 1 the status is idle\n" +
-                "When the plane form is cleared\n" +
-                "Then the plane form is empty\n" +
-                "\n";
+                "Then the plane form is empty\n";
     }
 
 }

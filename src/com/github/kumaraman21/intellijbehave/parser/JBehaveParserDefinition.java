@@ -57,8 +57,8 @@ public class JBehaveParserDefinition implements ParserDefinition {
     @Override
     public TokenSet getWhitespaceTokens() {
         //return TokenSet.create(IStoryPegElementType.STORY_TOKEN_SPACE);
-        return TokenSet.EMPTY;
-        //return TokenSet.create(IJBehaveElementType.JB_TOKEN_SPACE, IJBehaveElementType.JB_TOKEN_NEWLINE);
+        //return TokenSet.EMPTY;
+        return TokenSet.create(IJBehaveElementType.JB_TOKEN_SPACE);
     }
 
     @NotNull

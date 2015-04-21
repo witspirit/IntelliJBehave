@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
+import com.intellij.psi.tree.IElementType;
+
 import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
 import static com.github.kumaraman21.intellijbehave.parser.JBehaveParserUtil.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class JBehaveParser implements PsiParser {
@@ -1071,7 +1071,7 @@ public class JBehaveParser implements PsiParser {
   //             WhiteSpace StepComment? Narrative?
   //             WhiteSpace StepComment? GivenStories?
   //             WhiteSpace StepComment? Lifecycle?
-  //             WhiteSpace StepComment? (WhiteSpace Scenario)+ WhiteSpace
+  //             WhiteSpace StepComment? (WhiteSpace Scenario)* WhiteSpace
   public static boolean Story(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story")) return false;
     boolean r;
@@ -1176,20 +1176,16 @@ public class JBehaveParser implements PsiParser {
     return true;
   }
 
-  // (WhiteSpace Scenario)+
+  // (WhiteSpace Scenario)*
   private static boolean Story_17(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story_17")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = Story_17_0(b, l + 1);
     int c = current_position_(b);
-    while (r) {
+    while (true) {
       if (!Story_17_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "Story_17", c)) break;
       c = current_position_(b);
     }
-    exit_section_(b, m, null, r);
-    return r;
+    return true;
   }
 
   // WhiteSpace Scenario
@@ -1465,10 +1461,10 @@ public class JBehaveParser implements PsiParser {
   static boolean WhiteSpace(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "WhiteSpace")) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, "<whitespace>");
     r = WhiteSpace_0(b, l + 1);
     r = r && SpaceStar(b, l + 1);
-    exit_section_(b, m, null, r);
+    exit_section_(b, l, m, null, r, false, null);
     return r;
   }
 

@@ -15,7 +15,7 @@ public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
     public int INDENT_META_ELEMENT = 6;
     //
     public int INDENT_PARENTS = 0;
-    public int INDENT_LEAFS = 2;
+    public int INDENT_LEAFS = 0;
     //
     public int SPACE_KEYWORD_AFTER = 1;
     //

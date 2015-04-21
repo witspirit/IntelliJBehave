@@ -23,34 +23,42 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
                                             @NotNull Document document, boolean quick) {
         JBehaveFile file = (JBehaveFile) root;
         JBehaveStory story = (JBehaveStory) file.getStory();
-        foldWholeRegion(descriptors, story.getDescription());
-        foldAfterToken(descriptors, story.getMetaStatement());
-        foldAfterToken(descriptors, story.getNarrative());
-        foldAfterToken(descriptors, story.getLifecycle());
-        for (JBehaveScenario scenario : story.getScenarioList()) {
-            foldScenario(descriptors, scenario);
-            for (JBehaveStep step : scenario.getStepList()) {
-                JBehaveStepArgument stepArgument = step.getStepArgument();
-                if (stepArgument != null) {
-                    JBehaveTable table = stepArgument.getTable();
-                    if (table != null) {
-                        foldWholeRegion(descriptors, table);
+        if (story != null) {
+            foldWholeRegion(descriptors, story.getDescription());
+            JBehaveMetaStatement metaStatement = story.getMetaStatement();
+            if (metaStatement != null && !metaStatement.getMetaElementList().isEmpty()) {
+                foldAfterToken(descriptors, metaStatement.getFirstChild(), metaStatement);
+            }
+            JBehaveNarrative narrative = story.getNarrative();
+            if (narrative != null && narrative.getNarrativeText() != null) {
+                foldAfterToken(descriptors, narrative.getFirstChild(), narrative);
+            }
+            JBehaveLifecycle lifecycle = story.getLifecycle();
+            if (lifecycle != null &&
+                    (lifecycle.getLifecycleAfter() != null || lifecycle.getLifecycleBefore() != null)) {
+                foldAfterToken(descriptors, lifecycle.getFirstChild(), lifecycle);
+            }
+            for (JBehaveScenario scenario : story.getScenarioList()) {
+                foldScenario(descriptors, scenario);
+                for (JBehaveStep step : scenario.getStepList()) {
+                    JBehaveStepArgument stepArgument = step.getStepArgument();
+                    if (stepArgument != null) {
+                        JBehaveTable table = stepArgument.getTable();
+                        if (table != null) {
+                            foldWholeRegion(descriptors, table);
+                        }
                     }
                 }
             }
         }
     }
 
-    private void foldAfterToken(List<FoldingDescriptor> descriptors, @Nullable PsiElement element) {
-        if (element != null) {
-            ASTNode firstChildNode = element.getNode().getFirstChildNode();
-            if (firstChildNode != null) {
-                TextRange textRange = firstChildNode.getTextRange();
-                TextRange elementTextRange = element.getTextRange();
-                descriptors.add(new FoldingDescriptor(element, new TextRange(textRange.getEndOffset(),
-                                                                             elementTextRange.getEndOffset())));
-            }
-        }
+    private void foldAfterToken(List<FoldingDescriptor> descriptors, @NotNull PsiElement afterToken,
+                                @NotNull PsiElement foldRegion) {
+        TextRange afterTextRange = afterToken.getTextRange();
+        TextRange textRange = foldRegion.getTextRange();
+        descriptors.add(new FoldingDescriptor(afterToken,
+                                              new TextRange(afterTextRange.getEndOffset(), textRange.getEndOffset())));
     }
 
     private void foldWholeRegion(List<FoldingDescriptor> descriptors, @Nullable PsiElement element) {
