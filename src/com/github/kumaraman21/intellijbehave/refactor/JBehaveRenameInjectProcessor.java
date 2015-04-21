@@ -22,9 +22,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -72,8 +70,9 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
                                                                 String.format(format, newName));
             PsiElement[] injectElements = type == IJBehaveElementType.JB_TOKEN_INJECT ? getInjectElements(psiFile) :
                     getUserInjectElements(psiFile);
-            if (injectElements.length > 0) {
-                element.replace(injectElements[0]);
+            List<PsiElement> elements = getElements(psiFile);
+            if (!elements.isEmpty()) {
+                element.replace(elements.get(0));
             }
         }
     }
@@ -107,6 +106,18 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
                 }
             }
         }
+    }
+
+    @NotNull
+    private List<PsiElement> getElements(PsiFile psiFile) {
+        List<PsiElement> stepParameters = new ArrayList<PsiElement>();
+        PsiElement firstChild = psiFile.getFirstChild().getFirstChild();
+        PsiElement firstChild1 = firstChild.getFirstChild();
+        while (firstChild1 != null) {
+            stepParameters.add(firstChild1);
+            firstChild1 = firstChild1.getNextSibling();
+        }
+        return stepParameters;
     }
 
     private PsiElement[] getUserInjectElements(PsiFile containingFile) {
