@@ -15,10 +15,13 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighter;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,4 +59,12 @@ public class ParserRule extends ASTWrapperPsiElement implements JBehaveElement {
         };
 
     }
+
+    public void annotate(AnnotationHolder annotationHolder) {
+        TextAttributesKey textAttribute = JBehaveSyntaxHighlighter.getTextAttribute(getNode().getElementType());
+        if (textAttribute != null) {
+            annotationHolder.createInfoAnnotation(this, null).setTextAttributes(textAttribute);
+        }
+    }
+
 }

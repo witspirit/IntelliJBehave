@@ -373,7 +373,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
      * @return
      */
     @Nullable
-    public List<Pair<ContentToken, String>> getTokensOf(String input) throws IllegalArgumentException {
+    public List<Pair<ContentToken, String>> getTokensOf(String input) {
         List<Pair<ContentToken, String>> retVal = new ArrayList<Pair<ContentToken, String>>();
         Deque<StringToken> myTokens = new ArrayDeque<StringToken>();
 
@@ -386,7 +386,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             boolean match = false;
             final List<ContentToken> subs = new ArrayList<ContentToken>();
             while (!inputTokens.isEmpty()) {
-                if (myTokens.isEmpty()) throw new IllegalArgumentException();
+                if (myTokens.isEmpty()) return null;
                 StringToken token = myTokens.removeFirst();
                 ContentToken currentInput = inputTokens.removeFirst();
                 if (token.isIdentifier()) {

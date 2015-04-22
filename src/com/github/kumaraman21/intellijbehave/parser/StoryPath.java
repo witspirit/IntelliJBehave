@@ -15,12 +15,15 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
+import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighter;
 import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
@@ -35,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class StoryPath extends ASTWrapperPsiElement {
+public class StoryPath extends ParserRule {
 
     private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
@@ -124,5 +127,29 @@ public class StoryPath extends ASTWrapperPsiElement {
 
         }
         return null;
+    }
+
+    @Override
+    public void annotate(AnnotationHolder annotationHolder) {
+        PsiReference[] references = getReferences();
+        if (references.length != 1 || !(references[0] instanceof StoryPathPsiReference)) {
+            return;
+        }
+        StoryPathPsiReference reference = (StoryPathPsiReference) references[0];
+
+        if (reference.multiResolve(false).length == 0) {
+            PsiElement parent1 = getParent();
+            if (parent1 != null) {
+                PsiElement parent = parent1.getParent();
+                if (parent != null && parent.getNode().getElementType() == IJBehaveElementType.JB_GIVEN_STORIES) {
+                    Annotation errorAnnotation = annotationHolder.createErrorAnnotation(this, "File not found");
+                    errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_FILE_NOT_FOUND);
+                }
+            }
+        } else {
+            Annotation infoAnnotation = annotationHolder.createInfoAnnotation(this, null);
+            infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_STORY_PATH);
+        }
+
     }
 }
