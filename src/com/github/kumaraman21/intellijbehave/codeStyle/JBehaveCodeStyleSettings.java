@@ -22,11 +22,11 @@ public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
     //
     public int ALL_KEEPEMPTYLINES = 0;
     //
-    public int DESCRIPTION_LINEFEED = 2;
+    public int DESCRIPTION_LINEFEED = 1;
     public boolean DESCRIPTION_KEEPLINEBREAKS = true;
     //public int DESCRIPTION_KEEPEMPTYLINES = 0;
     //
-    public int META_LINEFEED = 2;
+    public int META_LINEFEED = 1;
     public boolean META_KEEPLINEBREAKS = true;
     //public int META_KEEPEMPTYLINES = 0;
     //
@@ -34,47 +34,47 @@ public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean TOKEN_META_KEEPLINEBREAKS = false;
     //public int TOKEN_META_KEEPEMPTYLINES = 0;
     //
-    public int NARRATIVE_LINEFEED = 2;
+    public int NARRATIVE_LINEFEED = 1;
     public boolean NARRATIVE_KEEPLINEBREAKS = true;
     //public int NARRATIVE_KEEPEMPTYLINES = 0;
     //
-    public int TOKEN_NARRATIVE_LINEFEED = 1;
-    public boolean TOKEN_NARRATIVE_KEEPLINEBREAKS = false;
+    public int TOKEN_NARRATIVE_LINEFEED = 0;
+    public boolean TOKEN_NARRATIVE_KEEPLINEBREAKS = true;
     //public int TOKEN_NARRATIVE_KEEPEMPTYLINES = 0;
     //
-    public int GIVENSTORIES_LINEFEED = 2;
+    public int GIVENSTORIES_LINEFEED = 1;
     public boolean GIVENSTORIES_KEEPLINEBREAKS = true;
     //public int GIVENSTORIES_KEEPEMPTYLINES = 0;
     //
-    public int TOKEN_GIVENSTORIES_LINEFEED = 1;
+    public int TOKEN_GIVENSTORIES_LINEFEED = 0;
     public boolean TOKEN_GIVENSTORIES_KEEPLINEBREAKS = false;
     //public int TOKEN_GIVENSTORIES_KEEPEMPTYLINES = 0;
     //
-    public int LIFECYCLE_LINEFEED = 2;
+    public int LIFECYCLE_LINEFEED = 1;
     public boolean LIFECYCLE_KEEPLINEBREAKS = true;
     //public int LIFECYCLE_KEEPEMPTYLINES = 0;
     //
-    public int LIFECYCLE_AFTER_LINEFEED = 2;
+    public int LIFECYCLE_AFTER_LINEFEED = 1;
     public boolean LIFECYCLE_AFTER_KEEPLINEBREAKS = true;
     //public int LIFECYCLE_AFTER_KEEPEMPTYLINES = 0;
     //
-    public int LIFECYCLE_BEFORE_LINEFEED = 2;
+    public int LIFECYCLE_BEFORE_LINEFEED = 1;
     public boolean LIFECYCLE_BEFORE_KEEPLINEBREAKS = true;
     //public int LIFECYCLE_BEFORE_KEEPEMPTYLINES = 0;
     //
-    public int TOKEN_LIFECYCLE_LINEFEED = 1;
+    public int TOKEN_LIFECYCLE_LINEFEED = 0;
     public boolean TOKEN_LIFECYCLE_KEEPLINEBREAKS = true;
     //public int TOKEN_LIFECYCLE_KEEPEMPTYLINES = 0;
     //
-    public int TOKEN_LIFECYCLE_AFTER_LINEFEED = 1;
+    public int TOKEN_LIFECYCLE_AFTER_LINEFEED = 0;
     public boolean TOKEN_LIFECYCLE_AFTER_KEEPLINEBREAKS = true;
     //public int TOKEN_LIFECYCLE_AFTER_KEEPEMPTYLINES = 0;
     //
-    public int TOKEN_LIFECYCLE_BEFORE_LINEFEED = 1;
+    public int TOKEN_LIFECYCLE_BEFORE_LINEFEED = 0;
     public boolean TOKEN_LIFECYCLE_BEFORE_KEEPLINEBREAKS = true;
     //public int TOKEN_LIFECYCLE_BEFORE_KEEPEMPTYLINES = 0;
     //
-    public int SCENARIO_LINEFEED = 2;
+    public int SCENARIO_LINEFEED = 1;
     public boolean SCENARIO_KEEPLINEBREAKS = true;
     //public int SCENARIO_KEEPEMPTYLINES = 0;
     //
@@ -82,27 +82,27 @@ public class JBehaveCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean TOKEN_SCENARIO_KEEPLINEBREAKS = false;
     //public int TOKEN_SCENARIO_KEEPEMPTYLINES = 0;
     //
-    public int SCENARIO_TITLE_LINEFEED = 1;
+    public int SCENARIO_TITLE_LINEFEED = 0;
     public boolean SCENARIO_TITLE_KEEPLINEBREAKS = true;
     //public int SCENARIO_TITLE_KEEPEMPTYLINES = 0;
     //
-    public int FIRST_STEP_LINEFEED = 1;
+    public int FIRST_STEP_LINEFEED = 0;
     public boolean FIRST_STEP_KEEPLINEBREAKS = true;
     //public int FIRST_STEP_KEEPEMPTYLINES = 0;
     //
-    public int GIVEN_STEP_LINEFEED = 2;
+    public int GIVEN_STEP_LINEFEED = 1;
     public boolean GIVEN_STEP_KEEPLINEBREAKS = true;
     //public int GIVEN_STEP_KEEPEMPTYLINES = 0;
     //
-    public int AND_STEP_LINEFEED = 1;
+    public int AND_STEP_LINEFEED = 0;
     public boolean AND_STEP_KEEPLINEBREAKS = true;
     //public int AND_STEP_KEEPEMPTYLINES = 0;
     //
-    public int WHEN_STEP_LINEFEED = 1;
+    public int WHEN_STEP_LINEFEED = 0;
     public boolean WHEN_STEP_KEEPLINEBREAKS = true;
     //public int WHEN_STEP_KEEPEMPTYLINES = 0;
     //
-    public int THEN_STEP_LINEFEED = 1;
+    public int THEN_STEP_LINEFEED = 0;
     public boolean THEN_STEP_KEEPLINEBREAKS = true;
     //public int THEN_STEP_KEEPEMPTYLINES = 0;
 

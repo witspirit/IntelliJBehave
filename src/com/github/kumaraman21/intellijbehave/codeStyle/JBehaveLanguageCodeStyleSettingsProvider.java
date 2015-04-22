@@ -126,8 +126,6 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
                 "Given using profile <<PROFILE|DEMO>> 1 the status is idle\n" +
                 "When the database clear button is clicked on the area 51 module\n" +
                 "Then the status is Setting up database\n" +
-                "Given the status is idle\n" +
-                "Then the plane table is empty\n" +
                 "\n" +
                 "After:\n" +
                 "Given using profile <<PROFILE|DEMO>> 1 the status is idle within 3 seconds\n" +
