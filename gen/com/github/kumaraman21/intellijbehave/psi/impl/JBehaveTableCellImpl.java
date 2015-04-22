@@ -29,9 +29,9 @@ public class JBehaveTableCellImpl extends ParserRule implements JBehaveTableCell
   }
 
   @Override
-  @Nullable
-  public JBehaveMetaElement getMetaElement() {
-    return findChildByClass(JBehaveMetaElement.class);
+  @NotNull
+  public List<JBehaveMetaElement> getMetaElementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, JBehaveMetaElement.class);
   }
 
   @Override

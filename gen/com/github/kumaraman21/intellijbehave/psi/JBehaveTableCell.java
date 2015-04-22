@@ -10,8 +10,8 @@ public interface JBehaveTableCell extends PsiElement {
   @NotNull
   List<JBehaveIpAddress> getIpAddressList();
 
-  @Nullable
-  JBehaveMetaElement getMetaElement();
+  @NotNull
+  List<JBehaveMetaElement> getMetaElementList();
 
   @NotNull
   List<JBehaveStoryPath> getStoryPathList();

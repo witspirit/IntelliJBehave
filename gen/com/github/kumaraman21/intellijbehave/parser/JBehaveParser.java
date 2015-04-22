@@ -1,14 +1,14 @@
 // This is a generated file. Not intended for manual editing.
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
 import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*;
 import static com.github.kumaraman21.intellijbehave.parser.JBehaveParserUtil.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class JBehaveParser implements PsiParser {
@@ -445,7 +445,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TOKEN_META (Newline)* ((Space|Newline)* MetaElement)*
+  // TOKEN_META (Newline)* ((Space|Newline)* (MetaElement|StepComment))*
   public static boolean MetaStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement")) return false;
     boolean r, p;
@@ -480,7 +480,7 @@ public class JBehaveParser implements PsiParser {
     return r;
   }
 
-  // ((Space|Newline)* MetaElement)*
+  // ((Space|Newline)* (MetaElement|StepComment))*
   private static boolean MetaStatement_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_2")) return false;
     int c = current_position_(b);
@@ -492,13 +492,13 @@ public class JBehaveParser implements PsiParser {
     return true;
   }
 
-  // (Space|Newline)* MetaElement
+  // (Space|Newline)* (MetaElement|StepComment)
   private static boolean MetaStatement_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "MetaStatement_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = MetaStatement_2_0_0(b, l + 1);
-    r = r && MetaElement(b, l + 1);
+    r = r && MetaStatement_2_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -522,6 +522,17 @@ public class JBehaveParser implements PsiParser {
     Marker m = enter_section_(b);
     r = Space(b, l + 1);
     if (!r) r = Newline(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // MetaElement|StepComment
+  private static boolean MetaStatement_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "MetaStatement_2_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = MetaElement(b, l + 1);
+    if (!r) r = StepComment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -831,7 +842,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY
+  // StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY|TOKEN_AND|TOKEN_GIVEN|TOKEN_WHEN|TOKEN_THEN
   static boolean SimpleWord(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "SimpleWord")) return false;
     boolean r;
@@ -840,6 +851,10 @@ public class JBehaveParser implements PsiParser {
     if (!r) r = StoryPath(b, l + 1);
     if (!r) r = consumeToken(b, JB_TOKEN_COLON);
     if (!r) r = consumeToken(b, JB_TOKEN_MKEY);
+    if (!r) r = consumeToken(b, JB_TOKEN_AND);
+    if (!r) r = consumeToken(b, JB_TOKEN_GIVEN);
+    if (!r) r = consumeToken(b, JB_TOKEN_WHEN);
+    if (!r) r = consumeToken(b, JB_TOKEN_THEN);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1279,15 +1294,31 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Line|TOKEN_META|MetaElement
+  // (Line|TOKEN_META|MetaElement)+
   public static boolean TableCell(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "TableCell")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<table cell>");
+    r = TableCell_0(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!TableCell_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "TableCell", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, l, m, JB_TABLE_CELL, r, false, null);
+    return r;
+  }
+
+  // Line|TOKEN_META|MetaElement
+  private static boolean TableCell_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "TableCell_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = Line(b, l + 1);
     if (!r) r = consumeToken(b, JB_TOKEN_META);
     if (!r) r = MetaElement(b, l + 1);
-    exit_section_(b, l, m, JB_TABLE_CELL, r, false, null);
+    exit_section_(b, m, null, r);
     return r;
   }
 

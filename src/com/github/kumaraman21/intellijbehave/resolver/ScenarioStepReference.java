@@ -39,7 +39,6 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
         myStep = element;
         ASTNode node = element.getNode();
         final int startOffset = node.getStartOffset();
-//        ASTNode lastChildNode = node.getLastChildNode();
         Iterator<JBehaveStepLine> it = PsiTreeUtil.findChildrenOfType(myStep, JBehaveStepLine.class).iterator();
         if (it.hasNext()) {
             JBehaveStepLine next = it.next();
@@ -48,20 +47,6 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
         } else {
             myRange = new TextRange(range.getStartOffset(), node.getTextRange().getEndOffset() - startOffset);
         }
-
-//        if (lastChildNode != null) {
-//            ASTNode firstChildNode = lastChildNode.getFirstChildNode();
-//            if (firstChildNode != null) {
-//                myRange = new TextRange(range.getStartOffset(),
-//                        firstChildNode.getTextRange().getEndOffset() - startOffset);
-//            }
-//            else{
-//                String r="";
-//            }
-//        }
-//        else{
-//            String r="";
-//        }
     }
 
     @Override

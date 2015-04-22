@@ -19,8 +19,8 @@ import com.github.kumaraman21.intellijbehave.highlighter.JBehaveSyntaxHighlighte
 import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.psi.*;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
-import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
@@ -193,19 +193,10 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
                                 printWriter.print(" ");
                                 printWriter.print(newText);
                                 if (havePostParameters) {
-                                    //
-                                    //                                    Iterator<JBehaveStepPostParameter> it = getStoryStepPostParameters().iterator();
-                                    //                                    JBehaveStepPostParameter postParameter = it.next();
-                                    //
                                     JBehaveStepArgument stepArgument = ((JBehaveStep) this).getStepArgument();
                                     if (stepArgument != null) {
                                         JBehaveStoryPaths storyPaths1 = stepArgument.getStoryPaths();
                                         JBehaveTable table1 = stepArgument.getTable();
-                                        //                                    Collection<StoryPath> storyPaths =
-                                        //                                            PsiTreeUtil.findChildrenOfType(this, StoryPath.class);
-                                        //                                    //StoryStoryPaths storyPath = postParameter.getStoryPaths();
-                                        //                                    JBehaveTable table = postParameter.getTable();
-                                        //if (!storyPaths.isEmpty() && table == null) {
                                         if (storyPaths1 != null) {
                                             printWriter.print(" ");
                                             printWriter.print("dummy/story/story.story");
@@ -315,23 +306,25 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
 
     @Override
     public void annotate(AnnotationHolder annotationHolder) {
-        Iterator<JavaStepDefinition> it =
-                JavaStepDefinitionsIndex.getInstance(getProject()).findStepDefinitions(this).iterator();
-        if (!(it.hasNext() && annotateParameters(this, it.next(), annotationHolder))) {
-            annotateStepError(annotationHolder, this);
+        //        Iterator<JavaStepDefinition> it =
+        //                JavaStepDefinitionsIndex.getInstance(getProject()).findStepDefinitions(this).iterator();
+        PsiReference[] references = getReferences();
+        if (references.length > 0) {
+            JavaStepDefinition javaStepDefinition = ((ScenarioStepReference) references[0]).resolveToDefinition();
+            if (!(javaStepDefinition != null && annotateParameters(javaStepDefinition, annotationHolder))) {
+                annotateStepError(annotationHolder);
+            }
         }
-
     }
 
-    private void annotateStepError(@NotNull AnnotationHolder annotationHolder, ScenarioStep step) {
+    private void annotateStepError(@NotNull AnnotationHolder annotationHolder) {
         Annotation errorAnnotation =
-                annotationHolder.createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
+                annotationHolder.createErrorAnnotation(getStoryStepLine(), "No definition found for the step");
         errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
     }
 
-    private boolean annotateParameters(ScenarioStep step, JavaStepDefinition javaStepDefinition,
-                                       AnnotationHolder annotationHolder) {
-        String storyStepText = step.getStepText();
+    private boolean annotateParameters(JavaStepDefinition javaStepDefinition, AnnotationHolder annotationHolder) {
+        String storyStepText = getStepText();
         String javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
         if (javaStepText == null) {
             storyStepText = storyStepText + " dummy";
@@ -342,10 +335,10 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
 
         Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
 
-        final int offset = step.getTextOffset() + step.getStepTextOffset();
+        final int offset = getTextOffset() + getStepTextOffset();
         final List<Pair<ParametrizedString.ContentToken, String>> tokensOf = pJavaStepText.getTokensOf(storyStepText);
         if (tokensOf != null) {
-            final int tokensOfSize = step.hasStoryStepPostParameters() ? tokensOf.size() - 1 : tokensOf.size();
+            final int tokensOfSize = hasStoryStepPostParameters() ? tokensOf.size() - 1 : tokensOf.size();
 
             for (int i = 0; i < tokensOfSize; i++) {
                 final Pair<ParametrizedString.ContentToken, String> pair = tokensOf.get(i);
@@ -364,7 +357,7 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
                     //
                     for (ParametrizedString.ContentToken s : ParametrizedString.split(contentToken.value())) {
                         final PsiElement elementAt =
-                                step.getContainingFile().findElementAt(offset + contentToken.getStart() + s.getStart());
+                                getContainingFile().findElementAt(offset + contentToken.getStart() + s.getStart());
                         if (elementAt != null &&
                                 elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
                             elementAt.putUserData(ParserRule.isStepParameter, true);

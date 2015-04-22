@@ -38,7 +38,7 @@
     TOKEN_PIPE='regexp:\|'
     TOKEN_PATH = 'regexp:([A-Z]:|<.+>|<<.+>>)?([a-zA-Z0-9]|<.+>|<<.+>>|(/|\\))([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-|\ )+)+([a-zA-Z0-9]|_|@|\.|-|/)'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-    TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r]+"
+    TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r\|]+"
     TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,|@]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
@@ -58,7 +58,7 @@ Story ::=   WhiteSpace StepComment? Description?
             WhiteSpace StepComment? Lifecycle?
             WhiteSpace StepComment? (WhiteSpace Scenario)* WhiteSpace
 Description ::= MultiTextLine
-MetaStatement ::= TOKEN_META (Newline)* ((Space|Newline)* MetaElement)* {pin=1 recoverWhile=RecoverMeta}
+MetaStatement ::= TOKEN_META (Newline)* ((Space|Newline)* (MetaElement|StepComment))* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue |MetaKey | MetaValue) {pin=2 }
 MetaKey::= TOKEN_MKEY {pin=1 }
 MetaValue::= Line
@@ -103,11 +103,11 @@ Examples ::= TOKEN_EXAMPLES WhiteSpace (Table|StoryPath) {pin=1}
 
 Table ::= (WhiteSpace TableRow)+
 TableRow ::= TOKEN_PIPE SpaceStar (TableCell SpaceStar)? TOKEN_PIPE (SpaceStar (TableCell SpaceStar)?  TOKEN_PIPE)* {pin=1}
-TableCell ::=  Line|TOKEN_META|MetaElement
+TableCell ::=  (Line|TOKEN_META|MetaElement)+
 
 private MultiTextLine ::= (WhiteSpace Line)+
 
-private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY
+private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON|TOKEN_MKEY|TOKEN_AND|TOKEN_GIVEN|TOKEN_WHEN|TOKEN_THEN
 private Word ::= SimpleWord+
 private WordSeparator ::= Space+
 private Line ::= Word (WordSeparator Word)*
