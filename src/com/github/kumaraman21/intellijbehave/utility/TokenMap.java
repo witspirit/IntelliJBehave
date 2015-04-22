@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
  * Created by DeBritoD on 27.03.2015.
  */
 public class TokenMap {
-    private Map<String, TokenMap> nextTokens = new HashMap<String, TokenMap>();
+    private final Map<String, TokenMap> nextTokens = new HashMap<String, TokenMap>();
     private JavaStepDefinition leafToken;// = new ArrayList<JavaStepDefinition>();
-    private static Pattern pattern = Pattern.compile("((\\w|<|>|\\|)+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    private static final Pattern pattern = Pattern.compile("((\\w|<|>|\\|)+|[\\W&&[^\\s]])", Pattern.DOTALL);
 
     private static List<String> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
@@ -110,7 +110,7 @@ public class TokenMap {
         return Collections.emptyList();
     }
 
-    public List<JavaStepDefinition> getAll() {
+    private List<JavaStepDefinition> getAll() {
         final List<JavaStepDefinition> result = new ArrayList<JavaStepDefinition>();
         if (leafToken != null) {
             result.add(leafToken);

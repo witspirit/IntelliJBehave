@@ -34,7 +34,7 @@ import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
 
 public class JBehaveFile extends PsiFileBase implements JBehaveElement, Comparable<JBehaveFile> {
-    private static Set<IElementType> immediateChildren = new HashSet<IElementType>();
+    private static final Set<IElementType> immediateChildren = new HashSet<IElementType>();
 
     static {
         immediateChildren.add(IJBehaveElementType.JB_DESCRIPTION);

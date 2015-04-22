@@ -23,11 +23,7 @@ public class JavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, Sea
     public void processQuery(@NotNull SearchParameters searchParameters, @NotNull Processor<PsiReference> consumer) {
         final PsiMethod method = searchParameters.getMethod();
 
-        List<String> stepTexts = ApplicationManager.getApplication().runReadAction(new Computable<List<String>>() {
-            public List<String> compute() {
-                return getAnnotationTexts(method);
-            }
-        });
+        List<String> stepTexts = ApplicationManager.getApplication().runReadAction(new ListComputable(method));
 
         for (String stepText : stepTexts) {
             String word = getTheBiggestWordToSearchByIndex(stepText);
@@ -42,6 +38,18 @@ public class JavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, Sea
                     query.forEach(consumer);
                 }
             }
+        }
+    }
+
+    private static class ListComputable implements Computable<List<String>> {
+        private final PsiMethod method;
+
+        public ListComputable(PsiMethod method) {
+            this.method = method;
+        }
+
+        public List<String> compute() {
+            return getAnnotationTexts(method);
         }
     }
 }

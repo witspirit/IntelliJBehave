@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ScenarioStepReferenceProvider extends PsiReferenceProvider {
+class ScenarioStepReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {

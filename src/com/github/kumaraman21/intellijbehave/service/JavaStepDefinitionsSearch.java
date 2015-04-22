@@ -25,27 +25,16 @@ public class JavaStepDefinitionsSearch implements QueryExecutor<PsiReference, Se
 
         final PsiMethod method = (PsiMethod) myElement;
 
-        Boolean isStepDefinition = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-            public Boolean compute() {
-                return isStepDefinition(method);
-            }
-        });
+        Boolean isStepDefinition = ApplicationManager.getApplication().runReadAction(new BooleanComputable(method));
 
         if (!isStepDefinition) {
             return true;
         }
 
-        List<String> stepTexts = ApplicationManager.getApplication().runReadAction(new Computable<List<String>>() {
-            public List<String> compute() {
-                return getAnnotationTexts(method);
-            }
-        });
+        List<String> stepTexts = ApplicationManager.getApplication().runReadAction(new ListComputable(method));
 
-        SearchScope searchScope = ApplicationManager.getApplication().runReadAction(new Computable<SearchScope>() {
-            public SearchScope compute() {
-                return queryParameters.getEffectiveSearchScope();
-            }
-        });
+        SearchScope searchScope =
+                ApplicationManager.getApplication().runReadAction(new SearchScopeComputable(queryParameters));
 
         boolean result = true;
 
@@ -58,5 +47,41 @@ public class JavaStepDefinitionsSearch implements QueryExecutor<PsiReference, Se
         }
 
         return result;
+    }
+
+    private static class SearchScopeComputable implements Computable<SearchScope> {
+        private final SearchParameters queryParameters;
+
+        public SearchScopeComputable(SearchParameters queryParameters) {
+            this.queryParameters = queryParameters;
+        }
+
+        public SearchScope compute() {
+            return queryParameters.getEffectiveSearchScope();
+        }
+    }
+
+    private static class ListComputable implements Computable<List<String>> {
+        private final PsiMethod method;
+
+        public ListComputable(PsiMethod method) {
+            this.method = method;
+        }
+
+        public List<String> compute() {
+            return getAnnotationTexts(method);
+        }
+    }
+
+    private static class BooleanComputable implements Computable<Boolean> {
+        private final PsiMethod method;
+
+        public BooleanComputable(PsiMethod method) {
+            this.method = method;
+        }
+
+        public Boolean compute() {
+            return isStepDefinition(method);
+        }
     }
 }

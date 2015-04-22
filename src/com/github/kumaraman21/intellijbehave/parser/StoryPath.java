@@ -40,7 +40,7 @@ import java.util.TreeSet;
 
 public class StoryPath extends ParserRule {
 
-    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
+    private final Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
     public StoryPath(@NotNull ASTNode node) {
         super(node);
@@ -70,12 +70,12 @@ public class StoryPath extends ParserRule {
         return text;
     }
 
-    public String getFileName() {
+    private String getFileName() {
         String[] fileNames = getFileNames();
         return fileNames[fileNames.length - 1];
     }
 
-    public String[] getFileNames() {
+    private String[] getFileNames() {
         String text = getValue();
         String[] split = text.split("/");
         int lastIdx = split.length - 1;
@@ -123,7 +123,7 @@ public class StoryPath extends ParserRule {
                 parent = parent.getParent();
             }
             return parent != null ? parent.getParent() : null;
-        } catch (InvalidPathException p) {
+        } catch (InvalidPathException ignored) {
 
         }
         return null;

@@ -23,9 +23,10 @@ import org.jbehave.core.steps.StepType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StepTypeMappings {
+public enum StepTypeMappings {
+    ;
 
-    public static final Map<StepType, String> STEP_TYPE_TO_ANNOTATION_MAPPING = new HashMap<StepType, String>();
+    private static final Map<StepType, String> STEP_TYPE_TO_ANNOTATION_MAPPING = new HashMap<StepType, String>();
 
     static {
         STEP_TYPE_TO_ANNOTATION_MAPPING.put(StepType.GIVEN, Given.class.getName());

@@ -29,8 +29,8 @@ import java.util.Set;
 public abstract class StepDefinitionIterator implements ContentIterator {
 
     private final StepDefinitionAnnotationConverter stepDefinitionAnnotationConverter = new StepDefinitionAnnotationConverter();
-    private StepType stepType;
-    private Project project;
+    private final StepType stepType;
+    private final Project project;
 
     public StepDefinitionIterator(@Nullable StepType stepType, Project project) {
         this.stepType = stepType;

@@ -28,52 +28,53 @@ import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
 import static java.util.Arrays.asList;
 
 public class JBehaveUtil {
-    public static final Predicate<PsiAnnotation> JB_STEPS_ANNOTATIONS = new Predicate<PsiAnnotation>() {
+    private static final Predicate<PsiAnnotation> JB_STEPS_ANNOTATIONS = new Predicate<PsiAnnotation>() {
         @Override
         public boolean apply(@Nullable PsiAnnotation annotation) {
             return annotation != null && isJBehaveStepAnnotation(annotation);
         }
     };
-    public static final Predicate<PsiAnnotation> JB_ALIAS_ANNOTATION = new Predicate<PsiAnnotation>() {
+    private static final Predicate<PsiAnnotation> JB_ALIAS_ANNOTATION = new Predicate<PsiAnnotation>() {
         @Override
         public boolean apply(@Nullable PsiAnnotation annotation) {
             return annotation != null && isJBehaveAliasAnnotation(annotation);
         }
     };
-    public static final Predicate<PsiAnnotation> JB_ALIASES_ANNOTATION = new Predicate<PsiAnnotation>() {
+    private static final Predicate<PsiAnnotation> JB_ALIASES_ANNOTATION = new Predicate<PsiAnnotation>() {
         @Override
         public boolean apply(@Nullable PsiAnnotation annotation) {
             return annotation != null && isJBehaveAliasesAnnotation(annotation);
         }
     };
-    public static final Function<PsiAnnotation, Set<String>> TO_ANNOTATION_TEXTS = new Function<PsiAnnotation, Set<String>>() {
+    private static final Function<PsiAnnotation, Set<String>> TO_ANNOTATION_TEXTS =
+            new Function<PsiAnnotation, Set<String>>() {
         @Override
         public Set<String> apply(PsiAnnotation stepAnnotation) {
             return getAnnotationTexts(stepAnnotation);
         }
     };
-    public static final Function<String, Set<String>> TO_A_SET_OF_PATTERNS = new Function<String, Set<String>>() {
+    private static final Function<String, Set<String>> TO_A_SET_OF_PATTERNS = new Function<String, Set<String>>() {
         @Override
         public Set<String> apply(@Nullable String value) {
             return new PatternVariantBuilder(value).allVariants();
         }
     };
-    public static final ImmutableSet<String> JB_ANNOTATIONS_SET = ImmutableSet.of(Given.class.getName(),
+    private static final ImmutableSet<String> JB_ANNOTATIONS_SET = ImmutableSet.of(Given.class.getName(),
             When.class.getName(), Then.class.getName());
 
-    public static boolean isJBehaveStepAnnotation(@NotNull PsiAnnotation annotation) {
+    private static boolean isJBehaveStepAnnotation(@NotNull PsiAnnotation annotation) {
         String annotationName = getAnnotationName(annotation);
 
         return annotationName != null && JB_ANNOTATIONS_SET.contains(annotationName);
     }
 
-    public static boolean isJBehaveAliasAnnotation(@NotNull PsiAnnotation annotation) {
+    private static boolean isJBehaveAliasAnnotation(@NotNull PsiAnnotation annotation) {
         String annotationName = getAnnotationName(annotation);
 
         return annotationName != null && Objects.equal(annotationName, Alias.class.getName());
     }
 
-    public static boolean isJBehaveAliasesAnnotation(@NotNull PsiAnnotation annotation) {
+    private static boolean isJBehaveAliasesAnnotation(@NotNull PsiAnnotation annotation) {
         String annotationName = getAnnotationName(annotation);
 
         return annotationName != null && Objects.equal(annotationName, Aliases.class.getName());
@@ -228,7 +229,7 @@ public class JBehaveUtil {
                 searchScope, word, (short) 5, true);
     }
 
-    public static SearchScope restrictScopeToJBehaveFiles(final Computable<SearchScope> originalScopeComputation) {
+    private static SearchScope restrictScopeToJBehaveFiles(final Computable<SearchScope> originalScopeComputation) {
         return (SearchScope) ApplicationManager.getApplication().runReadAction(new Computable() {
             public SearchScope compute() {
                 SearchScope originalScope = originalScopeComputation.compute();

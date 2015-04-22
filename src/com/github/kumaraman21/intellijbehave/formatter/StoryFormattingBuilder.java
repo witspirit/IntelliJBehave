@@ -32,8 +32,7 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
         SpacingBuilder spaceBuilder = createSpaceBuilder(jbehaveSettings);
         IndentingMappings indents = createIndents(jbehaveSettings);
         StoryBlock storyBlock = new StoryBlock(element.getNode(), jbehaveSettings, spaceBuilder, indents);
-        FormattingModel model = FormattingModelProvider.createFormattingModelForPsiFile(file, storyBlock, settings);
-        return model;
+        return FormattingModelProvider.createFormattingModelForPsiFile(file, storyBlock, settings);
     }
 
     private static void spacingTokens(IElementType token, IElementType within, int space, SpacingBuilder spacingBuilder,
@@ -45,7 +44,7 @@ public class StoryFormattingBuilder implements FormattingModelBuilder {
         }
     }
 
-    public static SpacingBuilder createSpaceBuilder(JBehaveCodeStyleSettings settings) {
+    private static SpacingBuilder createSpaceBuilder(JBehaveCodeStyleSettings settings) {
         SpacingBuilder spacingBuilder =
                 new SpacingBuilder(settings.getContainer(), JBehaveFileType.JBEHAVE_FILE_TYPE.getLanguage());
         IFileElementType root = JBehaveParserDefinition.STORY_FILE;

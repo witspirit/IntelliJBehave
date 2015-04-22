@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by DeBritoD on 13.04.2015.
  */
-public class TokenMapManager {
+class TokenMapManager {
     private TokenMap tokenMap = new TokenMap();
     private AtomicBoolean needsUpdate = new AtomicBoolean(true);
 }

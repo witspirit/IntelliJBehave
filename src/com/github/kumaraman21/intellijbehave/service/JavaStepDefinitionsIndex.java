@@ -28,11 +28,11 @@ import static java.util.Arrays.asList;
 
 public class JavaStepDefinitionsIndex {
     private final PsiManager manager;
-    private Map<Module, TokenMap> tokenMaps = new HashMap<Module, TokenMap>();
-    private AtomicBoolean needsUpdate = new AtomicBoolean(true);
-    private ChangeListener changeListener = new ChangeListener(this);
+    private final Map<Module, TokenMap> tokenMaps = new HashMap<Module, TokenMap>();
+    private final AtomicBoolean needsUpdate = new AtomicBoolean(true);
+    private final ChangeListener changeListener = new ChangeListener(this);
 
-    public JavaStepDefinitionsIndex(Project project) {
+    private JavaStepDefinitionsIndex(Project project) {
         manager = PsiManager.getInstance(project);
     }
 
@@ -96,17 +96,16 @@ public class JavaStepDefinitionsIndex {
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> getJavaStepDefinitions(@NotNull ScenarioStep step,
-                                                                 @NotNull TokenMap tokenMap) {
+    private static Collection<JavaStepDefinition> getJavaStepDefinitions(@NotNull ScenarioStep step,
+                                                                         @NotNull TokenMap tokenMap) {
         if (tokenMap.isEmpty()) return Collections.emptyList();
         final Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
 
-        final String storyLine = getStoryLineShrinked(step);
         final String text = step.getAnnotatedStoryLine();
 
         final List<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(text, true);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
-            if (stepDefinition != null /*&& stepDefinition.matches(storyLine) && stepDefinition.supportsStep(step)*/) {
+            if (stepDefinition != null) {
                 Integer currentHighestPriority =
                         getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);
@@ -120,7 +119,7 @@ public class JavaStepDefinitionsIndex {
         return definitionsByClass.values();
     }
 
-    private String getStoryLineShrinked(@NotNull final ScenarioStep step) {
+    private static String getStoryLineShrinked(@NotNull final ScenarioStep step) {
         JBehaveStepLine storyStepLine = step.getStoryStepLine();
         if (storyStepLine != null) {
             String storyLine = storyStepLine.getText();
@@ -141,7 +140,7 @@ public class JavaStepDefinitionsIndex {
     //    }
 
     @NotNull
-    public TokenMap loadStepsFor(@NotNull Module module) {
+    private TokenMap loadStepsFor(@NotNull Module module) {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
         PsiClass givenAnnotationClass = findStepAnnotation(Given.class.getName(), module, dependenciesScope);
@@ -179,41 +178,11 @@ public class JavaStepDefinitionsIndex {
         return null;
     }
 
-    private class ChangeListener implements PsiTreeChangeListener {
-        private JavaStepDefinitionsIndex theIndexer;
+    private static class ChangeListener extends PsiTreeChangeAdapter {
+        private final JavaStepDefinitionsIndex theIndexer;
 
         public ChangeListener(JavaStepDefinitionsIndex theIndexer) {
             this.theIndexer = theIndexer;
-        }
-
-        @Override
-        public void beforeChildAddition(@NotNull PsiTreeChangeEvent event) {
-
-        }
-
-        @Override
-        public void beforeChildRemoval(@NotNull PsiTreeChangeEvent event) {
-
-        }
-
-        @Override
-        public void beforeChildReplacement(@NotNull PsiTreeChangeEvent event) {
-
-        }
-
-        @Override
-        public void beforeChildMovement(@NotNull PsiTreeChangeEvent event) {
-
-        }
-
-        @Override
-        public void beforeChildrenChange(@NotNull PsiTreeChangeEvent event) {
-
-        }
-
-        @Override
-        public void beforePropertyChange(@NotNull PsiTreeChangeEvent event) {
-
         }
 
         private void changed(@NotNull PsiTreeChangeEvent event) {
@@ -255,9 +224,5 @@ public class JavaStepDefinitionsIndex {
 
         }
 
-        @Override
-        public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
-
-        }
     }
 }

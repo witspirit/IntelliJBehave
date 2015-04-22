@@ -21,12 +21,13 @@ import java.util.List;
 /**
  * Created by DeBritoD on 13.04.2015.
  */
-public class IndentChildrenBlock extends AbstractBlock {
-    protected static TokenSet ignore =
+class IndentChildrenBlock extends AbstractBlock {
+    static final TokenSet ignore =
             TokenSet.create(IJBehaveElementType.JB_TOKEN_NEWLINE, IJBehaveElementType.JB_TOKEN_SPACE,
                             TokenType.WHITE_SPACE);
 
-    protected static TokenSet leaf = TokenSet.create(IJBehaveElementType.JB_STEP_LINE, IJBehaveElementType.JB_STEP_PAR,
+    private static final TokenSet leaf =
+            TokenSet.create(IJBehaveElementType.JB_STEP_LINE, IJBehaveElementType.JB_STEP_PAR,
                                                      IJBehaveElementType.JB_DESCRIPTION,
                                                      IJBehaveElementType.JB_META_ELEMENT,
                                                      IJBehaveElementType.JB_NARRATIVE_TEXT,
@@ -34,12 +35,12 @@ public class IndentChildrenBlock extends AbstractBlock {
                                                      IJBehaveElementType.JB_SCENARIO_TITLE);
 
 
-    protected IndentingMappings indentingMappings;
-    protected SpacingBuilder spacingBuilder;
-    protected JBehaveCodeStyleSettings settings;
+    final IndentingMappings indentingMappings;
+    final SpacingBuilder spacingBuilder;
+    final JBehaveCodeStyleSettings settings;
 
-    public IndentChildrenBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
-                               @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
+    IndentChildrenBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
+                        @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
         super(node, null, null);
         this.settings = settings;
         this.indentingMappings = indentingMappings;

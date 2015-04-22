@@ -26,7 +26,7 @@ public class Scenario extends ASTWrapperPsiElement {
         return getText();
     }
 
-    public String getTitle() {
+    private String getTitle() {
         final JBehaveScenarioTitle scenarioTitle = ((JBehaveScenario) getOriginalElement()).getScenarioTitle();
         return scenarioTitle != null ? scenarioTitle.getText() : "";
     }

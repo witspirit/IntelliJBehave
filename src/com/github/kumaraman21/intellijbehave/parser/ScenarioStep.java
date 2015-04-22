@@ -76,7 +76,7 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
                 }
             }
             return type;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
 
         }
         return StepType.IGNORABLE;
@@ -87,12 +87,12 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
     }
 
     @Nullable
-    public ASTNode getKeyword() {
+    private ASTNode getKeyword() {
         //return getNode().findChildByType(StoryTokenType.STEP_TYPES);
         return getNode().findChildByType(IJBehaveElementType.JB_STEP_PAR);
     }
 
-    public String getStepText() {
+    private String getStepText() {
         int offset = getStepTextOffset();
         PsiElement firstChild = PsiTreeUtil.getChildOfType(this, JBehaveStepPar.class);
         PsiElement firstChild1 = PsiTreeUtil.getChildOfType(this, JBehaveStepArgument.class);
@@ -142,7 +142,7 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
         return keyword.getText();
     }
 
-    public int getStepTextOffset() {
+    private int getStepTextOffset() {
         String stepPrefix = getActualStepPrefix();
         return stepPrefix != null ? stepPrefix.length() + 1 : 0;
     }
@@ -327,7 +327,7 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
         String storyStepText = getStepText();
         String javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
         if (javaStepText == null) {
-            storyStepText = storyStepText + " dummy";
+            storyStepText += " dummy";
             javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
             if (javaStepText == null) return false;
         }

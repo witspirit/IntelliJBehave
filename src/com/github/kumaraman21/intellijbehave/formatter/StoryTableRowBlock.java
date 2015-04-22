@@ -26,7 +26,7 @@ public class StoryTableRowBlock extends IndentChildrenBlock {
     public StoryTableRowBlock(int[] columnWidths, ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
                               @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
         super(node, settings, spacingBuilder, indentingMappings);
-        this.columnWidths = columnWidths;
+        setColumnWidths(columnWidths);
     }
 
     public StoryTableRowBlock(ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
@@ -35,7 +35,8 @@ public class StoryTableRowBlock extends IndentChildrenBlock {
     }
 
     public void setColumnWidths(int[] columnWidths) {
-        this.columnWidths = columnWidths;
+        this.columnWidths = new int[columnWidths.length];
+        System.arraycopy(columnWidths, 0, this.columnWidths, 0, columnWidths.length);
     }
 
     @Override

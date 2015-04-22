@@ -88,11 +88,8 @@ public class JBehaveLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
     @Override
     public IndentOptionsEditor getIndentOptionsEditor() {
         JBehaveIndentOptionsEditor editor = new JBehaveIndentOptionsEditor();
-        //        editor.addIndentField("Meta element indent", "INDENT_META_ELEMENT", 6)
-        //              .addIndentField("Story path indent", "INDENT_STORY_PATH", 14);
-        //editor.addIndentField("Indent parents", "INDENT_PARENTS", 0);
-        editor.addIndentField("Indent children", "INDENT_LEAFS", 0);
-        editor.addIndentField("Indent narrative text", "INDENT_NARRATIVE_TEXT", 0);
+        editor.addIndentField("Indent children", "INDENT_LEAFS");
+        editor.addIndentField("Indent narrative text", "INDENT_NARRATIVE_TEXT");
         return editor;
     }
 

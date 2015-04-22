@@ -9,8 +9,8 @@ import java.util.Map;
  * Created by DeBritoD on 14.04.2015.
  */
 public class IndentingMappings {
-    private Map<IElementType, Integer> indents = new HashMap<IElementType, Integer>();
-    private int defaultIndent;
+    private final Map<IElementType, Integer> indents = new HashMap<IElementType, Integer>();
+    private final int defaultIndent;
 
     public IndentingMappings(int defaultIndent) {
         this.defaultIndent = defaultIndent;

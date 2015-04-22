@@ -17,18 +17,26 @@ public class StructureViewFactory implements PsiStructureViewFactory {
     @Override
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
         if (!(psiFile instanceof JBehaveFile)) return null;
-        return new TreeBasedStructureViewBuilder() {
-            @NotNull
-            @Override
-            public com.intellij.ide.structureView.StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                return new StructureViewModel(psiFile, editor);
-            }
+        return new MyTreeBasedStructureViewBuilder(psiFile);
 
-            @Override
-            public boolean isRootNodeShown() {
-                return false;
-            }
-        };
+    }
 
+    private static class MyTreeBasedStructureViewBuilder extends TreeBasedStructureViewBuilder {
+        private final PsiFile psiFile;
+
+        public MyTreeBasedStructureViewBuilder(PsiFile psiFile) {
+            this.psiFile = psiFile;
+        }
+
+        @NotNull
+        @Override
+        public com.intellij.ide.structureView.StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+            return new StructureViewModel(psiFile, editor);
+        }
+
+        @Override
+        public boolean isRootNodeShown() {
+            return false;
+        }
     }
 }

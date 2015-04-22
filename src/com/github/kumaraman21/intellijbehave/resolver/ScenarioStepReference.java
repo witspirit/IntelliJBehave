@@ -33,7 +33,7 @@ import java.util.*;
 public class ScenarioStepReference implements PsiPolyVariantReference {
     private final ScenarioStep myStep;
     private TextRange myRange = null;
-    private Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
+    private final Set<PsiAnnotation> theAnnotations = new HashSet<PsiAnnotation>();
 
     public ScenarioStepReference(@NotNull ScenarioStep element, @NotNull TextRange range) {
         myStep = element;
@@ -86,7 +86,7 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
         ResolveResult[] resolvedResults = multiResolve(false);
 
         for (ResolveResult resolveResult : resolvedResults) {
-            if (getElement().getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
+            if (myStep.getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
                 return true;
             }
         }
@@ -112,7 +112,7 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> resolveToDefinitions() {
+    private Collection<JavaStepDefinition> resolveToDefinitions() {
         return JavaStepDefinitionsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
 
@@ -121,7 +121,7 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
     }
 
     public Set<PsiAnnotation> getAnnotations() {
-        HashSet<PsiAnnotation> result = new HashSet<PsiAnnotation>();
+        Set<PsiAnnotation> result = new HashSet<PsiAnnotation>();
         result.addAll(theAnnotations);
         return result;
     }
@@ -140,18 +140,26 @@ public class ScenarioStepReference implements PsiPolyVariantReference {
             if (method != null && !resolvedElements.contains(method)) {
                 theAnnotations.add(resolvedStepDefinition.getAnnotation());
                 resolvedElements.add(method);
-                result.add(new ResolveResult() {
-                    public PsiElement getElement() {
-                        return method;
-                    }
-
-                    public boolean isValidResult() {
-                        return true;
-                    }
-                });
+                result.add(new MyResolveResult(method));
             }
         }
 
         return result.toArray(new ResolveResult[result.size()]);
+    }
+
+    private static class MyResolveResult implements ResolveResult {
+        private final PsiMethod method;
+
+        public MyResolveResult(PsiMethod method) {
+            this.method = method;
+        }
+
+        public PsiElement getElement() {
+            return method;
+        }
+
+        public boolean isValidResult() {
+            return true;
+        }
     }
 }

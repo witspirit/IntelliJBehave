@@ -14,15 +14,15 @@ import java.util.List;
  * Created by DeBritoD on 16.04.2015.
  */
 public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
-    private List<IndentField> indentFields = new ArrayList<IndentField>();
+    private final List<IndentField> indentFields = new ArrayList<IndentField>();
 
-    public JBehaveIndentOptionsEditor addIndentField(IndentField field) {
+    private JBehaveIndentOptionsEditor addIndentField(IndentField field) {
         indentFields.add(field);
         return this;
     }
 
-    public JBehaveIndentOptionsEditor addIndentField(String labelText, String fieldName, int defaultValue) {
-        return addIndentField(new IndentField(labelText, fieldName, defaultValue));
+    public JBehaveIndentOptionsEditor addIndentField(String labelText, String fieldName) {
+        return addIndentField(new IndentField(labelText, fieldName));
     }
 
     protected void addComponents() {
@@ -40,9 +40,9 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
             for (IndentField field : indentFields) {
                 if (field.isModified(customSettings)) return true;
             }
-        } catch (NoSuchFieldException n) {
+        } catch (NoSuchFieldException ignored) {
 
-        } catch (IllegalAccessException i) {
+        } catch (IllegalAccessException ignored) {
 
         }
         return false;
@@ -56,9 +56,9 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
                 field.apply(customSettings);
             }
 
-        } catch (NoSuchFieldException n) {
+        } catch (NoSuchFieldException ignored) {
 
-        } catch (IllegalAccessException i) {
+        } catch (IllegalAccessException ignored) {
 
         }
     }
@@ -72,9 +72,9 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
             for (IndentField field : indentFields) {
                 field.reset(customSettings);
             }
-        } catch (NoSuchFieldException n) {
+        } catch (NoSuchFieldException ignored) {
 
-        } catch (IllegalAccessException i) {
+        } catch (IllegalAccessException ignored) {
 
         }
     }
@@ -87,16 +87,14 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
     }
 
     public static class IndentField {
-        private String labelText;
+        private final String labelText;
         private JLabel label;
         private JTextField textField;
-        private int defaultValue;
-        private String fieldName;
+        private final String fieldName;
 
-        public IndentField(String labelText, String fieldName, int defaultValue) {
+        public IndentField(String labelText, String fieldName) {
             this.labelText = labelText;
             this.fieldName = fieldName;
-            this.defaultValue = defaultValue;
         }
 
         public void createUi() {
@@ -125,17 +123,17 @@ public class JBehaveIndentOptionsEditor extends SmartIndentOptionsEditor {
         }
 
         public void apply(JBehaveCodeStyleSettings settings) throws NoSuchFieldException, IllegalAccessException {
-            int value = getFieldValue(textField, Integer.MIN_VALUE, 6);
+            int value = getFieldValue(textField);
             Class<? extends JBehaveCodeStyleSettings> settingsClass = settings.getClass();
             Field field = settingsClass.getField(fieldName);
             field.setInt(settings, value);
         }
 
-        protected int getFieldValue(JTextField field, int minValue, int defValue) {
+        int getFieldValue(JTextField field) {
             try {
-                return Math.max(Integer.parseInt(field.getText()), minValue);
+                return Math.max(Integer.parseInt(field.getText()), Integer.MIN_VALUE);
             } catch (NumberFormatException e) {
-                return defValue;
+                return 0;
             }
         }
     }

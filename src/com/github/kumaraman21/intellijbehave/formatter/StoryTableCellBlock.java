@@ -15,7 +15,7 @@ import java.util.List;
  * Created by DeBritoD on 20.03.2015.
  */
 public class StoryTableCellBlock extends IndentChildrenBlock {
-    private int columnNr;
+    private final int columnNr;
 
     public StoryTableCellBlock(int columnNr, ASTNode node, @NotNull JBehaveCodeStyleSettings settings,
                                @NotNull SpacingBuilder spacingBuilder, @NotNull IndentingMappings indentingMappings) {
@@ -38,7 +38,7 @@ public class StoryTableCellBlock extends IndentChildrenBlock {
 
     @Nullable
     @Override
-    public Spacing getSpacing(Block child1, Block child2) {
+    public Spacing getSpacing(Block child1, @NotNull Block child2) {
         return null;
     }
 

@@ -43,7 +43,7 @@ public class JBehaveSettingsPanel {
     private JLabel storyRunnerLabel;
     private TextFieldWithBrowseButton storyRunnerField;
 
-    private JBehaveSettings jBehaveSettings;
+    private final JBehaveSettings jBehaveSettings;
 
     public JBehaveSettingsPanel(Project project) {
         jBehaveSettings = JBehaveSettings.getInstance(project);
@@ -119,7 +119,7 @@ public class JBehaveSettingsPanel {
     }
 
     private class BrowseMainClassListener implements ActionListener {
-        private TextFieldWithBrowseButton textField;
+        private final TextFieldWithBrowseButton textField;
 
         public BrowseMainClassListener(TextFieldWithBrowseButton textField) {
             this.textField = textField;

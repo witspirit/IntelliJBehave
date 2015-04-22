@@ -34,7 +34,8 @@ public class JBehaveConfigurable implements SearchableConfigurable {
     @NotNull
     @Override
     public String getId() {
-        return getHelpTopic();
+        String helpTopic = getHelpTopic();
+        return helpTopic != null ? helpTopic : "";
     }
 
     @Override

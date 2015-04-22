@@ -18,6 +18,7 @@ package com.github.kumaraman21.intellijbehave.template;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -30,9 +31,11 @@ import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 public class JBehaveTemplateLoaderComponent implements ApplicationComponent {
     @Override
     public void initComponent() {
-        FileTemplate template = FileTemplateManager.getInstance().getTemplate(JBEHAVE_FILE_TYPE.getName());
+        FileTemplate template = FileTemplateManager.getInstance(ProjectManager.getInstance().getDefaultProject())
+                                                   .getTemplate(JBEHAVE_FILE_TYPE.getName());
         if (template == null) {
-            template = FileTemplateManager.getInstance().addTemplate(JBEHAVE_FILE_TYPE.getName(),
+            template = FileTemplateManager.getInstance(ProjectManager.getInstance().getDefaultProject())
+                                          .addTemplate(JBEHAVE_FILE_TYPE.getName(),
                     JBEHAVE_FILE_TYPE.getDefaultExtension());
 
             InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");

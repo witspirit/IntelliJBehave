@@ -33,12 +33,11 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
     }
 
     @Override
-    public boolean canProcessElement(PsiElement element) {
+    public boolean canProcessElement(@NotNull PsiElement element) {
         ASTNode node = element.getNode();
         if (node != null) {
             IElementType type = node.getElementType();
-            return type != null &&
-                    (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT);
+            return (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT);
         }
         return false;
     }
@@ -68,8 +67,6 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
             PsiFile psiFile = PsiFileFactory.getInstance(element.getProject())
                                             .createFileFromText("dummy.story", JBehaveFileType.JBEHAVE_FILE_TYPE,
                                                                 String.format(format, newName));
-            PsiElement[] injectElements = type == IJBehaveElementType.JB_TOKEN_INJECT ? getInjectElements(psiFile) :
-                    getUserInjectElements(psiFile);
             List<PsiElement> elements = getElements(psiFile);
             if (!elements.isEmpty()) {
                 element.replace(elements.get(0));
@@ -80,7 +77,7 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
     @NotNull
     @Override
     public Collection<PsiReference> findReferences(PsiElement element) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -121,21 +118,11 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
     }
 
     private PsiElement[] getUserInjectElements(PsiFile containingFile) {
-        return PsiTreeUtil.collectElements(containingFile, new PsiElementFilter() {
-            @Override
-            public boolean isAccepted(PsiElement element) {
-                return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_USER_INJECT;
-            }
-        });
+        return PsiTreeUtil.collectElements(containingFile, new MyPsiElementFilter2());
     }
 
     private PsiElement[] getInjectElements(PsiFile containingFile) {
-        return PsiTreeUtil.collectElements(containingFile, new PsiElementFilter() {
-            @Override
-            public boolean isAccepted(PsiElement element) {
-                return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_INJECT;
-            }
-        });
+        return PsiTreeUtil.collectElements(containingFile, new MyPsiElementFilter());
     }
 
     @Nullable
@@ -173,5 +160,19 @@ public class JBehaveRenameInjectProcessor extends RenamePsiElementProcessor {
     @Override
     public boolean forcesShowPreview() {
         return true;
+    }
+
+    private static class MyPsiElementFilter implements PsiElementFilter {
+        @Override
+        public boolean isAccepted(PsiElement element) {
+            return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_INJECT;
+        }
+    }
+
+    private static class MyPsiElementFilter2 implements PsiElementFilter {
+        @Override
+        public boolean isAccepted(PsiElement element) {
+            return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_USER_INJECT;
+        }
     }
 }

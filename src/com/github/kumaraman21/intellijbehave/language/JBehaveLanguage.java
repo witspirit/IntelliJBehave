@@ -28,11 +28,13 @@ public class JBehaveLanguage extends CompositeLanguage {
     private JBehaveLanguage() {
         super("JBehave", "text/jbehave");
         SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this,
-                new SingleLazyInstanceSyntaxHighlighterFactory() {
-                    @NotNull
-                    protected SyntaxHighlighter createHighlighter() {
-                        return new JBehaveSyntaxHighlighter();
-                    }
-                });
+                                                                       new MySingleLazyInstanceSyntaxHighlighterFactory());
+    }
+
+    private static class MySingleLazyInstanceSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+        @NotNull
+        protected SyntaxHighlighter createHighlighter() {
+            return new JBehaveSyntaxHighlighter();
+        }
     }
 }

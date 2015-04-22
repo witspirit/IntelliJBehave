@@ -18,8 +18,8 @@ import java.util.Collection;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class StructureViewElement implements StructureViewTreeElement {
-    private NavigatablePsiElement element;
+class StructureViewElement implements StructureViewTreeElement {
+    private final NavigatablePsiElement element;
 
     public StructureViewElement(NavigatablePsiElement element) {
         this.element = element;
@@ -51,25 +51,7 @@ public class StructureViewElement implements StructureViewTreeElement {
     public ItemPresentation getPresentation() {
         ItemPresentation presentation = element.getPresentation();
         if (presentation == null) {
-            presentation = new ItemPresentation() {
-                @Nullable
-                @Override
-                public String getPresentableText() {
-                    return null;
-                }
-
-                @Nullable
-                @Override
-                public String getLocationString() {
-                    return null;
-                }
-
-                @Nullable
-                @Override
-                public Icon getIcon(boolean unused) {
-                    return null;
-                }
-            };
+            presentation = new MyItemPresentation();
         }
         return presentation;
     }
@@ -83,13 +65,33 @@ public class StructureViewElement implements StructureViewTreeElement {
         } else if (element instanceof Scenario) {
             structureViewChildren = ((Scenario) element).getSteps();
         } else return EMPTY_ARRAY;
-        return ContainerUtil.map2Array(structureViewChildren, TreeElement.class,
-                new Function<PsiElement, TreeElement>() {
-                    @Override
-                    public TreeElement fun(PsiElement psiElement) {
-                        return new StructureViewElement((NavigatablePsiElement) psiElement);
-                    }
-                });
+        return ContainerUtil.map2Array(structureViewChildren, TreeElement.class, new PsiElementTreeElementFunction());
     }
 
+    private static class PsiElementTreeElementFunction implements Function<PsiElement, TreeElement> {
+        @Override
+        public TreeElement fun(PsiElement psiElement) {
+            return new StructureViewElement((NavigatablePsiElement) psiElement);
+        }
+    }
+
+    private static class MyItemPresentation implements ItemPresentation {
+        @Nullable
+        @Override
+        public String getPresentableText() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public String getLocationString() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Icon getIcon(boolean unused) {
+            return null;
+        }
+    }
 }

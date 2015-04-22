@@ -34,18 +34,7 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
     @NotNull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, "JBehave") {
-            @Override
-            protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
-                return new JBehaveCodeStyleMainPanel(getCurrentSettings(), settings);
-            }
-
-            @Nullable
-            @Override
-            public String getHelpTopic() {
-                return null;
-            }
-        };
+        return new MyCodeStyleAbstractConfigurable(settings, originalSettings);
     }
 
     private static class JBehaveCodeStyleMainPanel extends TabbedLanguageCodeStylePanel {
@@ -62,5 +51,22 @@ public class JBehaveCodeStyleSettingsProvider extends CodeStyleSettingsProvider 
             //addTab(new JsonCodeStylePanel(settings));
         }
 
+    }
+
+    private static class MyCodeStyleAbstractConfigurable extends CodeStyleAbstractConfigurable {
+        public MyCodeStyleAbstractConfigurable(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
+            super(settings, originalSettings, "JBehave");
+        }
+
+        @Override
+        protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+            return new JBehaveCodeStyleMainPanel(getCurrentSettings(), settings);
+        }
+
+        @Nullable
+        @Override
+        public String getHelpTopic() {
+            return null;
+        }
     }
 }

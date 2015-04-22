@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.refactoring.actions.BaseRefactoringAction;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -47,7 +48,7 @@ public class JBehaveRenameStepParameterHandler extends PsiElementRenameHandler {
     }
 
     @Override
-    public void invoke(Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement inject = getStepParameter(editor, file);
         if (inject != null) {
             editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
@@ -58,7 +59,7 @@ public class JBehaveRenameStepParameterHandler extends PsiElementRenameHandler {
     }
 
     @Override
-    public void invoke(Project project, PsiElement[] elements, DataContext dataContext) {
+    public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
         PsiElement psiAnnotation = getStepParameter(dataContext);
         if (psiAnnotation == null) {
             super.invoke(project, elements, dataContext);

@@ -79,14 +79,14 @@ public class JBehaveFoldingBuilder extends CustomFoldingBuilder {
     }
 
     @Override
-    protected String getLanguagePlaceholderText(ASTNode node, TextRange range) {
+    protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range) {
         if (node.getElementType() == IJBehaveElementType.JB_TABLE) return "Table";
         if (node.getElementType() == IJBehaveElementType.JB_DESCRIPTION) return "Description";
         return "...";
     }
 
     @Override
-    protected boolean isRegionCollapsedByDefault(ASTNode node) {
+    protected boolean isRegionCollapsedByDefault(@NotNull ASTNode node) {
         return false;
     }
 }

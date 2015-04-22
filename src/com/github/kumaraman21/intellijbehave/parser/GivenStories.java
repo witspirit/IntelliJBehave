@@ -18,6 +18,7 @@ package com.github.kumaraman21.intellijbehave.parser;
 import com.github.kumaraman21.intellijbehave.language.JBehaveFileType;
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveGivenStories;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveStoryPaths;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
@@ -34,11 +35,12 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 public class GivenStories extends ParserRule {
 
     private static final Key<Boolean> hasStories = new Key<Boolean>("hasStories");
-    private Set<PsiFile> myFiles = new TreeSet<PsiFile>();
+    private final Set<PsiFile> myFiles = new TreeSet<PsiFile>();
 
     public GivenStories(@NotNull ASTNode node) {
         super(node);
@@ -50,21 +52,21 @@ public class GivenStories extends ParserRule {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
 
-    public String getValue() {
+    private String getValue() {
         String text = getNode().getText().trim();
         int i = text.lastIndexOf(',');
         if (i >= 0) {
-            return text.substring(0, i);
+            text = text.substring(0, i);
         }
         return text;
     }
 
-    public String getFileName() {
+    private String getFileName() {
         String[] fileNames = getFileNames();
         return fileNames[fileNames.length - 1];
     }
 
-    public String[] getFileNames() {
+    private String[] getFileNames() {
         String text = getValue();
         String[] split = text.split("/");
         int lastIdx = split.length - 1;
@@ -146,6 +148,8 @@ public class GivenStories extends ParserRule {
         return getBiggestStoryTree(file.getOriginalFile().getParent());
     }
 
+    private static final Pattern pattern = Pattern.compile("\\s+");
+
     @NotNull
     @Override
     public ItemPresentation getPresentation() {
@@ -153,15 +157,12 @@ public class GivenStories extends ParserRule {
             @Nullable
             @Override
             public String getPresentableText() {
-                String text = "";
-
-                try {
-                    text = ((JBehaveGivenStories) getOriginalElement()).getStoryPaths().getText();
-                    text = text.replaceAll("\\s+", " ");
-                } catch (NullPointerException e) {
-                    text = "";
+                JBehaveGivenStories givenStories = (JBehaveGivenStories) getOriginalElement();
+                JBehaveStoryPaths storyPaths = givenStories.getStoryPaths();
+                if (storyPaths != null) {
+                    return pattern.matcher(storyPaths.getText()).replaceAll(" ");
                 }
-                return text;
+                return "";
             }
 
             @Nullable

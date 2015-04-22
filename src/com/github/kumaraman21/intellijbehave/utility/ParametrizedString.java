@@ -17,17 +17,17 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
     private final String content;
     private final String parameterPrefix;
-    private List<Token> tokens = new ArrayList<Token>();
-    private List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
-    private static Pattern dollarPattern = Pattern.compile("(\\$\\w*)(\\W|\\Z)", Pattern.DOTALL);
-    private static Pattern bracketPattern = Pattern.compile("(<\\w*>)(\\W|\\Z)", Pattern.DOTALL);
+    private final List<Token> tokens = new ArrayList<Token>();
+    private final List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
+    private static final Pattern dollarPattern = Pattern.compile("(\\$\\w*)(\\W|\\Z)", Pattern.DOTALL);
+    private static final Pattern bracketPattern = Pattern.compile("(<\\w*>)(\\W|\\Z)", Pattern.DOTALL);
 
     public ParametrizedString(String content) {
         this(content, "$");
     }
 
 
-    public ParametrizedString(String content, String parameterPrefix) {
+    private ParametrizedString(String content, String parameterPrefix) {
         if (content == null) {
             throw new IllegalArgumentException("Content cannot be null");
         }
@@ -60,7 +60,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return (obj instanceof ParametrizedString) && isSameAs((ParametrizedString) obj);
     }
 
-    public boolean isSameAs(ParametrizedString other) {
+    private boolean isSameAs(ParametrizedString other) {
         return other.content.equals(content);
     }
 
@@ -94,14 +94,6 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
     }
 
-    public String toStringIdentifiers() {
-        List<String> result = new ArrayList<String>();
-        for (Token token : tokens) {
-            result.add(token.value().trim());
-        }
-        return StringUtils.join(result, " ");
-    }
-
     public String toStringWithoutIdentifiers() {
         List<String> result = new ArrayList<String>();
         for (Token token : tokensWithoutIdentifier) {
@@ -120,11 +112,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return tokens.get(index);
     }
 
-    public int getTokenCount() {
-        return tokens.size();
-    }
-
-    public WeightChain calculateWeightChain(String input) {
+    private WeightChain calculateWeightChain(String input) {
         WeightChain chain = acceptsBeginning(0, input, 0);
         chain.input = input;
         chain.collectWeights();
@@ -222,7 +210,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     public String complete(String input, boolean hasPostParameter) {
         List<ContentToken> builder = new ArrayList<ContentToken>();
         List<StringToken> myTokens = new ArrayList<StringToken>();
-        ArrayList<ContentToken> inputTokens = new ArrayList<ContentToken>();
+        List<ContentToken> inputTokens = new ArrayList<ContentToken>();
 
         putInWordTokens(myTokens);
 
@@ -300,7 +288,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return sb.toString();
     }
 
-    private static Pattern pattern = Pattern.compile("([\\S&&[^:]]+|[\\W&&[^\\s]])", Pattern.DOTALL);
+    private static final Pattern pattern = Pattern.compile("([\\S&&[^:]]+|[\\W&&[^\\s]])", Pattern.DOTALL);
     //private static Pattern injectPattern = Pattern.compile("(<.+>)", Pattern.DOTALL);
 
     public static List<ContentToken> split(final String text) {
@@ -347,7 +335,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return maybeInject;
     }
 
-    public void putInWordTokens(Collection<StringToken> myTokens) {
+    private void putInWordTokens(Collection<StringToken> myTokens) {
         for (Token token : tokens) {
             String value = token.value();
             if (token.isIdentifier) {
@@ -585,17 +573,17 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
 
         public String value() {
-            return content.substring(getOffset(), getOffset() + getLength());
+            return content.substring(offset, offset + length);
         }
 
         @Override
         public String toString() {
-            return "<<" + (isIdentifier() ? "$" : "") + value() + ">>";
+            return "<<" + (isIdentifier ? "$" : "") + value() + ">>";
         }
 
         public boolean regionMatches(int toffset, String other, int ooffset, int len) {
             try {
-                return normalize(content, getOffset() + toffset, len).equalsIgnoreCase(normalize(other, ooffset, len));
+                return normalize(content, offset + toffset, len).equalsIgnoreCase(normalize(other, ooffset, len));
             } catch (final java.lang.StringIndexOutOfBoundsException e) {
                 return false;
             }
@@ -637,7 +625,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
             Iterator<ContentToken> it = tokens.iterator();
             if (it.hasNext()) {
                 ContentToken next = it.next();
-                content = next.getContent();
+                content = next.content;
                 start = next.start;
                 while (it.hasNext()) {
                     next = it.next();
@@ -666,7 +654,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         }
 
         public String value() {
-            return content.substring(getStart(), getEnd());
+            return content.substring(start, end);
         }
 
         @Override

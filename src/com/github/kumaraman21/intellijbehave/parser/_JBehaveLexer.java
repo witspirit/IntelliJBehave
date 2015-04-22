@@ -19,7 +19,7 @@ public class _JBehaveLexer implements FlexLexer {
   private static final int ZZ_BUFFERSIZE = 16384;
 
   /** lexical states */
-  public static final int YYINITIAL = 0;
+  private static final int YYINITIAL = 0;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -889,7 +889,7 @@ public class _JBehaveLexer implements FlexLexer {
   /**
    * Returns the length of the matched text region.
    */
-  public final int yylength() {
+  private int yylength() {
     return zzMarkedPos-zzStartRead;
   }
 

@@ -26,19 +26,12 @@ public class MetaStatement extends ParserRule {
             @Nullable
             @Override
             public String getPresentableText() {
-                String text = "";
-
-                try {
-                    List<JBehaveMetaElement> elements =
-                            ((JBehaveMetaStatement) getOriginalElement()).getMetaElementList();
-                    if (!elements.isEmpty()) {
-                        text = elements.get(0).getText();
-                    } else text = "";
-                    text = text.replaceAll("\\s+", " ");
-                } catch (NullPointerException e) {
-                    text = "";
+                List<JBehaveMetaElement> elements = ((JBehaveMetaStatement) getOriginalElement()).getMetaElementList();
+                if (!elements.isEmpty()) {
+                    return elements.get(0).getText().replaceAll("\\s+", " ");
                 }
-                return text;
+                return "";
+
             }
 
             @Nullable

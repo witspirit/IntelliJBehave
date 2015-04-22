@@ -9,10 +9,10 @@ import java.util.*;
  */
 public class CharTree<T> {
     private final int key;
-    private Map<Integer, CharTree<T>> children = new HashMap<Integer, CharTree<T>>();
+    private final Map<Integer, CharTree<T>> children = new HashMap<Integer, CharTree<T>>();
     private T value;
 
-    public CharTree(int key) {
+    private CharTree(int key) {
         this(key, null);
     }
 
@@ -26,7 +26,7 @@ public class CharTree<T> {
         return lookupValue(seq, 0);
     }
 
-    public T lookupValue(CharSequence seq, int offset) {
+    private T lookupValue(CharSequence seq, int offset) {
         return lookup(seq, offset).value;
     }
 
@@ -47,7 +47,7 @@ public class CharTree<T> {
         return new Entry<T>(found, i - offset);
     }
 
-    public void print(int level) {
+    void print(int level) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
             builder.append(" |  ");
@@ -123,11 +123,8 @@ public class CharTree<T> {
             if (length != entry.length) {
                 return false;
             }
-            if (value != null ? !value.equals(entry.value) : entry.value != null) {
-                return false;
-            }
+            return !(value != null ? !value.equals(entry.value) : entry.value != null);
 
-            return true;
         }
 
         @Override

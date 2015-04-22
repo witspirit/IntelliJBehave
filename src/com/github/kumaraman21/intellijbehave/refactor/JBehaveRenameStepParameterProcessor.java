@@ -34,11 +34,11 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
     }
 
     @Override
-    public boolean canProcessElement(PsiElement element) {
+    public boolean canProcessElement(@NotNull PsiElement element) {
         ASTNode node = element.getNode();
         if (node != null) {
             IElementType type = node.getElementType();
-            if (type != null && type == IJBehaveElementType.JB_TOKEN_WORD) {
+            if (type == IJBehaveElementType.JB_TOKEN_WORD) {
                 Boolean userData = element.getUserData(ParserRule.isStepParameter);
                 return userData != null && userData;
             }
@@ -83,7 +83,7 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
     @NotNull
     @Override
     public Collection<PsiReference> findReferences(PsiElement element) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -115,12 +115,7 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
     }
 
     private PsiElement[] getStepParameters(PsiFile containingFile) {
-        return PsiTreeUtil.collectElements(containingFile, new PsiElementFilter() {
-            @Override
-            public boolean isAccepted(PsiElement element) {
-                return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD;
-            }
-        });
+        return PsiTreeUtil.collectElements(containingFile, new MyPsiElementFilter());
     }
 
     @Nullable
@@ -158,5 +153,12 @@ public class JBehaveRenameStepParameterProcessor extends RenamePsiElementProcess
     @Override
     public boolean forcesShowPreview() {
         return true;
+    }
+
+    private static class MyPsiElementFilter implements PsiElementFilter {
+        @Override
+        public boolean isAccepted(PsiElement element) {
+            return element.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD;
+        }
     }
 }

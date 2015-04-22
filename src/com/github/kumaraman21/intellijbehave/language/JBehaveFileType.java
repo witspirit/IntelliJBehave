@@ -25,7 +25,7 @@ import static com.github.kumaraman21.intellijbehave.language.JBehaveLanguage.JBE
 public class JBehaveFileType extends LanguageFileType {
     public static final JBehaveFileType JBEHAVE_FILE_TYPE = new JBehaveFileType();
 
-    protected JBehaveFileType() {
+    private JBehaveFileType() {
         super(JBEHAVE_LANGUAGE);
     }
 

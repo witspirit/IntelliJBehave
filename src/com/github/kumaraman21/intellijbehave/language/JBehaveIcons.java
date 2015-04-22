@@ -4,7 +4,8 @@ import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
-public class JBehaveIcons {
+public enum JBehaveIcons {
+    ;
     //https://github.com/jbehave/jbehave-eclipse/blob/master/org.jbehave.eclipse/icons/bdd-jb-orange-red-green.png.
     public static final Icon JB = IconLoader.getIcon("/fileTypes/bdd-jb-orange-red-green.png"); // 16x16
     public static final Icon SCENARIO = IconLoader.getIcon("/fileTypes/bdd-s-darkpink.png"); // 16x16

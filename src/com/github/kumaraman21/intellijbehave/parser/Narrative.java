@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.parser;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveNarrative;
+import com.github.kumaraman21.intellijbehave.psi.JBehaveNarrativeText;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import org.jetbrains.annotations.NotNull;
@@ -24,15 +25,11 @@ public class Narrative extends ParserRule {
             @Nullable
             @Override
             public String getPresentableText() {
-                String text = "";
-
-                try {
-                    text = ((JBehaveNarrative) getOriginalElement()).getNarrativeText().getText();
-                    text = text.replaceAll("\\s+", " ");
-                } catch (NullPointerException e) {
-                    text = "";
+                JBehaveNarrativeText narrativeText = ((JBehaveNarrative) getOriginalElement()).getNarrativeText();
+                if (narrativeText != null) {
+                    return narrativeText.getText().replaceAll("\\s+", " ");
                 }
-                return text;
+                return "";
             }
 
             @Nullable

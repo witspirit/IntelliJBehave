@@ -26,8 +26,8 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
     private final StepPatternParser stepPatternParser = new RegexPrefixCapturingPatternParser();
 
     public JavaStepDefinition(PsiAnnotation annotation) {
-        myElementPointer = SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(
-                annotation);
+        myElementPointer =
+                SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation);
     }
 
     public boolean matches(String stepText) {
@@ -107,16 +107,12 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
             return null;
         }
 
-        String qualifiedName = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-            public String compute() {
-                return element.getQualifiedName();
-            }
-        });
+        String qualifiedName = ApplicationManager.getApplication().runReadAction(new StringComputable(element));
 
         return ANNOTATION_TO_STEP_TYPE_MAPPING.get(qualifiedName);
     }
 
-    private String toType(StepType type) {
+    private static String toType(StepType type) {
         switch (type) {
             case GIVEN:
                 return "Given";
@@ -168,7 +164,8 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
 
     @Override
     public String toString() {
-        return myElementPointer.getElement().getText();
+        PsiAnnotation element = myElementPointer.getElement();
+        return element != null ? element.getText() : "";
     }
 
     public Set<ParametrizedString> toPString() {
@@ -180,7 +177,7 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
     }
 
     @Override
-    public int compareTo(JavaStepDefinition other) {
+    public int compareTo(@NotNull JavaStepDefinition other) {
         StepType myType = getAnnotationType();
         StepType otherType = other.getAnnotationType();
         if (myType != otherType && myType != StepType.IGNORABLE && otherType != StepType.IGNORABLE) {
@@ -207,15 +204,29 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
     public Map<String, PsiType> mapNameToType() {
         Map<String, PsiType> mapNameToType = new HashMap<String, PsiType>();
         PsiMethod method = getAnnotatedMethod();
-        PsiParameterList parameterList = method.getParameterList();
-        PsiParameter[] parameters = parameterList.getParameters();
-        for (PsiParameter parameter : parameters) {
-            PsiTypeElement typeElement = parameter.getTypeElement();
-            if (typeElement != null) {
-                PsiType type = typeElement.getType();
-                mapNameToType.put(parameter.getName(), type);
+        if (method != null) {
+            PsiParameterList parameterList = method.getParameterList();
+            PsiParameter[] parameters = parameterList.getParameters();
+            for (PsiParameter parameter : parameters) {
+                PsiTypeElement typeElement = parameter.getTypeElement();
+                if (typeElement != null) {
+                    PsiType type = typeElement.getType();
+                    mapNameToType.put(parameter.getName(), type);
+                }
             }
         }
         return mapNameToType;
+    }
+
+    private static class StringComputable implements Computable<String> {
+        private final PsiAnnotation element;
+
+        public StringComputable(PsiAnnotation element) {
+            this.element = element;
+        }
+
+        public String compute() {
+            return element.getQualifiedName();
+        }
     }
 }

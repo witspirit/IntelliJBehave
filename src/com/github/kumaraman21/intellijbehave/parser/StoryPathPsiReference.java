@@ -72,7 +72,7 @@ public class StoryPathPsiReference implements PsiPolyVariantReference {
         ResolveResult[] resolvedResults = multiResolve(false);
 
         for (ResolveResult resolveResult : resolvedResults) {
-            if (getElement().getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
+            if (myElement.getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
                 return true;
             }
         }
@@ -126,16 +126,24 @@ public class StoryPathPsiReference implements PsiPolyVariantReference {
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         List<ResolveResult> result = new ArrayList<ResolveResult>();
         for (final PsiFile psiFile : myElement.getFiles()) {
-            result.add(new ResolveResult() {
-                public PsiElement getElement() {
-                    return psiFile;
-                }
-
-                public boolean isValidResult() {
-                    return true;
-                }
-            });
+            result.add(new MyResolveResult(psiFile));
         }
         return result.toArray(new ResolveResult[result.size()]);
+    }
+
+    private static class MyResolveResult implements ResolveResult {
+        private final PsiFile psiFile;
+
+        public MyResolveResult(PsiFile psiFile) {
+            this.psiFile = psiFile;
+        }
+
+        public PsiElement getElement() {
+            return psiFile;
+        }
+
+        public boolean isValidResult() {
+            return true;
+        }
     }
 }

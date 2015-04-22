@@ -66,9 +66,10 @@ public class JBehaveColorsAndFontsPage implements ColorSettingsPage {
         return ATTRS;
     }
 
+    private static final ColorDescriptor[] COLOR_DESCRIPTORS = new ColorDescriptor[0];
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
-        return new ColorDescriptor[0];
+        return COLOR_DESCRIPTORS;
     }
 
     @NotNull

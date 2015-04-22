@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by DeBritoD on 03.04.2015.
  */
-public class StructureViewModel extends StructureViewModelBase {
+class StructureViewModel extends StructureViewModelBase {
     public StructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
         super(psiFile, editor, new StructureViewElement(psiFile));
         withSorters(Sorter.ALPHA_SORTER);

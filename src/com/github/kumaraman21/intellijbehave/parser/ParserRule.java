@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ParserRule extends ASTWrapperPsiElement implements JBehaveElement {
-    public static Key<Boolean> isStepParameter = Key.create("JBehave.IsStepParameter");
+    public static final Key<Boolean> isStepParameter = Key.create("JBehave.IsStepParameter");
 
     public ParserRule(@NotNull ASTNode node) {
         super(node);

@@ -21,14 +21,14 @@ import javax.swing.*;
 /**
  * Created by DeBritoD on 08.04.2015.
  */
-public class SuggestionHolder extends FakePsiElement {
-    protected PsiElement psiElement;
+class SuggestionHolder extends FakePsiElement {
+    private final PsiElement psiElement;
 
-    public SuggestionHolder(PsiElement value) {
+    SuggestionHolder(PsiElement value) {
         this.psiElement = value;
     }
 
-    public PsiElement getPsiElement() {
+    PsiElement getPsiElement() {
         return psiElement;
     }
 
@@ -57,12 +57,12 @@ public class SuggestionHolder extends FakePsiElement {
     }
 
     @Override
-    public boolean textMatches(CharSequence text) {
+    public boolean textMatches(@NotNull CharSequence text) {
         return psiElement.textMatches(text);
     }
 
     @Override
-    public boolean textMatches(PsiElement element) {
+    public boolean textMatches(@NotNull PsiElement element) {
         return psiElement.textMatches(element);
     }
 
@@ -72,12 +72,12 @@ public class SuggestionHolder extends FakePsiElement {
     }
 
     @Override
-    public void accept(PsiElementVisitor visitor) {
+    public void accept(@NotNull PsiElementVisitor visitor) {
         psiElement.accept(visitor);
     }
 
     @Override
-    public void acceptChildren(PsiElementVisitor visitor) {
+    public void acceptChildren(@NotNull PsiElementVisitor visitor) {
         psiElement.acceptChildren(visitor);
     }
 
@@ -87,22 +87,24 @@ public class SuggestionHolder extends FakePsiElement {
     }
 
     @Override
-    public PsiElement add(PsiElement element) throws IncorrectOperationException {
+    public PsiElement add(@NotNull PsiElement element) throws IncorrectOperationException {
         return psiElement.add(element);
     }
 
     @Override
-    public PsiElement addBefore(PsiElement element, @Nullable PsiElement anchor) throws IncorrectOperationException {
+    public PsiElement addBefore(@NotNull PsiElement element,
+                                @Nullable PsiElement anchor) throws IncorrectOperationException {
         return psiElement.addBefore(element, anchor);
     }
 
     @Override
-    public PsiElement addAfter(PsiElement element, @Nullable PsiElement anchor) throws IncorrectOperationException {
+    public PsiElement addAfter(@NotNull PsiElement element,
+                               @Nullable PsiElement anchor) throws IncorrectOperationException {
         return psiElement.addAfter(element, anchor);
     }
 
     @Override
-    public void checkAdd(PsiElement element) throws IncorrectOperationException {
+    public void checkAdd(@NotNull PsiElement element) throws IncorrectOperationException {
         psiElement.checkAdd(element);
     }
 
@@ -112,7 +114,7 @@ public class SuggestionHolder extends FakePsiElement {
     }
 
     @Override
-    public PsiElement addRangeBefore(PsiElement first, PsiElement last,
+    public PsiElement addRangeBefore(@NotNull PsiElement first, @NotNull PsiElement last,
                                      PsiElement anchor) throws IncorrectOperationException {
         return psiElement.addRangeBefore(first, last, anchor);
     }
@@ -139,7 +141,7 @@ public class SuggestionHolder extends FakePsiElement {
     }
 
     @Override
-    public PsiElement replace(PsiElement newElement) throws IncorrectOperationException {
+    public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
         return psiElement.replace(newElement);
     }
 
@@ -167,18 +169,18 @@ public class SuggestionHolder extends FakePsiElement {
 
     @Override
     @Nullable
-    public <T> T getCopyableUserData(Key<T> key) {
+    public <T> T getCopyableUserData(@NotNull Key<T> key) {
         return psiElement.getCopyableUserData(key);
     }
 
     @Override
-    public <T> void putCopyableUserData(Key<T> key, @Nullable T value) {
+    public <T> void putCopyableUserData(@NotNull Key<T> key, @Nullable T value) {
         psiElement.putCopyableUserData(key, value);
     }
 
     @Override
-    public boolean processDeclarations(PsiScopeProcessor processor, ResolveState state, @Nullable PsiElement lastParent,
-                                       PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state,
+                                       @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         return psiElement.processDeclarations(processor, state, lastParent, place);
     }
 
@@ -224,17 +226,17 @@ public class SuggestionHolder extends FakePsiElement {
 
     @Override
     @Nullable
-    public <T> T getUserData(Key<T> key) {
+    public <T> T getUserData(@NotNull Key<T> key) {
         return psiElement.getUserData(key);
     }
 
     @Override
-    public <T> void putUserData(Key<T> key, @Nullable T value) {
+    public <T> void putUserData(@NotNull Key<T> key, @Nullable T value) {
         psiElement.putUserData(key, value);
     }
 
     @Override
-    public PsiElement setName(String name) throws IncorrectOperationException {
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         return this;
     }
 

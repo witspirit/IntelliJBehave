@@ -8,7 +8,7 @@ import com.intellij.refactoring.rename.RenameDialog;
 /**
  * Created by DeBritoD on 18.03.2015.
  */
-public class JBehaveAnnotationRenameDialog extends RenameDialog {
+class JBehaveAnnotationRenameDialog extends RenameDialog {
     public JBehaveAnnotationRenameDialog(Project project, PsiElement psiElement, PsiElement nameSuggestionContext,
                                          Editor editor) {
         super(project, psiElement, nameSuggestionContext, editor);

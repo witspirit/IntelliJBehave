@@ -30,7 +30,7 @@ import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANN
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.*;
 
-public class StepDefinitionAnnotationConverter {
+class StepDefinitionAnnotationConverter {
 
     private static String getTextFromValue(PsiElement value) {
         return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
@@ -82,10 +82,20 @@ public class StepDefinitionAnnotationConverter {
                                                              final PsiAnnotation annotation) {
 
         return FluentIterable.from(new PatternVariantBuilder(annotationText).allVariants()).transform(
-                new Function<String, StepDefinitionAnnotation>() {
-                    public StepDefinitionAnnotation apply(String variant) {
-                        return new StepDefinitionAnnotation(stepType, variant, annotation);
-                    }
-                }).toSet();
+                new StringStepDefinitionAnnotationFunction(stepType, annotation)).toSet();
+    }
+
+    private static class StringStepDefinitionAnnotationFunction implements Function<String, StepDefinitionAnnotation> {
+        private final StepType stepType;
+        private final PsiAnnotation annotation;
+
+        public StringStepDefinitionAnnotationFunction(StepType stepType, PsiAnnotation annotation) {
+            this.stepType = stepType;
+            this.annotation = annotation;
+        }
+
+        public StepDefinitionAnnotation apply(String variant) {
+            return new StepDefinitionAnnotation(stepType, variant, annotation);
+        }
     }
 }

@@ -54,7 +54,7 @@ public class StepParameterSuggestionHolder extends SuggestionHolder {
         return sb.toString();
     }
 
-    public static Deque<PsiElement> getSiblings(PsiElement element) {
+    private static Deque<PsiElement> getSiblings(PsiElement element) {
         Deque<PsiElement> elements = new LinkedList<PsiElement>();
         elements.add(element);
         addTillFirstSibling(element, elements);
