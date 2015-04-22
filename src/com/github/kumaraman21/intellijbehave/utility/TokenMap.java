@@ -102,6 +102,7 @@ public class TokenMap {
             }
             ++it;
         }
+        //The rest of the input could be a parameter. This will be solved in ParametrizedString.
         if (it >= split.size() && strict && leafToken != null) {
             return Collections.singletonList(leafToken);
         }

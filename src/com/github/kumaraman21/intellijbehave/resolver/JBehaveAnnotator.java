@@ -43,11 +43,13 @@ public class JBehaveAnnotator implements Annotator {
             Iterator<JavaStepDefinition> it =
                     JavaStepDefinitionsIndex.getInstance(step.getProject()).findStepDefinitions(step).iterator();
             if (it.hasNext()) {
-                annotateParameters(step, it.next(), annotationHolder);
+                try {
+                    annotateParameters(step, it.next(), annotationHolder);
+                } catch (IllegalArgumentException e) {
+                    annotateStepError(annotationHolder, step);
+                }
             } else {
-                Annotation errorAnnotation = annotationHolder
-                        .createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
-                errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
+                annotateStepError(annotationHolder, step);
             }
 
         } else if (psiElement instanceof StoryPath) {
@@ -78,6 +80,12 @@ public class JBehaveAnnotator implements Annotator {
 
     }
 
+    private void annotateStepError(@NotNull AnnotationHolder annotationHolder, ScenarioStep step) {
+        Annotation errorAnnotation =
+                annotationHolder.createErrorAnnotation(step.getStoryStepLine(), "No definition found for the step");
+        errorAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_ERROR_NO_DEF_FOUND);
+    }
+
     private void annotateElement(PsiElement psiElement, AnnotationHolder annotationHolder) {
         TextAttributesKey textAttribute =
                 JBehaveSyntaxHighlighter.getTextAttribute(psiElement.getNode().getElementType());
@@ -87,7 +95,7 @@ public class JBehaveAnnotator implements Annotator {
     }
 
     private void annotateParameters(ScenarioStep step, JavaStepDefinition javaStepDefinition,
-                                    AnnotationHolder annotationHolder) {
+                                    AnnotationHolder annotationHolder) throws IllegalArgumentException {
         String storyStepText = step.getStepText();
         String javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
         if (javaStepText == null) {

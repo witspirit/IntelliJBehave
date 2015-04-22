@@ -373,82 +373,84 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
      * @return
      */
     @Nullable
-    public List<Pair<ContentToken, String>> getTokensOf(String input) {
+    public List<Pair<ContentToken, String>> getTokensOf(String input) throws IllegalArgumentException {
         List<Pair<ContentToken, String>> retVal = new ArrayList<Pair<ContentToken, String>>();
         Deque<StringToken> myTokens = new ArrayDeque<StringToken>();
 
         putInWordTokens(myTokens);
 
-        Deque<ContentToken> inputTokens = new ArrayDeque<ContentToken>();
-        inputTokens.addAll(split(input));
+        if (!myTokens.isEmpty()) {
+            Deque<ContentToken> inputTokens = new ArrayDeque<ContentToken>();
+            inputTokens.addAll(split(input));
 
-        boolean match = false;
-        final List<ContentToken> subs = new ArrayList<ContentToken>();
-        while (!inputTokens.isEmpty()) {
-            StringToken token = myTokens.removeFirst();
-            ContentToken currentInput = inputTokens.removeFirst();
-            if (token.isIdentifier()) {
-                if (!subs.isEmpty()) {
-                    retVal.add(Pair.create(new ContentToken(subs), (String) null));
-                    subs.clear();
-                }
-                if (myTokens.isEmpty()) {
-                    subs.add(currentInput);
-                    while (!inputTokens.isEmpty()) {
-                        currentInput = inputTokens.removeFirst();
-                        subs.add(currentInput);
+            boolean match = false;
+            final List<ContentToken> subs = new ArrayList<ContentToken>();
+            while (!inputTokens.isEmpty()) {
+                if (myTokens.isEmpty()) throw new IllegalArgumentException();
+                StringToken token = myTokens.removeFirst();
+                ContentToken currentInput = inputTokens.removeFirst();
+                if (token.isIdentifier()) {
+                    if (!subs.isEmpty()) {
+                        retVal.add(Pair.create(new ContentToken(subs), (String) null));
+                        subs.clear();
                     }
-                    retVal.add(Pair.create(new ContentToken(subs), token.getValue()));
-                    subs.clear();
-                    break;
-                }
-                if (inputTokens.isEmpty()) {
-                    return null;
-                }
-                //lookahead
-                StringToken lookAheadToken = myTokens.removeFirst();
-                while (lookAheadToken.isIdentifier() && !myTokens.isEmpty()) {
-                    lookAheadToken = myTokens.removeFirst();
-                }
-                String value = lookAheadToken.getValue();
-                //find a matching input token
-                match = false;
-                do {
-                    subs.add(currentInput);
-                    currentInput = inputTokens.removeFirst();
-                    boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput.value());
-                    boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput.value());
-                    if (b1 || b2) {
+                    if (myTokens.isEmpty()) {
+                        subs.add(currentInput);
+                        while (!inputTokens.isEmpty()) {
+                            currentInput = inputTokens.removeFirst();
+                            subs.add(currentInput);
+                        }
                         retVal.add(Pair.create(new ContentToken(subs), token.getValue()));
-                        match = true;
-                        myTokens.addFirst(lookAheadToken);
-                        inputTokens.addFirst(currentInput);
+                        subs.clear();
                         break;
                     }
+                    if (inputTokens.isEmpty()) {
+                        return null;
+                    }
+                    //lookahead
+                    StringToken lookAheadToken = myTokens.removeFirst();
+                    while (lookAheadToken.isIdentifier() && !myTokens.isEmpty()) {
+                        lookAheadToken = myTokens.removeFirst();
+                    }
+                    String value = lookAheadToken.getValue();
+                    //find a matching input token
+                    match = false;
+                    do {
+                        subs.add(currentInput);
+                        currentInput = inputTokens.removeFirst();
+                        boolean b1 = inputTokens.isEmpty() && value.startsWith(currentInput.value());
+                        boolean b2 = !inputTokens.isEmpty() && value.equals(currentInput.value());
+                        if (b1 || b2) {
+                            retVal.add(Pair.create(new ContentToken(subs), token.getValue()));
+                            match = true;
+                            myTokens.addFirst(lookAheadToken);
+                            inputTokens.addFirst(currentInput);
+                            break;
+                        }
 
-                } while (!inputTokens.isEmpty());
-                subs.clear();
-                if (!match) return null;
-            } else {
-                String tokenValue = token.getValue();
-                match = (inputTokens.isEmpty() && tokenValue.startsWith(currentInput.value())) ||
-                        (!inputTokens.isEmpty() && tokenValue.equals(currentInput.value()));
-                if (!match) {
-                    //maybe an inject
-                    String inject = unwrapInject(currentInput.value());
-                    match = (inputTokens.isEmpty() && tokenValue.startsWith(inject)) ||
-                            (!inputTokens.isEmpty() && tokenValue.equals(inject));
+                    } while (!inputTokens.isEmpty());
+                    subs.clear();
+                    if (!match) return null;
+                } else {
+                    String tokenValue = token.getValue();
+                    match = (inputTokens.isEmpty() && tokenValue.startsWith(currentInput.value())) ||
+                            (!inputTokens.isEmpty() && tokenValue.equals(currentInput.value()));
+                    if (!match) {
+                        //maybe an inject
+                        String inject = unwrapInject(currentInput.value());
+                        match = (inputTokens.isEmpty() && tokenValue.startsWith(inject)) ||
+                                (!inputTokens.isEmpty() && tokenValue.equals(inject));
+                    }
+                    if (!match) return null;
+                    subs.add(currentInput);
                 }
-                if (!match) return null;
-                subs.add(currentInput);
+            }
+            if (!match || !myTokens.isEmpty()) return null;
+            if (!subs.isEmpty()) {
+                retVal.add(Pair.create(new ContentToken(subs), (String) null));
+                subs.clear();
             }
         }
-        if (!match || !myTokens.isEmpty()) return null;
-        if (!subs.isEmpty()) {
-            retVal.add(Pair.create(new ContentToken(subs), (String) null));
-            subs.clear();
-        }
-
         return retVal;
     }
 
