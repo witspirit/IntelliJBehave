@@ -20,7 +20,6 @@ import com.github.kumaraman21.intellijbehave.parser.*;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -30,7 +29,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -75,29 +73,16 @@ public class JBehaveAnnotator implements Annotator {
                 infoAnnotation.setTextAttributes(JBehaveSyntaxHighlighter.JB_STORY_PATH);
             }
         } else if (psiElement instanceof ParserRule) {
-            ASTNode node = psiElement.getNode();
-            IElementType elementType = node.getElementType();
-            if (elementType != null) {
-                annotateElement(psiElement, annotationHolder, elementType);
-            }
+            annotateElement(psiElement, annotationHolder);
         }
 
     }
 
-
-    private void annotateElement(PsiElement psiElement, AnnotationHolder annotationHolder, IElementType elementType) {
-        TextAttributesKey textAttribute = JBehaveSyntaxHighlighter.getTextAttribute(elementType);
+    private void annotateElement(PsiElement psiElement, AnnotationHolder annotationHolder) {
+        TextAttributesKey textAttribute =
+                JBehaveSyntaxHighlighter.getTextAttribute(psiElement.getNode().getElementType());
         if (textAttribute != null) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(textAttribute);
-        }
-        if (elementType == IJBehaveElementType.JB_TABLE_CELL || elementType == IJBehaveElementType.JB_TABLE_ROW) {
-            PsiElement parent = psiElement.getParent();
-            if (parent != null) {
-                PsiElement[] children = parent.getChildren();
-                if (children.length > 0 && children[0] == psiElement) {
-                    annotateElement(parent, annotationHolder, parent.getNode().getElementType());
-                }
-            }
         }
     }
 
@@ -114,36 +99,28 @@ public class JBehaveAnnotator implements Annotator {
 
         Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
 
-        int offset = step.getTextOffset() + step.getStepTextOffset();
-        List<Pair<ParametrizedString.ContentToken, String>> tokensOf = pJavaStepText.getTokensOf(storyStepText);
+        final int offset = step.getTextOffset() + step.getStepTextOffset();
+        final List<Pair<ParametrizedString.ContentToken, String>> tokensOf = pJavaStepText.getTokensOf(storyStepText);
         if (tokensOf != null) {
-            final int lastToken = tokensOf.size() - 1;
-            int i = 0;
-            final boolean hasStoryStepPostParameters = step.hasStoryStepPostParameters();
+            final int tokensOfSize = step.hasStoryStepPostParameters() ? tokensOf.size() - 1 : tokensOf.size();
 
-            for (Pair<ParametrizedString.ContentToken, String> pair : tokensOf) {
-                ParametrizedString.ContentToken contentToken = pair.first;
-                String value = contentToken.value();
+            for (int i = 0; i < tokensOfSize; i++) {
+                final Pair<ParametrizedString.ContentToken, String> pair = tokensOf.get(i);
+                final ParametrizedString.ContentToken contentToken = pair.first;
                 if (pair.second != null) {
-                    ParametrizedString.Token token1 = pJavaStepText.getToken(i);
-                    PsiType parType = mapNameToType.get(token1.value());
-                    Annotation infoAnnotation;
-                    final String format = parType != null ?
-                            String.format("Parameter: <%s> %s", parType.getCanonicalText(), token1.value()) :
-                            String.format("Parameter: %s", token1.value());
-                    final TextAttributesKey stepParameter =
-                            hasStoryStepPostParameters && i == lastToken ? JBehaveSyntaxHighlighter.JB_DEFAULT_TEXT :
-                                    JBehaveSyntaxHighlighter.STEP_PARAMETER;
+                    ParametrizedString.Token pToken = pJavaStepText.getToken(i);
+                    PsiType parameterType = mapNameToType.get(pToken.value());
+                    final String format = parameterType != null ?
+                            String.format("Parameter: <%s> %s", parameterType.getCanonicalText(), pToken.value()) :
+                            String.format("Parameter: %s", pToken.value());
                     final TextRange textRange =
                             TextRange.from(offset + contentToken.getStart(), contentToken.getLength());
                     //
-                    infoAnnotation = annotationHolder.createInfoAnnotation(textRange, format);
-                    infoAnnotation.setTextAttributes(stepParameter);
+                    annotationHolder.createInfoAnnotation(textRange, format)
+                                    .setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
                     //
-                    List<ParametrizedString.ContentToken> stringList = ParametrizedString.split(value);
-                    PsiElement elementAt;
-                    for (ParametrizedString.ContentToken s : stringList) {
-                        elementAt =
+                    for (ParametrizedString.ContentToken s : ParametrizedString.split(contentToken.value())) {
+                        final PsiElement elementAt =
                                 step.getContainingFile().findElementAt(offset + contentToken.getStart() + s.getStart());
                         if (elementAt != null &&
                                 elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
@@ -151,7 +128,6 @@ public class JBehaveAnnotator implements Annotator {
                         }
                     }
                 }
-                ++i;
             }
         }
     }
