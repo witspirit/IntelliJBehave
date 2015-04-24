@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
+ * @author debritod
  */
 public class ParametrizedString implements Comparable<ParametrizedString> {
 
