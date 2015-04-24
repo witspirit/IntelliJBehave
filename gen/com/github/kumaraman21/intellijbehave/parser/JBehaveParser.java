@@ -1081,131 +1081,129 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // WhiteSpace StepComment? Description?
+  // StepComment? Description?
   //             WhiteSpace StepComment? MetaStatement?
   //             WhiteSpace StepComment? Narrative?
   //             WhiteSpace StepComment? GivenStories?
   //             WhiteSpace StepComment? Lifecycle?
-  //             WhiteSpace StepComment? (WhiteSpace Scenario)* WhiteSpace
+  //             WhiteSpace StepComment? (WhiteSpace Scenario)*
   public static boolean Story(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Story")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<story>");
-    r = WhiteSpace(b, l + 1);
+    r = Story_0(b, l + 1);
     r = r && Story_1(b, l + 1);
-    r = r && Story_2(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
+    r = r && Story_3(b, l + 1);
     r = r && Story_4(b, l + 1);
-    r = r && Story_5(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
+    r = r && Story_6(b, l + 1);
     r = r && Story_7(b, l + 1);
-    r = r && Story_8(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
+    r = r && Story_9(b, l + 1);
     r = r && Story_10(b, l + 1);
-    r = r && Story_11(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
+    r = r && Story_12(b, l + 1);
     r = r && Story_13(b, l + 1);
-    r = r && Story_14(b, l + 1);
     r = r && WhiteSpace(b, l + 1);
+    r = r && Story_15(b, l + 1);
     r = r && Story_16(b, l + 1);
-    r = r && Story_17(b, l + 1);
-    r = r && WhiteSpace(b, l + 1);
     exit_section_(b, l, m, JB_STORY, r, false, null);
     return r;
   }
 
   // StepComment?
-  private static boolean Story_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_1")) return false;
+  private static boolean Story_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_0")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // Description?
-  private static boolean Story_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_2")) return false;
+  private static boolean Story_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_1")) return false;
     Description(b, l + 1);
     return true;
   }
 
   // StepComment?
-  private static boolean Story_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_4")) return false;
+  private static boolean Story_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_3")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // MetaStatement?
-  private static boolean Story_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_5")) return false;
+  private static boolean Story_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_4")) return false;
     MetaStatement(b, l + 1);
     return true;
   }
 
   // StepComment?
-  private static boolean Story_7(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_7")) return false;
+  private static boolean Story_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_6")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // Narrative?
-  private static boolean Story_8(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_8")) return false;
+  private static boolean Story_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_7")) return false;
     Narrative(b, l + 1);
     return true;
   }
 
   // StepComment?
-  private static boolean Story_10(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_10")) return false;
+  private static boolean Story_9(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_9")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // GivenStories?
-  private static boolean Story_11(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_11")) return false;
+  private static boolean Story_10(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_10")) return false;
     GivenStories(b, l + 1);
     return true;
   }
 
   // StepComment?
-  private static boolean Story_13(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_13")) return false;
+  private static boolean Story_12(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_12")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // Lifecycle?
-  private static boolean Story_14(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_14")) return false;
+  private static boolean Story_13(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_13")) return false;
     Lifecycle(b, l + 1);
     return true;
   }
 
   // StepComment?
-  private static boolean Story_16(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_16")) return false;
+  private static boolean Story_15(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_15")) return false;
     StepComment(b, l + 1);
     return true;
   }
 
   // (WhiteSpace Scenario)*
-  private static boolean Story_17(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_17")) return false;
+  private static boolean Story_16(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_16")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!Story_17_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "Story_17", c)) break;
+      if (!Story_16_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "Story_16", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // WhiteSpace Scenario
-  private static boolean Story_17_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "Story_17_0")) return false;
+  private static boolean Story_16_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "Story_16_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = WhiteSpace(b, l + 1);
@@ -1400,7 +1398,7 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)?
+  // Alnum TOKEN_COLON Word '@' UriIdentifier (TOKEN_COLON Alnum)?
   public static boolean Uri(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "Uri")) return false;
     if (!nextTokenIs(b, JB_TOKEN_WORD)) return false;
@@ -1409,7 +1407,7 @@ public class JBehaveParser implements PsiParser {
     r = Alnum(b, l + 1);
     r = r && consumeToken(b, JB_TOKEN_COLON);
     r = r && Word(b, l + 1);
-    r = r && consumeToken(b, JB_TOKEN_AT);
+    r = r && consumeToken(b, "@");
     r = r && UriIdentifier(b, l + 1);
     p = r; // pin = 5
     r = r && Uri_5(b, l + 1);
@@ -1547,14 +1545,16 @@ public class JBehaveParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !<<eof>> (Story|Table)
+  // !<<eof>> WhiteSpace ( Table | Story ) WhiteSpace
   static boolean root(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "root")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, null);
     r = root_0(b, l + 1);
-    p = r; // pin = 1
-    r = r && root_1(b, l + 1);
+    r = r && WhiteSpace(b, l + 1);
+    r = r && root_2(b, l + 1);
+    p = r; // pin = 3
+    r = r && WhiteSpace(b, l + 1);
     exit_section_(b, l, m, null, r, p, null);
     return r || p;
   }
@@ -1569,13 +1569,13 @@ public class JBehaveParser implements PsiParser {
     return r;
   }
 
-  // Story|Table
-  private static boolean root_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "root_1")) return false;
+  // Table | Story
+  private static boolean root_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "root_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = Story(b, l + 1);
-    if (!r) r = Table(b, l + 1);
+    r = Table(b, l + 1);
+    if (!r) r = Story(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

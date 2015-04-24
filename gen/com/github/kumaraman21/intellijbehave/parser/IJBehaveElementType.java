@@ -41,7 +41,6 @@ public interface IJBehaveElementType {
 
   IElementType JB_TOKEN_AFTER = new JBehaveTokenType("After:");
   IElementType JB_TOKEN_AND = new JBehaveTokenType("And");
-  IElementType JB_TOKEN_AT = new JBehaveTokenType("TOKEN_AT");
   IElementType JB_TOKEN_BEFORE = new JBehaveTokenType("Before:");
   IElementType JB_TOKEN_BRACKET_CLOSE = new JBehaveTokenType(">");
   IElementType JB_TOKEN_BRACKET_OPEN = new JBehaveTokenType("<");
