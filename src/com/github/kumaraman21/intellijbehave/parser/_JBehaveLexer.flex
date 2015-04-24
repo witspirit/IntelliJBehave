@@ -21,13 +21,13 @@ import static com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType.*
 TOKEN_NEWLINE=[ \t\f]*(\r|\n|\r\n|\Z)
 TOKEN_SPACE=[ \t\f]+
 TOKEN_COMMENT=\!--.*
-TOKEN_USER_INJECT=<<.+>>
-TOKEN_INJECT=<.+>
+TOKEN_USER_INJECT=<<[^\t\n\x0B\f\r<>]+>>
+TOKEN_INJECT=<[^\t\n\x0B\f\r<>]+>
 TOKEN_PIPE=\|
 TOKEN_PATH=([A-Z]:|<.+>|<<.+>>)?([a-zA-Z0-9]|<.+>|<<.+>>|("/"|\\))([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-)+(("/"|\\)([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-|\ )+)+([a-zA-Z0-9]|_|@|\.|-|"/")
 TOKEN_IP=[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
-TOKEN_MKEY=@[^ \t\n\x0B\f\r\|]+
-TOKEN_WORD=[^ \t\n\x0B\f\r\|,|@]+
+TOKEN_MKEY=@[^ \t\n\x0B\f\r\|<>]+
+TOKEN_WORD=[^ \t\n\x0B\f\r\|,@:]+
 
 %%
 <YYINITIAL> {
@@ -49,7 +49,6 @@ TOKEN_WORD=[^ \t\n\x0B\f\r\|,|@]+
   ">>"                     { return JB_TOKEN_DBRACKET_CLOSE; }
   "<"                      { return JB_TOKEN_BRACKET_OPEN; }
   ">"                      { return JB_TOKEN_BRACKET_CLOSE; }
-  "TOKEN_AT"               { return JB_TOKEN_AT; }
 
   {TOKEN_NEWLINE}          { return JB_TOKEN_NEWLINE; }
   {TOKEN_SPACE}            { return JB_TOKEN_SPACE; }

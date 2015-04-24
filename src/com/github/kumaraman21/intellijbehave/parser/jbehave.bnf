@@ -33,13 +33,13 @@
     TOKEN_SPACE='regexp:[ \t\f]+'
     TOKEN_COMMENT="regexp:\!--.*"
 
-    TOKEN_USER_INJECT = 'regexp:<<.+>>'
-    TOKEN_INJECT = 'regexp:<.+>'
+    TOKEN_USER_INJECT = 'regexp:<<[^\t\n\x0B\f\r<>]+>>'
+    TOKEN_INJECT = 'regexp:<[^\t\n\x0B\f\r<>]+>'
     TOKEN_PIPE='regexp:\|'
     TOKEN_PATH = 'regexp:([A-Z]:|<.+>|<<.+>>)?([a-zA-Z0-9]|<.+>|<<.+>>|(/|\\))([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-)+((/|\\)([a-zA-Z0-9]|<.+>|<<.+>>|_|@|\.|-|\ )+)+([a-zA-Z0-9]|_|@|\.|-|/)'
     TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-    TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r\|]+"
-    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,|@]+"
+    TOKEN_MKEY="regexp:@[^ \t\n\x0B\f\r\|<>]+"
+    TOKEN_WORD="regexp:[^ \t\n\x0B\f\r\|,@:]+"
   ]
   extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
   extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
@@ -50,13 +50,13 @@
   extends("GivenStories")="com.github.kumaraman21.intellijbehave.parser.GivenStories"
 
 }
-root ::= !<<eof>> (Story|Table) {pin=1}
-Story ::=   WhiteSpace StepComment? Description?
+root ::= !<<eof>> WhiteSpace ( Table | Story ) WhiteSpace {pin=3}
+Story ::=   StepComment? Description?
             WhiteSpace StepComment? MetaStatement?
             WhiteSpace StepComment? Narrative?
             WhiteSpace StepComment? GivenStories?
             WhiteSpace StepComment? Lifecycle?
-            WhiteSpace StepComment? (WhiteSpace Scenario)* WhiteSpace
+            WhiteSpace StepComment? (WhiteSpace Scenario)*
 Description ::= MultiTextLine
 MetaStatement ::= TOKEN_META (Newline)* ((Space|Newline)* (MetaElement|StepComment))* {pin=1 recoverWhile=RecoverMeta}
 MetaElement::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO) (MetaKey Space MetaValue |MetaKey | MetaValue) {pin=2 }
@@ -114,7 +114,7 @@ private Line ::= Word (WordSeparator Word)*
 
 UriWord ::= Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
 UriIdentifier ::= IpAddress| (UriWord|'.')+
-Uri::= Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)? {pin=5}
+Uri::= Alnum TOKEN_COLON Word '@' UriIdentifier (TOKEN_COLON Alnum)? {pin=5}
 IpAddress ::= TOKEN_IP | Alnum ('.' Alnum)+
 private Alnum::=TOKEN_WORD
 

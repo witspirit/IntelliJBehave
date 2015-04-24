@@ -40,9 +40,11 @@ public class JBehaveRenameStepParameterHandler extends PsiElementRenameHandler {
     }
 
     private PsiElement getStepParameter(Editor editor, PsiFile psiFile) {
-        final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
-        if (canProcessElement(elementAtCaret)) {
-            return elementAtCaret;
+        if (editor != null && psiFile != null) {
+            final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
+            if (canProcessElement(elementAtCaret)) {
+                return elementAtCaret;
+            }
         }
         return null;
     }

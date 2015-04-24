@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.refactoring.actions.BaseRefactoringAction;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by DeBritoD on 18.03.2015.
@@ -29,12 +30,15 @@ public class JBehaveRenameInjectHandler extends PsiElementRenameHandler {
         return getInject(editor, psiFile);
     }
 
+    @Nullable
     private PsiElement getInject(Editor editor, PsiFile psiFile) {
-        final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
-        if (psiFile.getLanguage() == JBehaveLanguage.JBEHAVE_LANGUAGE) {
-            IElementType type = elementAtCaret.getNode().getElementType();
-            if (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT) {
-                return elementAtCaret;
+        if (editor != null && psiFile != null) {
+            final PsiElement elementAtCaret = BaseRefactoringAction.getElementAtCaret(editor, psiFile);
+            if (psiFile.getLanguage() == JBehaveLanguage.JBEHAVE_LANGUAGE) {
+                IElementType type = elementAtCaret.getNode().getElementType();
+                if (type == IJBehaveElementType.JB_TOKEN_USER_INJECT || type == IJBehaveElementType.JB_TOKEN_INJECT) {
+                    return elementAtCaret;
+                }
             }
         }
         return null;
