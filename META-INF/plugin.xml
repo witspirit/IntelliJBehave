@@ -69,6 +69,7 @@
     </ul>
 
     <h2>Release notes:</h2>
+    <p>New in version 2.2.1: Bug fix</p>
     <p>
         New in version 2.2.0:
     </p>
@@ -107,7 +108,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
