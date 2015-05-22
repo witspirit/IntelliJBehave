@@ -21,7 +21,7 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
     private final List<Token> tokens = new ArrayList<Token>();
     private final List<Token> tokensWithoutIdentifier = new ArrayList<Token>();
     private static final Pattern dollarPattern = Pattern.compile("(\\$\\w*)(\\W|\\Z)", Pattern.DOTALL);
-    private static final Pattern bracketPattern = Pattern.compile("(<\\w*>)(\\W|\\Z)", Pattern.DOTALL);
+    private static final Pattern bracketPattern = Pattern.compile("(<\\w*?>)(\\W|\\Z)", Pattern.DOTALL);
 
     public ParametrizedString(String content) {
         this(content, "$");
@@ -304,8 +304,8 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
         return result2;
     }
 
+    private static final Pattern injectPattern = Pattern.compile("(<{1,2}+.+?>{1,2}+)", Pattern.DOTALL);
     public static List<ContentToken> splitOnInject(final String text) {
-        Pattern injectPattern = Pattern.compile("(<.+>)", Pattern.DOTALL);
         final Matcher matcher = injectPattern.matcher(text);
 
         List<ContentToken> result = new ArrayList<ContentToken>();
