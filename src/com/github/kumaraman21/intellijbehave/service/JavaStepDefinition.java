@@ -176,6 +176,15 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
         return result;
     }
 
+    public Collection<String> toStringWithoutIdentifiers() {
+        final List<String> stringWithoutIdentifiers = new ArrayList<String>();
+        for (ParametrizedString parametrizedString : toPString()) {
+            stringWithoutIdentifiers.add(String.format("%s %s", getAnnotationTypeAsString(),
+                                                       parametrizedString.toStringWithoutIdentifiers()));
+        }
+        return stringWithoutIdentifiers;
+    }
+
     @Override
     public int compareTo(@NotNull JavaStepDefinition other) {
         StepType myType = getAnnotationType();
