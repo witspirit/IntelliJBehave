@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave.service;
 import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveStepLine;
 import com.github.kumaraman21.intellijbehave.utility.TokenMap;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
@@ -102,9 +103,12 @@ public class JavaStepDefinitionsIndex {
         if (tokenMap.isEmpty()) return Collections.emptyList();
         final Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<Class, JavaStepDefinition>();
 
-        final String text = step.getAnnotatedStoryLine();
-
-        final List<JavaStepDefinition> stepDefinitions = tokenMap.getConcerned(text, true);
+        String reallyFind = step.getAnnotatedStoryLine();
+        final int rulezzz = reallyFind.indexOf(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+        if (rulezzz >= 0) {
+            reallyFind = reallyFind.substring(0, rulezzz);
+        }
+        final List<JavaStepDefinition> stepDefinitions = tokenMap.get(reallyFind, true);
         for (JavaStepDefinition stepDefinition : stepDefinitions) {
             if (stepDefinition != null) {
                 Integer currentHighestPriority =
@@ -159,7 +163,8 @@ public class JavaStepDefinitionsIndex {
 
             for (PsiAnnotation stepDefAnnotation : allStepAnnotations) {
                 JavaStepDefinition javaStepDefinition = new JavaStepDefinition(stepDefAnnotation);
-                result.put(javaStepDefinition, javaStepDefinition.toStringWithoutIdentifiers());
+                Collection<String> paths = javaStepDefinition.toStrings();
+                result.put(javaStepDefinition, paths);
             }
         }
 

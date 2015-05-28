@@ -114,7 +114,8 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
         JBehaveStepLine storyStepLine = getStoryStepLine();
         if (storyStepLine != null) {
             lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
-            return String.format("%s %s", lowerCase, storyStepLine.getText());
+            final String format = hasStoryStepPostParameters() ? "%s %s $" : "%s %s";
+            return String.format(format, lowerCase, storyStepLine.getText());
         }
         return lowerCase;
     }
