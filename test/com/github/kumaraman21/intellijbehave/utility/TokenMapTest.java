@@ -5,6 +5,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,6 +57,7 @@ try {
      * Method: put(final Iterator<String> path, final V value)
      */
     public void testPut() throws Exception {
+        CollectLeafs<String> collector;
         String[] putTests =
                 new String[]{"a b $param c $param d e f", "a b $param c d e $param g $param", "a b c d $param e h",
                         "a $param bbb i", "a b j", "a b c d k", "a b <param> c d $param l",
@@ -72,16 +74,18 @@ try {
         }
         for (int i = 0; i < getTests.length; i++) {
             String getTest = getTests[i];
-            String putTets = putTests[i];
-            List<String> concerned = map.get(getTest, true);
+            String putTest = putTests[i];
+            collector = new CollectLeafs<String>();
+            map.get(getTest, collector, true);
+            List<String> concerned = collector.getResult();
             assertFalse(getTest, concerned.isEmpty());
             for (String result : concerned) {
-                assertEquals(putTets, result);
+                assertEquals(putTest, result);
             }
 
         }
         testCompletion(map, "a",
-                       "$param 2 3 4; a b c d $param e h; a b c d k; a b $param c d e $param g $param; a b <param> c d $param l; a b $param c $param d e f; a b j; a $param bbb i; aa bb $param cccc ddddd $param zzzzz");
+                       "$param 2 3 4; a $param bbb i; a b $param c $param d e f; a b $param c d e $param g $param; a b <param> c d $param l; a b c d $param e h; a b c d k; a b j; aa bb $param cccc ddddd $param zzzzz");
         //
         testCompletion(map, "aa", "$param 2 3 4; aa bb $param cccc ddddd $param zzzzz");
         testCompletion(map, "aa b", "aa bb $param cccc ddddd $param zzzzz");
@@ -103,7 +107,10 @@ try {
     }
 
     private void testCompletion(TokenMap<String> map, String input, String expected) {
-        List<String> concerned = map.get(input, false);
+        CollectLeafs<String> collector = new CollectLeafs<String>();
+        map.get(input, collector, false);
+        List<String> concerned = collector.getResult();
+        Collections.sort(concerned);
         assertFalse(input, concerned.isEmpty());
         String result = StringUtil.join(concerned, "; ");
         if (expected != null) {

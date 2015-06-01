@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
 import com.github.kumaraman21.intellijbehave.psi.JBehaveStepLine;
+import com.github.kumaraman21.intellijbehave.utility.CollectLeafs;
 import com.github.kumaraman21.intellijbehave.utility.TokenMap;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.lang.Language;
@@ -108,8 +109,9 @@ public class JavaStepDefinitionsIndex {
         if (rulezzz >= 0) {
             reallyFind = reallyFind.substring(0, rulezzz);
         }
-        final List<JavaStepDefinition> stepDefinitions = tokenMap.get(reallyFind, true);
-        for (JavaStepDefinition stepDefinition : stepDefinitions) {
+        CollectLeafs<JavaStepDefinition> collector = new CollectLeafs<JavaStepDefinition>();
+        tokenMap.get(reallyFind, collector, true);
+        for (JavaStepDefinition stepDefinition : collector.getResult()) {
             if (stepDefinition != null) {
                 Integer currentHighestPriority =
                         getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));

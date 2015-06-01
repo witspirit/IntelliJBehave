@@ -7,18 +7,13 @@ import java.util.regex.Pattern;
  * Created by DeBritoD on 27.03.2015.
  */
 public class TokenMap<V> {
-    private final String key;
     private final Map<String, TokenMap<V>> nextTokens = new HashMap<String, TokenMap<V>>();
     private V leafToken;
     private static final Pattern PutTokenizer = Pattern.compile("(\\S+)", Pattern.DOTALL);
     private static final Pattern GetTokenizer = Pattern.compile("(\\S+)", Pattern.DOTALL);
 
     public TokenMap() {
-        key = "";
-    }
 
-    public TokenMap(String key) {
-        this.key = key;
     }
 
     protected V getLeafToken() {
@@ -41,14 +36,14 @@ public class TokenMap<V> {
         }
     }
 
-    public List<V> get(final String toFind, final boolean strict) {
+    public boolean get(final String toFind, final ITokenMapVisitor<V> visitor, final boolean strict) {
         List<String> tokens = new ArrayList<String>();
 
         TokenIterator tokenIterator = new TokenIterator(toFind, GetTokenizer);
         while (tokenIterator.hasNext()) {
             tokens.add(tokenIterator.next());
         }
-        return get(tokens, 0, strict);
+        return get(tokens, 0, visitor, strict);
     }
 
     public boolean isEmpty() {
@@ -68,7 +63,7 @@ public class TokenMap<V> {
             final String token = reduceIfParameter(path.next());
             TokenMap<V> tokenMap = nextTokens.get(token);
             if (tokenMap == null) {
-                tokenMap = token.equals("$") ? new TokenMapParam<V>() : new TokenMap<V>();
+                tokenMap = token.startsWith("$") ? new TokenMapParam<V>() : new TokenMap<V>();
                 nextTokens.put(token, tokenMap);
             }
             tokenMap.put(path, value);
@@ -105,57 +100,56 @@ public class TokenMap<V> {
         return sb.toString();
     }
 
-    protected List<V> get(final List<String> split, final int count, final boolean strict) {
+    protected boolean get(final List<String> split, final int count, final ITokenMapVisitor<V> visitor,
+                          final boolean strict) {
         if ((strict && count < split.size()) || (!strict && count < split.size() - 1)) {
             TokenMap<V> tokenMap;
             final String next = unwrapInject(split.get(count));
             tokenMap = getNextTokens().get("$");
-            if (tokenMap != null) {
-                final List<V> concerned = tokenMap.get(split, count + 1, strict);
-                if (!concerned.isEmpty()) {
-                    return concerned;
-                }
+            if (tokenMap != null && tokenMap.get(split, count + 1, visitor, strict)) {
+                return true;
             }
             tokenMap = getNextTokens().get(next);
             if (tokenMap != null) {
-                return tokenMap.get(split, count + 1, strict);
+                return tokenMap.get(split, count + 1, visitor, strict);
             } else {
                 if (!strict) {
                     tokenMap = getNextTokens().get("$");
-                    return tokenMap.getAll();
+                    return tokenMap.getAll(visitor);
                 }
-                return Collections.emptyList();
+                return false;
             }
         }
 
         if (!strict && count == split.size() - 1) {
-            final List<V> result = new ArrayList<V>();
+            boolean found = false;
             String prefix = unwrapInject(split.get(count));
             for (final Map.Entry<String, TokenMap<V>> entry : getNextTokens().entrySet()) {
                 final String key = entry.getKey();
                 if (key.equals("$") || key.startsWith(prefix)) {
-                    result.addAll(entry.getValue().getAll());
+                    found |= entry.getValue().getAll(visitor);
                 }
             }
-            return result;
+            return found;
         }
         final V leafToken = getLeafToken();
-        if (count >= split.size() && strict && leafToken != null) {
-            return Collections.singletonList(leafToken);
+        if (strict && count >= split.size() && leafToken != null) {
+            visitor.found(leafToken);
+            return true;
         }
 
-        return Collections.emptyList();
+        return false;
     }
 
-    protected List<V> getAll() {
-        final List<V> result = new ArrayList<V>();
+    protected boolean getAll(final ITokenMapVisitor<V> visitor) {
+        boolean found = false;
         if (leafToken != null) {
-            result.add(leafToken);
+            visitor.found(leafToken);
+            found = true;
         }
         for (TokenMap<V> tokenMap : nextTokens.values()) {
-            result.addAll(tokenMap.getAll());
+            found |= tokenMap.getAll(visitor);
         }
-        return result;
+        return found;
     }
-
 }

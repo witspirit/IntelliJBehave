@@ -22,20 +22,20 @@ import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.psi.PsiElement;
 
-import java.util.Collection;
-
 public class ScanUtils {
 
     public static boolean iterateInContextOf(PsiElement storyRef, StepDefinitionIterator iterator) {
-        final TokenMap<JavaStepDefinition> allStepDefinitionsByType = JavaStepDefinitionsIndex.getInstance(
-                storyRef.getProject()).findAllStepDefinitionsByType((ScenarioStep) storyRef);
+        final TokenMap<JavaStepDefinition> allStepDefinitionsByType =
+                JavaStepDefinitionsIndex.getInstance(storyRef.getProject())
+                                        .findAllStepDefinitionsByType((ScenarioStep) storyRef);
         String text = storyRef.getText();
         final int rulezzz = text.indexOf(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
         if (rulezzz >= 0) {
             text = text.substring(0, rulezzz);
         }
-        final Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.get(text, false);
-        for (JavaStepDefinition stepDefinition : stepDefinitions) {
+        CollectLeafs<JavaStepDefinition> collector = new CollectLeafs<JavaStepDefinition>();
+        allStepDefinitionsByType.get(text, collector, false);
+        for (JavaStepDefinition stepDefinition : collector.getResult()) {
             iterator.processStepDefinition(stepDefinition);
         }
         return true;
