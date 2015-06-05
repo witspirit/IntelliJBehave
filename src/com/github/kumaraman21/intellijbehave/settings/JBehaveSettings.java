@@ -16,6 +16,7 @@
 package com.github.kumaraman21.intellijbehave.settings;
 
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,14 +24,12 @@ import org.jetbrains.annotations.NotNull;
         name = "JBehaveSettings",
         storages = {@Storage(
                 id = "main",
-                file = "$APP_CONFIG$/jbehave_settings.xml"
-        )}
-)
-public class JBehaveSettings implements ApplicationComponent, PersistentStateComponent<JBehaveSettings> {
+                file = "$PROJECT_CONFIG_DIR$/jbehave_settings.xml")})
+public class JBehaveSettings implements ProjectComponent, PersistentStateComponent<JBehaveSettings> {
     private String storyRunner;
 
-    public static JBehaveSettings getInstance() {
-        return ServiceManager.getService(JBehaveSettings.class);
+    public static JBehaveSettings getInstance(Project project) {
+        return ServiceManager.getService(project, JBehaveSettings.class);
     }
 
     @Override
@@ -65,5 +64,15 @@ public class JBehaveSettings implements ApplicationComponent, PersistentStateCom
     @Override
     public String getComponentName() {
         return "JBehaveSettings";
+    }
+
+    @Override
+    public void projectOpened() {
+
+    }
+
+    @Override
+    public void projectClosed() {
+
     }
 }

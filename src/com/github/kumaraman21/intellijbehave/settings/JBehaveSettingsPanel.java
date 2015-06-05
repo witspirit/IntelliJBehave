@@ -37,17 +37,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JBehaveSettingsPanel {
-
     private static final ClassFilter MAIN_CLASS_FILTER = new MainClassFilter();
 
     private JPanel contentPane;
     private JLabel storyRunnerLabel;
     private TextFieldWithBrowseButton storyRunnerField;
 
-    private JBehaveSettings jBehaveSettings;
+    private final JBehaveSettings jBehaveSettings;
 
-    public JBehaveSettingsPanel() {
-        jBehaveSettings = JBehaveSettings.getInstance();
+    public JBehaveSettingsPanel(Project project) {
+        jBehaveSettings = JBehaveSettings.getInstance(project);
         storyRunnerField.addActionListener(new BrowseMainClassListener(storyRunnerField));
     }
 
@@ -56,7 +55,8 @@ public class JBehaveSettingsPanel {
     }
 
     public void reset() {
-        storyRunnerField.setText(jBehaveSettings.getStoryRunner());
+        String storyRunner = jBehaveSettings.getStoryRunner();
+        storyRunnerField.setText(storyRunner);
     }
 
     public boolean isModified() {
@@ -83,13 +83,21 @@ public class JBehaveSettingsPanel {
         storyRunnerLabel = new JLabel();
         storyRunnerLabel.setText("Main class for running stories");
         storyRunnerLabel.setToolTipText("Class with a main function to receive the story file to run as a parameter");
-        contentPane.add(storyRunnerLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(storyRunnerLabel,
+                new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE,
+                        GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+                        false));
         storyRunnerField = new TextFieldWithBrowseButton();
         storyRunnerField.setAlignmentX(0.5f);
         storyRunnerField.setPreferredSize(new Dimension(400, 28));
-        contentPane.add(storyRunnerField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(storyRunnerField,
+                new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL,
+                        GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0,
+                        false));
         final Spacer spacer1 = new Spacer();
-        contentPane.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        contentPane.add(spacer1,
+                new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1,
+                        GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -99,8 +107,19 @@ public class JBehaveSettingsPanel {
         return contentPane;
     }
 
+    public JPanel getContentPane() {
+        return this.contentPane;
+    }
+
+    private static class MainClassFilter implements ClassFilter {
+        @Override
+        public boolean isAccepted(final PsiClass aClass) {
+            return ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null;
+        }
+    }
+
     private class BrowseMainClassListener implements ActionListener {
-        private TextFieldWithBrowseButton textField;
+        private final TextFieldWithBrowseButton textField;
 
         public BrowseMainClassListener(TextFieldWithBrowseButton textField) {
             this.textField = textField;
@@ -113,10 +132,7 @@ public class JBehaveSettingsPanel {
             // TODO: display error message if project is null
 
             TreeJavaClassChooserDialog dialog = new TreeJavaClassChooserDialog("Main class for running stories",
-                    project,
-                    GlobalSearchScope.allScope(project),
-                    MAIN_CLASS_FILTER,
-                    null);
+                    project, GlobalSearchScope.allScope(project), MAIN_CLASS_FILTER, null);
 
             final PsiClass currentClass = JavaPsiFacade.getInstance(project).findClass(textField.getText(),
                     GlobalSearchScope.allScope(project));
@@ -133,17 +149,6 @@ public class JBehaveSettingsPanel {
             }
 
             textField.setText(dialog.getSelected().getQualifiedName());
-        }
-    }
-
-    public JPanel getContentPane() {
-        return this.contentPane;
-    }
-
-    private static class MainClassFilter implements ClassFilter {
-        @Override
-        public boolean isAccepted(final PsiClass aClass) {
-            return ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null;
         }
     }
 }

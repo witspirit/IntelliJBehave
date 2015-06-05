@@ -1,21 +1,18 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
 import org.jetbrains.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
 public class CharTree<T> {
-    private Map<Integer, CharTree<T>> children = new HashMap<Integer, CharTree<T>>();
     private final int key;
+    private final Map<Integer, CharTree<T>> children = new HashMap<Integer, CharTree<T>>();
     private T value;
 
-    public CharTree(int key) {
+    private CharTree(int key) {
         this(key, null);
     }
 
@@ -29,7 +26,7 @@ public class CharTree<T> {
         return lookupValue(seq, 0);
     }
 
-    public T lookupValue(CharSequence seq, int offset) {
+    private T lookupValue(CharSequence seq, int offset) {
         return lookup(seq, offset).value;
     }
 
@@ -50,7 +47,7 @@ public class CharTree<T> {
         return new Entry<T>(found, i - offset);
     }
 
-    public void print(int level) {
+    void print(int level) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
             builder.append(" |  ");
@@ -77,8 +74,7 @@ public class CharTree<T> {
             int c = seq.charAt(pos);
             CharTree<T> child = getOrCreate(c);
             child.push(seq, pos + 1, value);
-        }
-        else {
+        } else {
             this.value = value;
         }
     }
@@ -127,11 +123,8 @@ public class CharTree<T> {
             if (length != entry.length) {
                 return false;
             }
-            if (value != null ? !value.equals(entry.value) : entry.value != null) {
-                return false;
-            }
+            return !(value != null ? !value.equals(entry.value) : entry.value != null);
 
-            return true;
         }
 
         @Override

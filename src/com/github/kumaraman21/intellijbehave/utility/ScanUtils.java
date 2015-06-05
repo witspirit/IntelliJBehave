@@ -15,34 +15,30 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.ContentIterator;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.resolver.StepDefinitionIterator;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.psi.PsiElement;
 
-import java.util.HashSet;
+import java.util.Collection;
 
 public class ScanUtils {
 
-    public static boolean iterateInContextOf(PsiElement storyRef, ContentIterator iterator) {
-        Module module = ModuleUtil.findModuleForPsiElement(storyRef);
-
-        boolean shouldContinue = (module != null) && ModuleRootManager.getInstance(module).getFileIndex().iterateContent(iterator);
-
-        if (shouldContinue) {
-            HashSet<Module> dependencies = new HashSet<Module>();
-            ModuleUtil.getDependencies(module, dependencies);
-
-            for (Module dependency : dependencies) {
-                shouldContinue = ModuleRootManager.getInstance(dependency).getFileIndex().iterateContent(iterator);
-                if (!shouldContinue) {
-                    break;
-                }
-            }
+    public static boolean iterateInContextOf(PsiElement storyRef, StepDefinitionIterator iterator) {
+        final TokenMap<JavaStepDefinition> allStepDefinitionsByType = JavaStepDefinitionsIndex.getInstance(
+                storyRef.getProject()).findAllStepDefinitionsByType((ScenarioStep) storyRef);
+        String text = storyRef.getText();
+        final int rulezzz = text.indexOf(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+        if (rulezzz >= 0) {
+            text = text.substring(0, rulezzz);
         }
-
-        return shouldContinue;
+        final Collection<JavaStepDefinition> stepDefinitions = allStepDefinitionsByType.get(text, false);
+        for (JavaStepDefinition stepDefinition : stepDefinitions) {
+            iterator.processStepDefinition(stepDefinition);
+        }
+        return true;
     }
 
 

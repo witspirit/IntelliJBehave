@@ -30,7 +30,11 @@ import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANN
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.*;
 
-public class StepDefinitionAnnotationConverter {
+class StepDefinitionAnnotationConverter {
+
+    private static String getTextFromValue(PsiElement value) {
+        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
+    }
 
     public Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
         Set<StepDefinitionAnnotation> res = null;
@@ -74,18 +78,24 @@ public class StepDefinitionAnnotationConverter {
         return res == null ? ImmutableSet.<StepDefinitionAnnotation>of() : res;
     }
 
-    private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
+    private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText,
+                                                             final PsiAnnotation annotation) {
 
-        return FluentIterable
-                .from(new PatternVariantBuilder(annotationText).allVariants())
-                .transform(new Function<String, StepDefinitionAnnotation>() {
-                    public StepDefinitionAnnotation apply(String variant) {
-                        return new StepDefinitionAnnotation(stepType, variant, annotation);
-                    }
-                }).toSet();
+        return FluentIterable.from(new PatternVariantBuilder(annotationText).allVariants()).transform(
+                new StringStepDefinitionAnnotationFunction(stepType, annotation)).toSet();
     }
 
-    private static String getTextFromValue(PsiElement value) {
-        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
+    private static class StringStepDefinitionAnnotationFunction implements Function<String, StepDefinitionAnnotation> {
+        private final StepType stepType;
+        private final PsiAnnotation annotation;
+
+        public StringStepDefinitionAnnotationFunction(StepType stepType, PsiAnnotation annotation) {
+            this.stepType = stepType;
+            this.annotation = annotation;
+        }
+
+        public StepDefinitionAnnotation apply(String variant) {
+            return new StepDefinitionAnnotation(stepType, variant, annotation);
+        }
     }
 }

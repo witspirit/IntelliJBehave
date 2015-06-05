@@ -1,0 +1,111 @@
+{
+  parserClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParser"
+  parserUtilClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParserUtil"
+  elementTypeHolderClass="com.github.kumaraman21.intellijbehave.parser.IJBehaveElementType"
+  elementTypePrefix="JB_"
+  elementTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveElementType"
+  tokenTypeClass="com.github.kumaraman21.intellijbehave.highlighter.JBehaveTokenType"
+  psiClassPrefix="JBehave"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.github.kumaraman21.intellijbehave.psi"
+  psiImplPackage="com.github.kumaraman21.intellijbehave.psi.impl"
+
+  tokens=[
+    TOKEN_META = 'Meta:'
+    TOKEN_NARRATIVE = 'Narrative:'
+    TOKEN_SCENARIO = 'Scenario:'
+    TOKEN_GIVEN_STORIES= 'GivenStories:'
+    TOKEN_GIVEN = 'Given'
+    TOKEN_WHEN='When'
+    TOKEN_THEN='Then'
+    TOKEN_AND='And'
+    TOKEN_EXAMPLES='Examples:'
+    TOKEN_LIFECYCLE="Lifecycle:"
+    TOKEN_BEFORE="Before:"
+    TOKEN_AFTER="After:"
+    TOKEN_COLON=":"
+    TOKEN_AT="@"
+    TOKEN_DBRACKET_OPEN = "<<"
+    TOKEN_DBRACKET_CLOSE = ">>"
+    TOKEN_BRACKET_OPEN = "<"
+    TOKEN_BRACKET_CLOSE = ">"
+    TOKEN_PIPE_END='regexp:\|[ \t\f]*(\r|\n|\r\n|\Z)'
+    TOKEN_PIPE='regexp:\|[ \t\f]*'
+    TOKEN_NEWLINE = "regexp:(\r|\n|\r\n|\Z)"
+    TOKEN_SPACE='regexp:[ \t\f]+'
+    TOKEN_COMMENT="regexp:\!--.*"
+
+    TOKEN_USER_INJECT = 'regexp:<<\S+>>'
+    TOKEN_INJECT = 'regexp:<\S+>'
+    TOKEN_PATH = 'regexp:((/|\\)?[a-zA-Z0-9]|_|@|\.|-|:|\ )+((/|\\)([a-zA-Z0-9]|_|@|\.|-|:|\ )+)+'
+    TOKEN_IP = "regexp:[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+    TOKEN_WORD = "regexp:([a-zA-Z0-9_-]|&|!|\\|\"|#|\$|%|\(|'|\)|\*|\+|/|;|=|\?|\[|\]|\^|`|\{|\}|\~)+"
+  ]
+  extends("StoryPath")="com.github.kumaraman21.intellijbehave.parser.StoryPath"
+  extends("Step")="com.github.kumaraman21.intellijbehave.parser.ScenarioStep"
+  extends("ScenarioTitle|TableCell|Table|TableRow|Description|NarrativeText|StepLine|Uri|IpAdress|MetaKey|MetaValue")="com.github.kumaraman21.intellijbehave.parser.ParserRule"
+  extends("Scenario")="com.github.kumaraman21.intellijbehave.parser.Scenario"
+  extends("MetaStatement")="com.github.kumaraman21.intellijbehave.parser.MetaStatement"
+  extends("Narrative")="com.github.kumaraman21.intellijbehave.parser.Narrative"
+  extends("GivenStories")="com.github.kumaraman21.intellijbehave.parser.GivenStories"
+
+}
+root ::= !<<eof>> (Story|Table) {pin=1}
+Story ::=  Description?  MetaStatement?  Narrative?  GivenStories?  Lifecycle?  Scenario+
+Description ::= MultiTextLine
+MetaStatement ::= TOKEN_META (MetaElement)* {recoverWhile=RecoverMeta}
+MetaElement::= !(TOKEN_NARRATIVE|TOKEN_SCENARIO|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE) (MetaKey MetaValue|MetaKey|MetaValue)
+MetaKey::= TOKEN_AT Word TOKEN_COLON? {pin=1}
+MetaValue::= Word (Word|TOKEN_COLON)*
+
+private RecoverMeta ::= !(TOKEN_NARRATIVE|TOKEN_GIVEN_STORIES|TOKEN_LIFECYCLE|TOKEN_SCENARIO|TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND|TOKEN_COMMENT|TOKEN_EXAMPLES)
+
+Narrative ::= TOKEN_NARRATIVE  NarrativeText? {pin=1 }
+NarrativeText ::= MultiTextLine
+
+GivenStories::= TOKEN_GIVEN_STORIES StoryPaths? {pin=1}
+StoryPaths ::= StoryPath (  ','  StoryPath)* {pin=1}
+StoryPath ::= TOKEN_PATH {pin=1}
+
+Lifecycle::= TOKEN_LIFECYCLE LifecycleBefore? LifecycleAfter? {pin=1 recoverWhile=RecoverMeta}
+LifecycleBefore::= TOKEN_BEFORE Step+ {pin=2}
+LifecycleAfter::= TOKEN_AFTER Step+ {pin=2}
+//private RecoverLife ::= !TOKEN_SCENARIO
+
+Scenario ::= TOKEN_SCENARIO  ScenarioTitle?  MetaStatement?  GivenStories?  ((Step |StepComment)+ Examples?)* {pin=1 recoverWhile=RecoverMeta}
+ScenarioTitle ::= Line
+
+Step ::=  StepPar StepArgument  {pin=1 recoverWhile=RecoverMeta}
+StepPar ::= TOKEN_WHEN|TOKEN_GIVEN|TOKEN_THEN|TOKEN_AND
+
+private StepComment ::= TOKEN_COMMENT
+
+StepArgument ::=  StepLine  StepPostParameter | StepLine
+
+private StepSimpleWord ::= Uri|IpAddress|Alnum|TOKEN_USER_INJECT|TOKEN_INJECT|TOKEN_BRACKET_OPEN|TOKEN_BRACKET_CLOSE|','|'.'
+private StepWord ::= StepSimpleWord+
+StepLine ::= StepWord+ TOKEN_COLON?
+
+StepPostParameter ::=  Table| StoryPaths
+
+//private RecoverStep ::= !(TOKEN_GIVEN|TOKEN_AND|TOKEN_THEN|TOKEN_WHEN|TOKEN_SCENARIO|TOKEN_COMMENT|TOKEN_GIVEN_STORIES|TOKEN_META|TOKEN_EXAMPLES)
+
+Examples ::= TOKEN_EXAMPLES  (Table|StoryPath)?  {pin=1}
+
+Table ::= (TableRow)+
+TableRow ::= TOKEN_PIPE (TableCell)? (TOKEN_PIPE (TableCell)?)* TOKEN_PIPE_END
+TableCell ::= Line
+TableCellEmpty ::= !Line
+
+private MultiTextLine ::= ( Line )+
+
+private SimpleWord ::= StepSimpleWord|StoryPath|TOKEN_COLON
+private Word ::= SimpleWord
+
+private Line ::= Word+
+
+UriWord ::= Alnum|TOKEN_USER_INJECT|TOKEN_INJECT
+UriIdentifier ::= IpAddress| (UriWord|'.')+
+Uri::= Alnum TOKEN_COLON Word TOKEN_AT UriIdentifier (TOKEN_COLON Alnum)? {pin=5}
+IpAddress ::= TOKEN_IP | Alnum ('.' Alnum)+
+private Alnum::=TOKEN_WORD //|TOKEN_NUMBER

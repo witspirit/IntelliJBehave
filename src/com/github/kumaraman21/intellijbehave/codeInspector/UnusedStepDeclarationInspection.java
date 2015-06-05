@@ -15,9 +15,9 @@
  */
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
-import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.github.kumaraman21.intellijbehave.parser.StoryFile;
-import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
+import com.github.kumaraman21.intellijbehave.parser.JBehaveFile;
+import com.github.kumaraman21.intellijbehave.parser.ScenarioStep;
+import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -46,47 +46,12 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-        return new JavaElementVisitor() {
-            @Override
-            public void visitMethod(final PsiMethod method) {
-                Boolean isStepDefinition = (Boolean) ApplicationManager.getApplication().runReadAction(new Computable() {
-                    public Boolean compute() {
-                        return isStepDefinition(method);
-                    }
-                });
-
-                if (!isStepDefinition) {
-                    return;
-                }
-
-                Project project = method.getProject();
-                StepUsageFinder stepUsageFinder = new StepUsageFinder(project);
-                ProjectRootManager.getInstance(project).getFileIndex().iterateContent(stepUsageFinder);
-                Set<JBehaveStep> stepUsages = stepUsageFinder.getStepUsages();
-
-                for (JBehaveStep step : stepUsages) {
-                    PsiReference[] references = step.getReferences();
-
-                    if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-                        return;
-                    }
-
-                    StepPsiReference reference = (StepPsiReference) references[0];
-                    JavaStepDefinition definition = reference.resolveToDefinition();
-
-                    if (definition != null && definition.getAnnotatedMethod() != null && definition.getAnnotatedMethod().isEquivalentTo(method)) {
-                        return;
-                    }
-                }
-
-                holder.registerProblem(method, "Step <code>#ref</code> is never used");
-            }
-        };
+        return new MyJavaElementVisitor(holder);
     }
 
     private static class StepUsageFinder implements ContentIterator {
-        private Project project;
-        private Set<JBehaveStep> stepUsages = newHashSet();
+        private final Project project;
+        private final Set<ScenarioStep> stepUsages = newHashSet();
 
         private StepUsageFinder(Project project) {
             this.project = project;
@@ -99,15 +64,60 @@ public class UnusedStepDeclarationInspection extends BaseJavaLocalInspectionTool
             }
 
             PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-            if (psiFile instanceof StoryFile) {
-                List<JBehaveStep> steps = ((StoryFile) psiFile).getSteps();
+            if (psiFile instanceof JBehaveFile) {
+                List<ScenarioStep> steps = ((JBehaveFile) psiFile).getSteps();
                 stepUsages.addAll(steps);
             }
             return true;
         }
 
-        public Set<JBehaveStep> getStepUsages() {
+        public Set<ScenarioStep> getStepUsages() {
             return stepUsages;
+        }
+    }
+
+    private static class MyJavaElementVisitor extends JavaElementVisitor {
+        private final ProblemsHolder holder;
+
+        public MyJavaElementVisitor(ProblemsHolder holder) {
+            this.holder = holder;
+        }
+
+        @Override
+        public void visitMethod(final PsiMethod method) {
+            Boolean isStepDefinition = (Boolean) ApplicationManager.getApplication().runReadAction(new Computable() {
+                                                                                                       public Boolean compute() {
+                                                                                                           return isStepDefinition(
+                                                                                                                   method);
+                                                                                                       }
+                                                                                                   });
+
+            if (!isStepDefinition) {
+                return;
+            }
+
+            Project project = method.getProject();
+            StepUsageFinder stepUsageFinder = new StepUsageFinder(project);
+            ProjectRootManager.getInstance(project).getFileIndex().iterateContent(stepUsageFinder);
+            Set<ScenarioStep> stepUsages = stepUsageFinder.getStepUsages();
+
+            for (ScenarioStep step : stepUsages) {
+                PsiReference[] references = step.getReferences();
+
+                if (references.length != 1 || !(references[0] instanceof ScenarioStepReference)) {
+                    return;
+                }
+
+                ScenarioStepReference reference = (ScenarioStepReference) references[0];
+                JavaStepDefinition definition = reference.resolveToDefinition();
+
+                if (definition != null && definition.getAnnotatedMethod() != null &&
+                        definition.getAnnotatedMethod().isEquivalentTo(method)) {
+                    return;
+                }
+            }
+
+            holder.registerProblem(method, "Step <code>#ref</code> is never used");
         }
     }
 }

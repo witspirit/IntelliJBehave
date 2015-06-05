@@ -30,6 +30,7 @@
         <li><a href="https://github.com/Arnauld">https://github.com/Arnauld</a></li>
         <li><a href="https://github.com/harley84">https://github.com/harley84</a></li>
         <li><a href="https://github.com/dmalch">https://github.com/dmalch</a></li>
+        <li><a href="https://github.com/debritod">https://github.com/debritod</a></li>
     </ul>
     And <a href="https://github.com/witspirit/IntelliJBehave/graphs/contributors">others</a>.
     </p>
@@ -45,6 +46,8 @@
     The plugin provides the following features:
     </p>
     <ul>
+    <li> Reformat of stories </li>
+    <li> Rename refactoring of steps </li>
     <li> Basic syntax highlighting for JBehave story files</li>
     <li> Jump to step definition in Java or Groovy</li>
     <li> Error Highlighting in story if step was not defined</li>
@@ -53,6 +56,8 @@
     <li> Code inspections to report unused steps definitions and undefined step usages </li>
     <li> Run *.story files</li>
     <li> Finding usages of steps methods </li>
+    <li> Jump to files given in GivenStories </li>
+    <li> Show parameter names of step implementation (point the mouse over the parameter of an step) </li>
     </ul>
 
     <p>
@@ -64,6 +69,37 @@
     </ul>
 
     <h2>Release notes:</h2>
+    <p>New in version 2.2.2: Bug fix: user- and system-inject in story-paths</p>
+    <p>New in version 2.2.1: Bug fix</p>
+    <p>
+        New in version 2.2.0:
+    </p>
+    <ul>
+        <li> Some reformat customizations </li>
+        <li> A lot of bug fixes </li>
+    </ul>
+    <p>
+        New in version 2.1.0:
+    </p>
+    <ul>
+        <li> Structure view </li>
+        <li> Rename factoring of injects </li>
+        <li> Rename factoring of step parameters </li>
+        <li> Coloring of tables, table rows and table cells </li>
+    </ul>
+    <p>
+        New in version 2.00:
+    </p>
+    <ul>
+        <li> New parser </li>
+        <li> Reformat of stories </li>
+        <li> Rename refactoring of steps </li>
+        <li> Working and useful completion </li>
+        <li> Find usages of step definitions </li>
+        <li> Folding </li>
+        <li> Jump to files given in GivenStories </li>
+        <li> Show parameter names of step implementation (point the mouse over the parameter of an step) </li>
+    </ul>
     <p>
         New in version 1.5:
     </p>
@@ -73,7 +109,7 @@
         <li>JBehave icon has been updated</li>
     </ul>
   ]]></description>
-    <version>1.52</version>
+    <version>2.2.2</version>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
     <idea-version since-build="133.0"/>
@@ -84,16 +120,15 @@
             </implementation-class>
         </component>
         <component>
-            <implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>
-        </component>
-        <component>
             <implementation-class>com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType
             </implementation-class>
         </component>
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
+        <!--<component>-->
+        <!--<implementation-class>com.github.kumaraman21.intellijbehave.settings.JBehaveSettings</implementation-class>-->
+        <!--</component>-->
     </project-components>
 
     <actions>
@@ -112,34 +147,61 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable"/>
-        <spellchecker.support language="Story"
+        <spellchecker.support language="JBehave"
                               implementationClass="com.github.kumaraman21.intellijbehave.spellchecker.JBehaveSpellcheckerStrategy"/>
-        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.StoryFileTypeFactory"/>
-        <lang.parserDefinition language="Story"
-                               implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
-        <annotator language="Story"
-                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
-        <lang.commenter language="Story"
-                        implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
-        <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>
-        <completion.contributor language="Story"
-                                implementationClass="com.github.kumaraman21.intellijbehave.completion.StoryCompletionContributor"/>
+        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.JBehaveFileTypeFactory"/>
+        <lang.parserDefinition language="JBehave"
+                               implementationClass="com.github.kumaraman21.intellijbehave.parser.JBehaveParserDefinition"/>
+        <annotator language="JBehave"
+                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.JBehaveAnnotator"/>
+        <lang.commenter language="JBehave"
+                        implementationClass="com.github.kumaraman21.intellijbehave.commenter.JBehaveCommenter"/>
+        <colorSettingsPage
+                implementation="com.github.kumaraman21.intellijbehave.highlighter.JBehaveColorsAndFontsPage"/>
+        <completion.contributor language="JBehave"
+                                implementationClass="com.github.kumaraman21.intellijbehave.completion.JBehaveCompletionContributor"/>
 
         <referencesSearch
-                implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaStepDefinitionSearch"/>
+                implementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsSearch"/>
         <methodReferencesSearch
-                implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaMethodUsageSearcher"/>
+                implementation="com.github.kumaraman21.intellijbehave.service.JavaMethodUsageSearcher"/>
         <!--code inspections-->
         <localInspection id="unusedStepDeclaration" language="JAVA" displayName="Unused step declaration"
                          groupName="JBehave" enabledByDefault="false" level="WARNING"
                          implementationClass="com.github.kumaraman21.intellijbehave.codeInspector.UnusedStepDeclarationInspection"/>
-        <localInspection id="undefinedStep" language="Story" displayName="Undefined step"
-                         groupName="JBehave" enabledByDefault="true" level="WARNING"
-                         implementationClass="com.github.kumaraman21.intellijbehave.codeInspector.UndefinedStepInspection"/>
         <psi.referenceContributor
-                implementation="com.github.kumaraman21.intellijbehave.resolver.StepPsiReferenceContributor"/>
+                implementation="com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReferenceContributor"/>
 
-        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"
-                        serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
+        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"
+                        serviceImplementation="com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex"/>
+        <projectService serviceInterface="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"
+                        serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings"/>
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationHandler"/>
+        <renamePsiElementProcessor id="annotation"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameAnnotationProcessor"
+                                   order="last"/>
+        <renameHandler implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameInjectHandler"/>
+        <renamePsiElementProcessor id="inject"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameInjectProcessor"
+                                   order="first"/>
+        <renameHandler
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameStepParameterHandler"/>
+        <renamePsiElementProcessor id="stepParameter"
+                                   implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveRenameStepParameterProcessor"
+                                   order="first"/>
+        <nameSuggestionProvider
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveNameSuggestionProvider"/>
+        <elementDescriptionProvider
+                implementation="com.github.kumaraman21.intellijbehave.refactor.JBehaveElementDescriptionProvider"/>
+        <lang.formatter implementationClass="com.github.kumaraman21.intellijbehave.formatter.StoryFormattingBuilder"
+                        language="JBehave"/>
+        <codeStyleSettingsProvider
+                implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.github.kumaraman21.intellijbehave.codeStyle.JBehaveLanguageCodeStyleSettingsProvider"/>
+        <lang.foldingBuilder language="JBehave"
+                             implementationClass="com.github.kumaraman21.intellijbehave.folding.JBehaveFoldingBuilder"/>
+        <lang.psiStructureViewFactory language="JBehave"
+                                      implementationClass="com.github.kumaraman21.intellijbehave.structureView.StructureViewFactory"/>
     </extensions>
 </idea-plugin>

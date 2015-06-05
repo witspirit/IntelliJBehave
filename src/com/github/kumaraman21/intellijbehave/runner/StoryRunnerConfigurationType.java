@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class StoryRunnerConfigurationType extends ApplicationConfigurationType implements ApplicationComponent {
 
-    public static final String JBEHAVE_STORY_RUNNER = "JBehave Story Runner";
+    public static final String JB_STORY_RUNNER = "JBehave Story Runner";
 
     @Override
     public String getDisplayName() {
-        return JBEHAVE_STORY_RUNNER;
+        return JB_STORY_RUNNER;
     }
 
     @Override

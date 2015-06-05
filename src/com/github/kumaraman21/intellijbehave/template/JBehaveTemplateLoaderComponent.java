@@ -18,51 +18,49 @@ package com.github.kumaraman21.intellijbehave.template;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+import static com.github.kumaraman21.intellijbehave.language.JBehaveFileType.JBEHAVE_FILE_TYPE;
 import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
 public class JBehaveTemplateLoaderComponent implements ApplicationComponent {
-  @Override
-  public void initComponent() {
-    FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
-    if (template == null) {
-      template = FileTemplateManager.getInstance()
-        .addTemplate(STORY_FILE_TYPE.getName(), STORY_FILE_TYPE.getDefaultExtension());
+    @Override
+    public void initComponent() {
+        FileTemplate template = FileTemplateManager.getInstance(ProjectManager.getInstance().getDefaultProject())
+                                                   .getTemplate(JBEHAVE_FILE_TYPE.getName());
+        if (template == null) {
+            template = FileTemplateManager.getInstance(ProjectManager.getInstance().getDefaultProject())
+                                          .addTemplate(JBEHAVE_FILE_TYPE.getName(),
+                    JBEHAVE_FILE_TYPE.getDefaultExtension());
 
-      InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");
-      try {
-        if(stream!=null)
-          template.setText(loadTextAndClose(new InputStreamReader(stream)));
-      }
-      catch (IOException e) {
-        e.printStackTrace();
-      }
-      finally {
-        try {
-          if(stream!=null)
-            stream.close();
+            InputStream stream = getClass().getResourceAsStream("/fileTemplates/JBehave Story.story.ft");
+            try {
+                if (stream != null) template.setText(loadTextAndClose(new InputStreamReader(stream)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (stream != null) stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
     }
-  }
 
-  @Override
-  public void disposeComponent() {
-    // do nothing
-  }
+    @Override
+    public void disposeComponent() {
+        // do nothing
+    }
 
-  @NotNull
-  @Override
-  public String getComponentName() {
-    return this.getClass().getName();
-  }
+    @NotNull
+    @Override
+    public String getComponentName() {
+        return this.getClass().getName();
+    }
 }
