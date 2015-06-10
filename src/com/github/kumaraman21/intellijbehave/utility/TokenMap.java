@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -8,12 +9,11 @@ import java.util.regex.Pattern;
  */
 public class TokenMap<V> {
     private final Map<String, TokenMap<V>> nextTokens = new HashMap<String, TokenMap<V>>();
-    private V leafToken;
+    private V leafToken = null;
     private static final Pattern PutTokenizer = Pattern.compile("(\\S+)", Pattern.DOTALL);
     private static final Pattern GetTokenizer = Pattern.compile("(\\S+)", Pattern.DOTALL);
 
     public TokenMap() {
-
     }
 
     protected V getLeafToken() {
@@ -37,7 +37,7 @@ public class TokenMap<V> {
     }
 
     public boolean get(final String toFind, final ITokenMapVisitor<V> visitor, final boolean strict) {
-        List<String> tokens = new ArrayList<String>();
+        List<ParametrizedToken> tokens = new ArrayList<ParametrizedToken>();
 
         TokenIterator tokenIterator = new TokenIterator(toFind, GetTokenizer);
         while (tokenIterator.hasNext()) {
@@ -58,12 +58,12 @@ public class TokenMap<V> {
         return token;
     }
 
-    private void put(final Iterator<String> path, final V value) {
+    private void put(final Iterator<ParametrizedToken> path, final V value) {
         if (path.hasNext()) {
-            final String token = reduceIfParameter(path.next());
+            final String token = reduceIfParameter(path.next().getValue());
             TokenMap<V> tokenMap = nextTokens.get(token);
             if (tokenMap == null) {
-                tokenMap = token.startsWith("$") ? new TokenMapParam<V>() : new TokenMap<V>();
+                tokenMap = token.equals("$") ? new TokenMapParam<V>() : new TokenMap<V>();
                 nextTokens.put(token, tokenMap);
             }
             tokenMap.put(path, value);
@@ -72,83 +72,66 @@ public class TokenMap<V> {
         }
     }
 
+    private static final Pattern InjectPattern = Pattern.compile("<.+?\\|\\s*(.+?)\\s*>", Pattern.DOTALL);
+
     protected String unwrapInject(final String value) {
-        int start = value.indexOf('<');
-        if (start < 0) return value;
-        final StringBuilder sb = new StringBuilder();
-        String newValue = value;
-        while (start >= 0) {
-            final boolean doubleStart = newValue.charAt(start + 1) == '<';
-            final int end = newValue.indexOf('>', start);
-            int secondEnd = end;
-            if (end + 1 < newValue.length() && newValue.charAt(end + 1) == '>' && doubleStart) ++secondEnd;
-            if (end >= 0) {
-                final int pipe = newValue.indexOf("|", start + 1);
-                if (pipe >= 0) {
-                    sb.append(newValue.substring(0, start));
-                    sb.append(newValue.substring(pipe + 1, end));
-                    newValue = newValue.substring(secondEnd + 1, newValue.length());
-                    start = newValue.indexOf('<');
-                } else {
-                    start = newValue.indexOf('<', start + 1);
-                }
-            } else {
-                break;
-            }
-        }
-        sb.append(newValue);
-        return sb.toString();
+        final Matcher matcher = InjectPattern.matcher(value);
+
+        return matcher.find() && matcher.groupCount() > 0 ? matcher.group(1) : value;
     }
 
-    protected boolean get(final List<String> split, final int count, final ITokenMapVisitor<V> visitor,
+    protected boolean get(final List<ParametrizedToken> split, final int count, final ITokenMapVisitor<V> visitor,
                           final boolean strict) {
         if ((strict && count < split.size()) || (!strict && count < split.size() - 1)) {
-            TokenMap<V> tokenMap;
-            final String next = unwrapInject(split.get(count));
-            tokenMap = getNextTokens().get("$");
+            final ParametrizedToken nextToken = split.get(count);
+            final String next = unwrapInject(nextToken.getValue());
+            TokenMap<V> tokenMap = getNextTokens().get("$");
             if (tokenMap != null && tokenMap.get(split, count + 1, visitor, strict)) {
                 return true;
             }
             tokenMap = getNextTokens().get(next);
             if (tokenMap != null) {
-                return tokenMap.get(split, count + 1, visitor, strict);
-            } else {
-                if (!strict) {
-                    tokenMap = getNextTokens().get("$");
-                    return tokenMap.getAll(visitor);
+                visitor.pushToken(nextToken);
+                if (tokenMap.get(split, count + 1, visitor, strict)) {
+                    return true;
+                } else {
+                    visitor.popToken();
+                    return false;
                 }
-                return false;
+            } else {
+                return !strict && getNextTokens().get("$").putAllInto(visitor);
             }
         }
 
         if (!strict && count == split.size() - 1) {
             boolean found = false;
-            String prefix = unwrapInject(split.get(count));
+            final ParametrizedToken nextToken = split.get(count);
+            final String prefix = unwrapInject(nextToken.getValue());
             for (final Map.Entry<String, TokenMap<V>> entry : getNextTokens().entrySet()) {
                 final String key = entry.getKey();
                 if (key.equals("$") || key.startsWith(prefix)) {
-                    found |= entry.getValue().getAll(visitor);
+                    found |= entry.getValue().putAllInto(visitor);
                 }
             }
+            if (found) visitor.pushToken(nextToken);
             return found;
         }
-        final V leafToken = getLeafToken();
-        if (strict && count >= split.size() && leafToken != null) {
-            visitor.found(leafToken);
+        if (strict && getLeafToken() != null && count >= split.size()) {
+            visitor.found(getLeafToken());
             return true;
         }
 
         return false;
     }
 
-    protected boolean getAll(final ITokenMapVisitor<V> visitor) {
+    protected boolean putAllInto(final ITokenMapVisitor<V> visitor) {
         boolean found = false;
         if (leafToken != null) {
             visitor.found(leafToken);
             found = true;
         }
         for (TokenMap<V> tokenMap : nextTokens.values()) {
-            found |= tokenMap.getAll(visitor);
+            found |= tokenMap.putAllInto(visitor);
         }
         return found;
     }
