@@ -4,6 +4,9 @@ import java.util.Iterator;
 
 /**
  * Created by DeBritoD on 01.06.2015.
+ *
+ * If there is a list of tokens e.g.: [ab, cd, *ef, gh] (where * marks a parameter), then return a reduced version
+ * e.g.: [abcd, *ef, gh].
  */
 public class ReduceTokenIterator implements Iterator<ParametrizedToken> {
     private Iterator<ParametrizedToken> it;
