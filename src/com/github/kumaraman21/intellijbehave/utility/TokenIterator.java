@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Created by DeBritoD on 27.05.2015.
  */
-public class TokenIterator implements Iterator<String> {
+public class TokenIterator implements Iterator<ParametrizedToken> {
     private final Matcher matcher;
     private boolean matching = false;
     private boolean hasMatch = false;
@@ -28,10 +28,11 @@ public class TokenIterator implements Iterator<String> {
     }
 
     @Override
-    public String next() {
+    public ParametrizedToken next() {
         if (hasNext()) {
             matching = false;
-            return value.substring(matcher.start(), matcher.end());
+            return new ParametrizedToken(value.substring(matcher.start(), matcher.end()), matcher.start(),
+                                         matcher.end(), false);
         }
         return null;
     }

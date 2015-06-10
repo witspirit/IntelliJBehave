@@ -9,4 +9,13 @@ public interface ITokenMapVisitor<V> {
     void found(List<V> concerned);
 
     void found(V leafToken);
+
+    void pushParameter(ParametrizedToken parameter);
+
+    void popParameter();
+
+    void pushToken(ParametrizedToken next);
+
+    void popToken();
+
 }

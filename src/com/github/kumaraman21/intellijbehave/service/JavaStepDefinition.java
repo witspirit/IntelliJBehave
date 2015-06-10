@@ -226,6 +226,22 @@ public class JavaStepDefinition implements Comparable<JavaStepDefinition> {
         return mapNameToType;
     }
 
+    public List<PsiParameter> getParameters() {
+        List<PsiParameter> retVal = new ArrayList<PsiParameter>();
+        PsiMethod method = getAnnotatedMethod();
+        if (method != null) {
+            PsiParameterList parameterList = method.getParameterList();
+            PsiParameter[] parameters = parameterList.getParameters();
+            for (PsiParameter parameter : parameters) {
+                PsiTypeElement typeElement = parameter.getTypeElement();
+                if (typeElement != null) {
+                    retVal.add(parameter);
+                }
+            }
+        }
+        return retVal;
+    }
+
     private static class StringComputable implements Computable<String> {
         private final PsiAnnotation element;
 

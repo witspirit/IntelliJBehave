@@ -21,6 +21,26 @@ public class CollectLeafs<V> implements ITokenMapVisitor<V> {
         result.add(leafToken);
     }
 
+    @Override
+    public void pushParameter(ParametrizedToken parameter) {
+
+    }
+
+    @Override
+    public void popParameter() {
+
+    }
+
+    @Override
+    public void pushToken(ParametrizedToken next) {
+
+    }
+
+    @Override
+    public void popToken() {
+
+    }
+
     public List<V> getResult() {
         List<V> retval = new ArrayList<V>(result.size());
         retval.addAll(result);

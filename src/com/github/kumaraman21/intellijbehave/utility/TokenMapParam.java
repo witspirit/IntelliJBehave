@@ -9,25 +9,30 @@ public class TokenMapParam<V> extends TokenMap<V> {
     public TokenMapParam() {
     }
 
-    protected boolean get(final List<String> split, final int count, final ITokenMapVisitor<V> visitor,
+    protected boolean get(final List<ParametrizedToken> split, final int count, final ITokenMapVisitor<V> visitor,
                           final boolean strict) {
-        int currentCount = count;
-        while (currentCount < split.size()) {
-            final String next = unwrapInject(split.get(currentCount));
+        visitor.pushParameter(split.get(count - 1));
+        if (count < split.size()) {
+            ParametrizedToken nextToken = split.get(count);
+            final String next = unwrapInject(nextToken.getValue());
             TokenMap<V> tokenMap = getNextTokens().get(next);
-            if (tokenMap != null) {
-                if (tokenMap.get(split, currentCount + 1, visitor, strict)) {
-                    return true;
-                }
+            visitor.pushToken(nextToken);
+            if (tokenMap != null && tokenMap.get(split, count + 1, visitor, strict)) {
+                return true;
             }
-            ++currentCount;
+            visitor.popToken();
+            if (get(split, count + 1, visitor, strict)) {
+                return true;
+            } else {
+                visitor.popParameter();
+                return false;
+            }
         }
-        final V leafToken = getLeafToken();
-        if (currentCount >= split.size() && strict && leafToken != null) {
-            visitor.found(leafToken);
+        if (strict && getLeafToken() != null && count >= split.size()) {
+            visitor.found(getLeafToken());
             return true;
         }
+        visitor.popParameter();
         return false;
     }
-
 }

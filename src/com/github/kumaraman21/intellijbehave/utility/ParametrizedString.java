@@ -294,17 +294,16 @@ public class ParametrizedString implements Comparable<ParametrizedString> {
 
     public static List<ContentToken> split(final String text) {
         final Matcher matcher = pattern.matcher(text);
+        List<ContentToken> result = new ArrayList<ContentToken>();
 
-        List<ContentToken> result2 = new ArrayList<ContentToken>();
         while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
-            result2.add(new ContentToken(text, start, end));
+            result.add(new ContentToken(text, matcher.start(), matcher.end()));
         }
-        return result2;
+        return result;
     }
 
     private static final Pattern injectPattern = Pattern.compile("(<{1,2}+.+?>{1,2}+)", Pattern.DOTALL);
+
     public static List<ContentToken> splitOnInject(final String text) {
         final Matcher matcher = injectPattern.matcher(text);
 

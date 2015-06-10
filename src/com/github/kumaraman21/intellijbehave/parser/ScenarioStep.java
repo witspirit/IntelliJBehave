@@ -21,7 +21,8 @@ import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.psi.*;
 import com.github.kumaraman21.intellijbehave.resolver.ScenarioStepReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
-import com.github.kumaraman21.intellijbehave.utility.ParametrizedString;
+import com.github.kumaraman21.intellijbehave.service.JavaStepDefinitionsIndex;
+import com.github.kumaraman21.intellijbehave.utility.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -44,7 +45,6 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.trim;
 
@@ -107,17 +107,21 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
         return "";
     }
 
-    public String getAnnotatedStoryLine() {
+    public String getStepTypeAsString() {
         StepType stepType = getStepType();
         String lowerCase = stepType.toString().toLowerCase();
+        return Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
+    }
+
+    public String getAnnotatedStoryLine() {
+        String stepType = getStepTypeAsString();
 
         JBehaveStepLine storyStepLine = getStoryStepLine();
         if (storyStepLine != null) {
-            lowerCase = Character.toUpperCase(lowerCase.charAt(0)) + lowerCase.substring(1);
             final String format = hasStoryStepPostParameters() ? "%s %s $" : "%s %s";
-            return String.format(format, lowerCase, storyStepLine.getText());
+            return String.format(format, stepType, storyStepLine.getText());
         }
-        return lowerCase;
+        return stepType;
     }
 
 
@@ -332,33 +336,31 @@ public class ScenarioStep extends ParserRule implements PsiNamedElement {
             javaStepText = javaStepDefinition.getAnnotationTextFor(storyStepText);
             if (javaStepText == null) return false;
         }
-        ParametrizedString pJavaStepText = new ParametrizedString(javaStepText);
+        final int offset = getTextOffset() + getStepTextOffset() - getStepTypeAsString().length() - 1;
+        TokenMap<JavaStepDefinition> tokenMap =
+                JavaStepDefinitionsIndex.getInstance(getProject()).findAllStepDefinitionsByType(this);
+        CollectTokens<JavaStepDefinition> tokens = new CollectTokens<JavaStepDefinition>();
+        tokenMap.get(getAnnotatedStoryLine(), tokens, true);
+        ReduceTokenIterator iterator = new ReduceTokenIterator(tokens.result());
+        if (iterator.hasNext()) {
+            Iterator<PsiParameter> typeIt = javaStepDefinition.getParameters().iterator();
+            while (iterator.hasNext()) {
+                ParametrizedToken next = iterator.next();
 
-        Map<String, PsiType> mapNameToType = javaStepDefinition.mapNameToType();
-
-        final int offset = getTextOffset() + getStepTextOffset();
-        final List<Pair<ParametrizedString.ContentToken, String>> tokensOf = pJavaStepText.getTokensOf(storyStepText);
-        if (tokensOf != null) {
-            final int tokensOfSize = hasStoryStepPostParameters() ? tokensOf.size() - 1 : tokensOf.size();
-
-            for (int i = 0; i < tokensOfSize; i++) {
-                final Pair<ParametrizedString.ContentToken, String> pair = tokensOf.get(i);
-                final ParametrizedString.ContentToken contentToken = pair.first;
-                if (pair.second != null) {
-                    ParametrizedString.Token pToken = pJavaStepText.getToken(i);
-                    PsiType parameterType = mapNameToType.get(pToken.value());
-                    final String format = parameterType != null ?
-                            String.format("Parameter: <%s> %s", parameterType.getCanonicalText(), pToken.value()) :
-                            String.format("Parameter: %s", pToken.value());
-                    final TextRange textRange =
-                            TextRange.from(offset + contentToken.getStart(), contentToken.getLength());
+                if (next.isParameter()) {
+                    PsiParameter parameterType = typeIt.next();
+                    PsiTypeElement typeElement = parameterType.getTypeElement();
+                    String format = typeElement != null ?
+                            String.format("Parameter: <%s> %s", typeElement.getType().getCanonicalText(),
+                                          parameterType.getName()) : null;
+                    final TextRange textRange = TextRange.from(offset + next.getStart(), next.getLength());
                     //
                     annotationHolder.createInfoAnnotation(textRange, format)
                                     .setTextAttributes(JBehaveSyntaxHighlighter.STEP_PARAMETER);
                     //
-                    for (ParametrizedString.ContentToken s : ParametrizedString.split(contentToken.value())) {
+                    for (ParametrizedString.ContentToken s : ParametrizedString.split(next.getValue())) {
                         final PsiElement elementAt =
-                                getContainingFile().findElementAt(offset + contentToken.getStart() + s.getStart());
+                                getContainingFile().findElementAt(offset + next.getStart() + s.getStart());
                         if (elementAt != null &&
                                 elementAt.getNode().getElementType() == IJBehaveElementType.JB_TOKEN_WORD) {
                             elementAt.putUserData(ParserRule.isStepParameter, true);
