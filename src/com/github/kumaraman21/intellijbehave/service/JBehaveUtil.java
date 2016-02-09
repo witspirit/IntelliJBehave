@@ -170,8 +170,12 @@ public class JBehaveUtil {
 
     @NotNull
     private static Set<String> getAliasesAnnotationTexts(@NotNull PsiAnnotation aliasAnnotation) {
-        final PsiArrayInitializerMemberValue attrValue = (PsiArrayInitializerMemberValue) aliasAnnotation.findAttributeValue("values");
-
+        PsiArrayInitializerMemberValue attrValue = null;
+        try {
+            attrValue = (PsiArrayInitializerMemberValue) aliasAnnotation.findAttributeValue("values");
+        }catch(ClassCastException cce){
+            //swallow!
+        }
         if (attrValue == null) {
             return ImmutableSet.of();
         }
