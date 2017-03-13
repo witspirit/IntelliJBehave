@@ -55,6 +55,9 @@ public class JBehaveUtil {
     public static final Function<String, Set<String>> TO_A_SET_OF_PATTERNS = new Function<String, Set<String>>() {
         @Override
         public Set<String> apply(@Nullable String value) {
+            if (value == null) {
+                value = "";
+            }
             return new PatternVariantBuilder(value).allVariants();
         }
     };
