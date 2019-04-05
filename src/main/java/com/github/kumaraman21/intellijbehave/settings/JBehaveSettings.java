@@ -19,6 +19,8 @@ import com.intellij.openapi.components.*;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 @State(
         name = "JBehaveSettings",
         storages = {@Storage(
@@ -29,6 +31,7 @@ public class JBehaveSettings implements ApplicationComponent, PersistentStateCom
 
     private String storyRunner;
     private boolean storyAutoCompletion;
+    private String fileExtensions = "";
 
     public static JBehaveSettings getInstance() {
         return ServiceManager.getService(JBehaveSettings.class);
@@ -60,6 +63,14 @@ public class JBehaveSettings implements ApplicationComponent, PersistentStateCom
         this.storyAutoCompletion = storyAutoCompletion;
     }
 
+    public String getFileExtensions() {
+        return fileExtensions;
+    }
+
+    public void setFileExtensions(String fileExtensions) {
+        this.fileExtensions = fileExtensions;
+    }
+
     @Override
     public void initComponent() {
 
@@ -75,4 +86,6 @@ public class JBehaveSettings implements ApplicationComponent, PersistentStateCom
     public String getComponentName() {
         return "JBehaveSettings";
     }
+
+
 }
