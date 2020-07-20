@@ -12,10 +12,9 @@ plugins {
 ext {
     kotlinVersion = '1.3.72'
     jBehaveVersion = '4.0.5'
-    easyTestingVersion = '1.2.5'
-    easyTestingAssertCoreVersion = '2.0M10'
     guavaVersion = '28.1-jre'
     jUnitVersion = '4.13'
+    assertJVersion = '3.14.0'
     mockitoVersion = '3.2.4'
 }
 
@@ -44,8 +43,7 @@ dependencies {
     compile "org.jbehave:jbehave-core:$jBehaveVersion"
     compile "com.google.guava:guava:$guavaVersion"
     testCompile "junit:junit:$jUnitVersion"
-    testCompile "org.easytesting:fest-util:$easyTestingVersion"
-    testCompile "org.easytesting:fest-assert-core:$easyTestingAssertCoreVersion"
+    testCompile "org.assertj:assertj-core:$assertJVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
