@@ -75,7 +75,11 @@
         <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable"/>
         <spellchecker.support language="Story"
                               implementationClass="com.github.kumaraman21.intellijbehave.spellchecker.JBehaveSpellcheckerStrategy"/>
-        <fileTypeFactory implementation="com.github.kumaraman21.intellijbehave.language.StoryFileTypeFactory"/>
+        <!--NOTE: changing the order of the attributes in the fileType extension point may result in the file type not being registered-->
+        <fileType name="JBehave Story"
+                  implementationClass="com.github.kumaraman21.intellijbehave.language.StoryFileType"
+                  fieldName="STORY_FILE_TYPE"
+                  language="Story" extensions="story"/>
         <lang.parserDefinition language="Story"
                                implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
         <annotator language="Story"
