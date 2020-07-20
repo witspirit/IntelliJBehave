@@ -15,7 +15,6 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
-import com.github.kumaraman21.intellijbehave.parser.StoryElementType;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;

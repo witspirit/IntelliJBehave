@@ -17,7 +17,6 @@ package com.github.kumaraman21.intellijbehave.template;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.openapi.components.Service;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -16,7 +16,6 @@
 package com.github.kumaraman21.intellijbehave.runner;
 
 import com.intellij.execution.application.ApplicationConfigurationType;
-import com.intellij.openapi.components.Service;
 import org.jetbrains.annotations.NotNull;
 
 public class StoryRunnerConfigurationType extends ApplicationConfigurationType {
