@@ -54,7 +54,7 @@ public class CreateStoryAction extends CreateElementActionBase {
 
   @NotNull
   @Override
-  protected PsiElement[] create(String newName, PsiDirectory directory) throws Exception {
+  protected PsiElement[] create(@NotNull String newName, PsiDirectory directory) throws Exception {
     final FileTemplate template = FileTemplateManager.getInstance().getTemplate(STORY_FILE_TYPE.getName());
 
     String fileName = getFileName(newName);
@@ -78,11 +78,6 @@ public class CreateStoryAction extends CreateElementActionBase {
   @Override
   protected String getErrorTitle() {
     return "Cannot Create Story File";
-  }
-
-  @Override
-  protected String getCommandName() {
-    return "Create Story File";
   }
 
   @Override
