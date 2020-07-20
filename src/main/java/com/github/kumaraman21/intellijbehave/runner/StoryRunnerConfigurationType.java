@@ -19,7 +19,6 @@ import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.openapi.components.Service;
 import org.jetbrains.annotations.NotNull;
 
-@Service
 public class StoryRunnerConfigurationType extends ApplicationConfigurationType {
 
     public static final String JBEHAVE_STORY_RUNNER = "JBehave Story Runner";

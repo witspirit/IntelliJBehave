@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
-@Service
 public class JBehaveTemplateLoaderService {
 
   public JBehaveTemplateLoaderService() {

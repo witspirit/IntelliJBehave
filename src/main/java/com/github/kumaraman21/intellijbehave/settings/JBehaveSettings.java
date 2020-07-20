@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
                 file = "$APP_CONFIG$/jbehave_settings.xml"
         )}
 )
-@Service
 public class JBehaveSettings implements PersistentStateComponent<JBehaveSettings> {
 
     private String storyRunner;
