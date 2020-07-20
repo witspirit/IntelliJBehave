@@ -1,8 +1,8 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>

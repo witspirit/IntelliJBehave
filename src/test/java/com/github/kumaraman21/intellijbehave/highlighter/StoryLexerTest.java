@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static com.github.kumaraman21.intellijbehave.Samples.*;
 import static com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType.*;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>

@@ -1,16 +1,15 @@
 package com.github.kumaraman21.intellijbehave.highlighter;
 
+import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
+import com.intellij.psi.tree.IElementType;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static com.github.kumaraman21.intellijbehave.Samples.EXAMPLES_SAMPLE;
 import static com.github.kumaraman21.intellijbehave.Samples.LONG_SAMPLE;
 import static com.github.kumaraman21.intellijbehave.Samples.META_SAMPLE;
 import static com.github.kumaraman21.intellijbehave.Samples.SIMPLE_SAMPLE;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
-import com.intellij.psi.tree.IElementType;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>

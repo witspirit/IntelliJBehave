@@ -1,12 +1,11 @@
 package com.github.kumaraman21.intellijbehave.highlighter;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.intellij.psi.tree.IElementType;
-
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>

@@ -1,14 +1,11 @@
 package com.github.kumaraman21.intellijbehave.utility;
 
-import static com.github.kumaraman21.intellijbehave.utility.JBKeyword.Narrative;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import com.github.kumaraman21.intellijbehave.utility.CharTree;
-import com.github.kumaraman21.intellijbehave.utility.JBKeyword;
-
 import org.jbehave.core.i18n.LocalizedKeywords;
 import org.junit.Before;
 import org.junit.Test;
+
+import static com.github.kumaraman21.intellijbehave.utility.JBKeyword.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
