@@ -16,13 +16,15 @@
 package com.github.kumaraman21.intellijbehave.runner;
 
 import com.intellij.execution.application.ApplicationConfigurationType;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.Service;
 import org.jetbrains.annotations.NotNull;
 
-public class StoryRunnerConfigurationType extends ApplicationConfigurationType implements ApplicationComponent {
+@Service
+public class StoryRunnerConfigurationType extends ApplicationConfigurationType {
 
     public static final String JBEHAVE_STORY_RUNNER = "JBehave Story Runner";
 
+    @NotNull
     @Override
     public String getDisplayName() {
         return JBEHAVE_STORY_RUNNER;
@@ -37,21 +39,5 @@ public class StoryRunnerConfigurationType extends ApplicationConfigurationType i
     @Override
     public String getId() {
         return "intellijbehave.storyrunner";
-    }
-
-    @Override
-    public void initComponent() {
-
-    }
-
-    @Override
-    public void disposeComponent() {
-
-    }
-
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return getId();
     }
 }
