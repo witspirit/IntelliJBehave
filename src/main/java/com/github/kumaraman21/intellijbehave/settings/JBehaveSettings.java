@@ -20,10 +20,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
 @State(
-        name = "JBehaveSettings",
-        storages = {@Storage(
-                file = "$APP_CONFIG$/jbehave_settings.xml"
-        )}
+    name = "JBehaveSettings",
+    storages = @Storage("$APP_CONFIG$/jbehave_settings.xml")
 )
 public class JBehaveSettings implements PersistentStateComponent<JBehaveSettings> {
 
