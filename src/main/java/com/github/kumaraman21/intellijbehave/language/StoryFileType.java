@@ -23,7 +23,6 @@ import javax.swing.*;
 import static com.github.kumaraman21.intellijbehave.language.StoryLanguage.STORY_LANGUAGE;
 
 public class StoryFileType extends LanguageFileType {
-    //In case this is called something else, e.g. INSTANCE, the file type icon/file type doesn't get registered
     public static final StoryFileType STORY_FILE_TYPE = new StoryFileType();
 
     protected StoryFileType() {
