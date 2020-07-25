@@ -56,7 +56,7 @@ public class StoryCompletionContributor extends CompletionContributor {
 
     private boolean getIsStoryAutoCompletion() {
         Application application = ApplicationManager.getApplication();
-        JBehaveSettings component = application.getComponent(JBehaveSettings.class);
+        JBehaveSettings component = application.getService(JBehaveSettings.class);
 
         return component.isStoryAutoCompletion();
     }
