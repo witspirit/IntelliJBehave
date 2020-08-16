@@ -104,7 +104,6 @@
         <projectService serviceInterface="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"
                         serviceImplementation="com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex"/>
         <applicationService serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings" />
-        <applicationService serviceImplementation="com.github.kumaraman21.intellijbehave.template.JBehaveTemplateLoaderService" />
         <applicationService serviceImplementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
         <!--This Run Configuration type is registered explicitly because otherwise after running a story (run config created),
             then restarting IntelliJ, the previously created run config type is not recognized by IntelliJ.
@@ -114,4 +113,5 @@
             this won't interfere with the default JBehave Story Runner.-->
         <configurationType implementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
     </extensions>
+
 </idea-plugin>
