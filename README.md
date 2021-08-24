@@ -1,7 +1,7 @@
 JBehave Support for IntelliJ IDEA
 =================================
 
-![JBehave Support](https://img.shields.io/jetbrains/plugin/v/7268-jbehave-support)
+[![JBehave Support](https://img.shields.io/jetbrains/plugin/v/7268-jbehave-support)](https://plugins.jetbrains.com/plugin/7268-jbehave-support)
 
 IntelliJ IDEA Plugin for JBehave
 
