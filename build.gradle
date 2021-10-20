@@ -13,7 +13,6 @@ plugins {
 ext {
     kotlinVersion = '1.4.32'
     jBehaveVersion = '4.8.3'
-    guavaVersion = '28.1-jre'
     jUnitVersion = '4.13'
     assertJVersion = '3.20.2'
     mockitoVersion = '3.11.2'
@@ -48,7 +47,6 @@ wrapper {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation "org.jbehave:jbehave-core:$jBehaveVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
     testImplementation "junit:junit:$jUnitVersion"
     testImplementation "org.assertj:assertj-core:$assertJVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"

@@ -15,8 +15,6 @@
  */
 package com.github.kumaraman21.intellijbehave.parser;
 
-import com.github.kumaraman21.intellijbehave.utility.NodeToPsiElement;
-import com.github.kumaraman21.intellijbehave.utility.NodeToStepPsiElement;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
@@ -25,13 +23,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 import static com.github.kumaraman21.intellijbehave.parser.StoryElementType.*;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.transform;
-import static java.util.Arrays.asList;
 
 public class StoryFile extends PsiFileBase {
 
@@ -48,34 +46,26 @@ public class StoryFile extends PsiFileBase {
     @NotNull
     public List<JBehaveStep> getSteps() {
 
-        List<ASTNode> stepNodes = newArrayList();
-
-        for (PsiElement scenario : getScenarios()) {
-            ASTNode[] stepNodesOfScenario = scenario.getNode().getChildren(STEPS_TOKEN_SET);
-            stepNodes.addAll(asList(stepNodesOfScenario));
-        }
-
-        return transform(stepNodes, new NodeToStepPsiElement());
+        return getScenarios().stream()
+                .map(scenario -> scenario.getNode().getChildren(STEPS_TOKEN_SET))
+                .flatMap(Stream::of)
+                .map(astNode -> (JBehaveStep) astNode.getPsi())
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<PsiElement> getScenarios() {
         PsiElement story = getStory();
         if (story == null) {
-            return newArrayList();
+            return new ArrayList<>();
         }
 
         ASTNode[] scenarioNodes = story.getNode().getChildren(TokenSet.create(SCENARIO));
-        return transform(asList(scenarioNodes), new NodeToPsiElement());
+        return Stream.of(scenarioNodes).map(ASTNode::getPsi).collect(Collectors.toList());
     }
 
     private PsiElement getStory() {
         ASTNode[] storyNodes = this.getNode().getChildren(TokenSet.create(STORY));
-
-        if (storyNodes.length > 0) {
-            return storyNodes[0].getPsi();
-        }
-
-        return null;
+        return storyNodes.length > 0 ? storyNodes[0].getPsi() : null;
     }
 }

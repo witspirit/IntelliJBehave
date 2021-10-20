@@ -1,12 +1,16 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import static com.google.common.collect.FluentIterable.from;
 import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
-import static java.util.Arrays.asList;
 
+import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
@@ -18,10 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -41,38 +41,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 
 public class JBehaveUtil {
-    public static final Predicate<PsiAnnotation> JBEHAVE_STEPS_ANNOTATIONS = new Predicate<PsiAnnotation>() {
-        @Override
-        public boolean apply(@Nullable PsiAnnotation annotation) {
-            return annotation != null && isJBehaveStepAnnotation(annotation);
-        }
-    };
-    public static final Predicate<PsiAnnotation> JBEHAVE_ALIAS_ANNOTATION = new Predicate<PsiAnnotation>() {
-        @Override
-        public boolean apply(@Nullable PsiAnnotation annotation) {
-            return annotation != null && isJBehaveAliasAnnotation(annotation);
-        }
-    };
-    public static final Predicate<PsiAnnotation> JBEHAVE_ALIASES_ANNOTATION = new Predicate<PsiAnnotation>() {
-        @Override
-        public boolean apply(@Nullable PsiAnnotation annotation) {
-            return annotation != null && isJBehaveAliasesAnnotation(annotation);
-        }
-    };
-    public static final Function<PsiAnnotation, Set<String>> TO_ANNOTATION_TEXTS = new Function<PsiAnnotation, Set<String>>() {
-        @Override
-        public Set<String> apply(PsiAnnotation stepAnnotation) {
-            return getAnnotationTexts(stepAnnotation);
-        }
-    };
-    public static final Function<String, Set<String>> TO_A_SET_OF_PATTERNS = new Function<String, Set<String>>() {
-        @Override
-        public Set<String> apply(@Nullable String value) {
-            return value != null ? new PatternVariantBuilder(value).allVariants() : Collections.EMPTY_SET;
-        }
-    };
-    public static final ImmutableSet<String> JBEHAVE_ANNOTATIONS_SET =
-            ImmutableSet.of(Given.class.getName(), When.class.getName(), Then.class.getName());
+
+    public static final Set<String> JBEHAVE_ANNOTATIONS_SET = Set.of(Given.class.getName(), When.class.getName(),
+            Then.class.getName());
 
     public static boolean isJBehaveStepAnnotation(@NotNull PsiAnnotation annotation) {
         String annotationName = getAnnotationName(annotation);
@@ -80,16 +51,11 @@ public class JBehaveUtil {
         return annotationName != null && JBEHAVE_ANNOTATIONS_SET.contains(annotationName);
     }
 
-    public static boolean isJBehaveAliasAnnotation(@NotNull PsiAnnotation annotation) {
+    public static boolean isAnnotationOfClass(@NotNull PsiAnnotation annotation,
+            @NotNull Class<? extends Annotation> annotationClass) {
         String annotationName = getAnnotationName(annotation);
 
-        return annotationName != null && Objects.equal(annotationName, Alias.class.getName());
-    }
-
-    public static boolean isJBehaveAliasesAnnotation(@NotNull PsiAnnotation annotation) {
-        String annotationName = getAnnotationName(annotation);
-
-        return annotationName != null && Objects.equal(annotationName, Aliases.class.getName());
+        return annotationName != null && Objects.equals(annotationName, annotationClass.getName());
     }
 
     @Nullable
@@ -106,79 +72,52 @@ public class JBehaveUtil {
     private static List<PsiAnnotation> getJBehaveStepAnnotations(@NotNull PsiMethod method) {
         PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
 
-        return from(asList(annotations))
-                .filter(JBEHAVE_STEPS_ANNOTATIONS).toList();
+        return Stream.of(annotations)
+                .filter(JBehaveUtil::isJBehaveStepAnnotation)
+                .collect(Collectors.toList());
     }
 
-    @Nullable
-    private static PsiAnnotation getJBehaveAliasAnnotation(@NotNull PsiMethod method) {
-        PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
-
-        return from(asList(annotations))
-                .filter(JBEHAVE_ALIAS_ANNOTATION).first().orNull();
-    }
-
-    @Nullable
-    private static PsiAnnotation getJBehaveAliasesAnnotation(@NotNull PsiMethod method) {
-        PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
-
-        return from(asList(annotations))
-                .filter(JBEHAVE_ALIASES_ANNOTATION).first().orNull();
+    private static Optional<PsiAnnotation> findAnnotation(PsiAnnotation @NotNull [] annotations,
+            @NotNull Class<? extends Annotation> annotationClass) {
+        return Stream.of(annotations)
+                .filter(annotation -> isAnnotationOfClass(annotation, annotationClass))
+                .findFirst();
     }
 
     public static boolean isStepDefinition(@NotNull PsiMethod method) {
-        List<PsiAnnotation> stepAnnotations = getJBehaveStepAnnotations(method);
-
-        for (PsiAnnotation stepAnnotation : stepAnnotations) {
-            if (stepAnnotation.findAttributeValue("value") != null) {
-                return true;
-            }
-        }
-
-        return false;
+        return getJBehaveStepAnnotations(method).stream()
+                .map(stepAnnotation -> stepAnnotation.findAttributeValue("value"))
+                .anyMatch(Objects::nonNull);
     }
 
     @NotNull
     public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation) {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        builder.addAll(getStepAnnotationTexts(stepAnnotation));
+        Set<String> annotationTexts = new HashSet<>();
+        getAnnotationText(stepAnnotation).ifPresent(annotationTexts::add);
 
         PsiMethod method = PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
         if (method != null) {
-            PsiAnnotation aliasAnnotation = getJBehaveAliasAnnotation(method);
-            if (aliasAnnotation != null) {
-                builder.addAll(getAliasAnnotationTexts(aliasAnnotation));
-            }
 
-            PsiAnnotation aliasesAnnotation = getJBehaveAliasesAnnotation(method);
-            if (aliasesAnnotation != null) {
-                builder.addAll(getAliasesAnnotationTexts(aliasesAnnotation));
-            }
+            PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
+
+            findAnnotation(annotations, Alias.class)
+                    .flatMap(JBehaveUtil::getAnnotationText)
+                    .ifPresent(annotationTexts::add);
+
+            findAnnotation(annotations, Aliases.class)
+                    .map(JBehaveUtil::getAliasesAnnotationTexts)
+                    .ifPresent(annotationTexts::addAll);
         }
 
-        return builder.build();
+        return annotationTexts.stream()
+                .map(PatternVariantBuilder::new)
+                .map(PatternVariantBuilder::allVariants)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
-    @NotNull
-    private static Set<String> getStepAnnotationTexts(@NotNull PsiAnnotation stepAnnotation) {
-        final String annotationText = AnnotationUtil.getStringAttributeValue(stepAnnotation, "value");
-
-        if (annotationText == null) {
-            return ImmutableSet.of();
-        }
-
-        return new PatternVariantBuilder(annotationText).allVariants();
-    }
-
-    @NotNull
-    private static Set<String> getAliasAnnotationTexts(@NotNull PsiAnnotation aliasAnnotation) {
-        final String annotationText = AnnotationUtil.getStringAttributeValue(aliasAnnotation, "value");
-
-        if (annotationText == null) {
-            return ImmutableSet.of();
-        }
-
-        return new PatternVariantBuilder(annotationText).allVariants();
+    private static Optional<String> getAnnotationText(@NotNull PsiAnnotation annotation) {
+        return Optional.ofNullable(AnnotationUtil.getStringAttributeValue(annotation, "value"));
     }
 
     @NotNull
@@ -186,33 +125,27 @@ public class JBehaveUtil {
         PsiAnnotationMemberValue values = aliasAnnotation.findAttributeValue("values");
 
         if (!(values instanceof PsiArrayInitializerMemberValue)) {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
 
         final PsiArrayInitializerMemberValue attrValue = (PsiArrayInitializerMemberValue) values;
 
-        if (attrValue == null) {
-            return ImmutableSet.of();
-        }
-
         final PsiConstantEvaluationHelper constantEvaluationHelper = JavaPsiFacade.getInstance(aliasAnnotation.getProject()).getConstantEvaluationHelper();
 
-        return from(asList(attrValue.getInitializers()))
-                .transform(new Function<PsiAnnotationMemberValue, String>() {
-                    @Override
-                    public String apply(@Nullable PsiAnnotationMemberValue psiAnnotationMemberValue) {
-                        Object constValue = constantEvaluationHelper.computeConstantExpression(psiAnnotationMemberValue);
-                        return constValue instanceof String ? (String) constValue : null;
-                    }
-                }).transformAndConcat(TO_A_SET_OF_PATTERNS).toSet();
+        return Stream.of(attrValue.getInitializers())
+                .map(constantEvaluationHelper::computeConstantExpression)
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .collect(Collectors.toSet());
     }
 
     @NotNull
     public static List<String> getAnnotationTexts(@NotNull PsiMethod method) {
-        List<PsiAnnotation> stepAnnotations = getJBehaveStepAnnotations(method);
-
-        return from(stepAnnotations)
-                .transformAndConcat(TO_ANNOTATION_TEXTS).toList();
+        return getJBehaveStepAnnotations(method)
+                .stream()
+                .map(JBehaveUtil::getAnnotationTexts)
+                .flatMap(Set::stream)
+                .collect(Collectors.toList());
     }
 
     @NotNull

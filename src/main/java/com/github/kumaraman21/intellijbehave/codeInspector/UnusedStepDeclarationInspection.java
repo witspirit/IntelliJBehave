@@ -30,11 +30,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.isStepDefinition;
-import static com.google.common.collect.Sets.newHashSet;
 
 public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspectionTool {
     @NotNull
@@ -86,7 +86,7 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
 
     private static class StepUsageFinder implements ContentIterator {
         private Project project;
-        private Set<JBehaveStep> stepUsages = newHashSet();
+        private Set<JBehaveStep> stepUsages = new HashSet<>();
 
         private StepUsageFinder(Project project) {
             this.project = project;

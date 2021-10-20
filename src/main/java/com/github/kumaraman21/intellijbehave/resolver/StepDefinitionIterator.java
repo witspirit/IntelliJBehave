@@ -17,7 +17,6 @@ package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesLoader;
-import com.google.common.base.Objects;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class StepDefinitionIterator implements ContentIterator {
@@ -67,7 +67,7 @@ public abstract class StepDefinitionIterator implements ContentIterator {
                     Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(annotations);
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
-                        if (stepType == null || Objects.equal(stepType, stepDefinitionAnnotation.getStepType())) {
+                        if (stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.getStepType())) {
 
                             boolean shouldContinue = processStepDefinition(stepDefinitionAnnotation);
                             if (!shouldContinue) {

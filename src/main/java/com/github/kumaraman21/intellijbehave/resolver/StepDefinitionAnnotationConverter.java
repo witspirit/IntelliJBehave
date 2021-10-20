@@ -15,19 +15,18 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
 import com.intellij.psi.*;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.steps.PatternVariantBuilder;
 import org.jbehave.core.steps.StepType;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
-import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.*;
 
 public class StepDefinitionAnnotationConverter {
@@ -48,12 +47,16 @@ public class StepDefinitionAnnotationConverter {
                     stepType = ANNOTATION_TO_STEP_TYPE_MAPPING.get(annotationQualifiedName);
                     String annotationText = getTextFromValue(attributes[0].getValue());
 
-                    if (res == null) res = newHashSet();
+                    if (res == null) {
+                        res = new HashSet<>();
+                    }
                     res.addAll(getPatternVariants(stepType, annotationText, annotation));
                 } else if (annotationQualifiedName != null) {
                     if (annotationQualifiedName.equals(Alias.class.getName())) {
                         String annotationText = getTextFromValue(attributes[0].getValue());
-                        if (res == null) res = newHashSet();
+                        if (res == null) {
+                            res = new HashSet<>();
+                        }
                         res.addAll(getPatternVariants(stepType, annotationText, annotation));
                     } else if (annotationQualifiedName.equals(Aliases.class.getName())) {
                         PsiAnnotationMemberValue attributeValue = attributes[0].getValue();
@@ -62,7 +65,9 @@ public class StepDefinitionAnnotationConverter {
                             for (PsiElement value : values) {
                                 if (value instanceof PsiLiteral) {
                                     String annotationText = getTextFromValue(value);
-                                    if (res == null) res = newHashSet();
+                                    if (res == null) {
+                                        res = new HashSet<>();
+                                    }
                                     res.addAll(getPatternVariants(stepType, annotationText, annotation));
                                 }
                             }
@@ -71,18 +76,16 @@ public class StepDefinitionAnnotationConverter {
                 }
             }
         }
-        return res == null ? ImmutableSet.<StepDefinitionAnnotation>of() : res;
+        return res == null ? Collections.emptySet() : res;
     }
 
     private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
 
-        return FluentIterable
-                .from(new PatternVariantBuilder(annotationText).allVariants())
-                .transform(new Function<String, StepDefinitionAnnotation>() {
-                    public StepDefinitionAnnotation apply(String variant) {
-                        return new StepDefinitionAnnotation(stepType, variant, annotation);
-                    }
-                }).toSet();
+        return new PatternVariantBuilder(annotationText)
+                .allVariants()
+                .stream()
+                .map(variant -> new StepDefinitionAnnotation(stepType, variant, annotation))
+                .collect(Collectors.toSet());
     }
 
     private static String getTextFromValue(PsiElement value) {

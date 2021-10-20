@@ -1,10 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiAnnotation;
@@ -19,10 +15,12 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
-import static com.google.common.collect.FluentIterable.from;
 
 public class JavaStepDefinition {
     private final SmartPsiElementPointer<PsiAnnotation> myElementPointer;
@@ -48,7 +46,7 @@ public class JavaStepDefinition {
         Set<String> annotationTexts = getAnnotationTexts();
 
         if (annotationTexts.size() == 1) {//small optimization: it doesn't create matchers if no step variants found
-            return Iterables.getFirst(annotationTexts, null);
+            return annotationTexts.iterator().next();
         }
 
         Set<StepMatcher> stepMatchers = getStepMatchers(annotationTexts);
@@ -79,28 +77,18 @@ public class JavaStepDefinition {
     private Set<StepMatcher> getStepMatchers(Set<String> annotationTextVariants) {
         final StepType annotationType = getAnnotationType();
 
-        return from(annotationTextVariants)
-                .transform(toStepMatchers(annotationType)).toSet();
-    }
-
-    private Function<String, StepMatcher> toStepMatchers(final StepType annotationType) {
-        return new Function<String, StepMatcher>() {
-            @Override
-            public StepMatcher apply(@Nullable String annotationText) {
-                return new OptimizedStepMatcher(stepPatternParser.parseStep(annotationType, annotationText));
-            }
-        };
+        return annotationTextVariants.stream()
+                .map(annotationText -> stepPatternParser.parseStep(annotationType, annotationText))
+                .map(OptimizedStepMatcher::new)
+                .collect(Collectors.toSet());
     }
 
     @NotNull
     private Set<String> getAnnotationTexts() {
         PsiAnnotation element = getAnnotation();
 
-        if (element == null) {
-            return ImmutableSet.of();
-        }
+        return element == null ? Collections.emptySet() : JBehaveUtil.getAnnotationTexts(element);
 
-        return JBehaveUtil.getAnnotationTexts(element);
     }
 
     @Nullable
@@ -151,6 +139,6 @@ public class JavaStepDefinition {
         StepType stepType = step.getStepType();
         StepType annotationType = getAnnotationType();
 
-        return Objects.equal(stepType, annotationType);
+        return Objects.equals(stepType, annotationType);
     }
 }
