@@ -44,7 +44,7 @@ public class UndefinedStepInspection extends LocalInspectionTool {
         return new PsiElementVisitor() {
 
             @Override
-            public void visitElement(PsiElement psiElement) {
+            public void visitElement(@NotNull PsiElement psiElement) {
                 super.visitElement(psiElement);
 
                 if (!(psiElement instanceof JBehaveStep)) {
@@ -73,24 +73,22 @@ public class UndefinedStepInspection extends LocalInspectionTool {
 
     private void highlightParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition, ProblemsHolder holder) {
         String stepText = step.getStepText();
-
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-        ParametrizedString pString = new ParametrizedString(annotationText);
 
         int offset = step.getStepTextOffset();
-        for (StringToken token : pString.tokenize(stepText)) {
+        for (StringToken token : new ParametrizedString(annotationText).tokenize(stepText)) {
             int length = token.getValue().length();
             if (token.isIdentifier()) {
-                registerHiglighting(StorySyntaxHighlighter.TABLE_CELL, step, TextRange.from(offset, length), holder);
+                registerHighlighting(StorySyntaxHighlighter.TABLE_CELL, step, TextRange.from(offset, length), holder);
             }
             offset += length;
         }
     }
 
-    private static void registerHiglighting(TextAttributesKey attributesKey,
-                                            JBehaveStep step,
-                                            TextRange range,
-                                            ProblemsHolder holder) {
+    private static void registerHighlighting(TextAttributesKey attributesKey,
+                                             JBehaveStep step,
+                                             TextRange range,
+                                             ProblemsHolder holder) {
         final ProblemDescriptor descriptor = new ProblemDescriptorImpl(
                 step, step, "", LocalQuickFix.EMPTY_ARRAY,
                 ProblemHighlightType.INFORMATION, false, range, false, null,

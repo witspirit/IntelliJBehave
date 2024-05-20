@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
 import static org.apache.commons.lang.StringUtils.*;
 
-public class StepDefinitionAnnotationConverter {
+public final class StepDefinitionAnnotationConverter {
 
-    public Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
+    public static Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
         Set<StepDefinitionAnnotation> res = null;
 
         StepType stepType = null;
@@ -43,10 +43,9 @@ public class StepDefinitionAnnotationConverter {
 
             // When there are no attributes for the annotation, we got nothing to do here
             if (attributes.length > 0) {
-                if (ANNOTATION_TO_STEP_TYPE_MAPPING.keySet().contains(annotationQualifiedName)) {
+                if (ANNOTATION_TO_STEP_TYPE_MAPPING.containsKey(annotationQualifiedName)) {
                     stepType = ANNOTATION_TO_STEP_TYPE_MAPPING.get(annotationQualifiedName);
                     String annotationText = getTextFromValue(attributes[0].getValue());
-
                     if (res == null) {
                         res = new HashSet<>();
                     }

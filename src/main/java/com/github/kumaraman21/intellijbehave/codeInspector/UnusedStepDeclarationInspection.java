@@ -49,7 +49,7 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
         return new JavaElementVisitor() {
             @Override
             public void visitMethod(final PsiMethod method) {
-                Boolean isStepDefinition = ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> isStepDefinition(method));
+                Boolean isStepDefinition = ReadAction.compute(() -> isStepDefinition(method));
 
                 if (!isStepDefinition) {
                     return;
@@ -81,8 +81,8 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
     }
 
     private static class StepUsageFinder implements ContentIterator {
-        private Project project;
-        private Set<JBehaveStep> stepUsages = new HashSet<>();
+        private final Project project;
+        private final Set<JBehaveStep> stepUsages = new HashSet<>();
 
         private StepUsageFinder(Project project) {
             this.project = project;
@@ -94,10 +94,8 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
                 return true;
             }
 
-            PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-            if (psiFile instanceof StoryFile) {
-                List<JBehaveStep> steps = ((StoryFile) psiFile).getSteps();
-                stepUsages.addAll(steps);
+            if (PsiManager.getInstance(project).findFile(virtualFile) instanceof StoryFile storyFile) {
+                stepUsages.addAll(storyFile.getSteps());
             }
             return true;
         }

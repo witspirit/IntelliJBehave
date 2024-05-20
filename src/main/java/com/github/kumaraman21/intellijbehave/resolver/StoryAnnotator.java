@@ -57,10 +57,9 @@ public class StoryAnnotator implements Annotator {
     private void annotateParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition, AnnotationHolder annotationHolder) {
         String stepText = step.getStepText();
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-        ParametrizedString pString = new ParametrizedString(annotationText);
 
         int offset = step.getTextOffset();
-        for (StringToken token : pString.tokenize(stepText)) {
+        for (StringToken token : new ParametrizedString(annotationText).tokenize(stepText)) {
             int length = token.getValue().length();
             if (token.isIdentifier()) {
                 annotationHolder.newAnnotation(HighlightSeverity.INFORMATION, "Parameter")

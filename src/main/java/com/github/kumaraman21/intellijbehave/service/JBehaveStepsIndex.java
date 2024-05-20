@@ -53,10 +53,9 @@ public final class JBehaveStepsIndex {
         }
 
         Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<>();
-        List<JavaStepDefinition> stepDefinitions = loadStepsFor(module);
         String stepText = step.getStepText();
 
-        for (JavaStepDefinition stepDefinition : stepDefinitions) {
+        for (JavaStepDefinition stepDefinition : loadStepsFor(module)) {
             if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
                 Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(stepDefinition);

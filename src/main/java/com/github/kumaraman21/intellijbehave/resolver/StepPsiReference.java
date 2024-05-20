@@ -42,12 +42,12 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public JBehaveStep getElement() {
+    public @NotNull JBehaveStep getElement() {
         return myStep;
     }
 
     @Override
-    public TextRange getRangeInElement() {
+    public @NotNull TextRange getRangeInElement() {
         return myRange;
     }
 
@@ -64,7 +64,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         return myStep;
     }
 
@@ -74,10 +74,8 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
-        ResolveResult[] resolvedResults = multiResolve(false);
-
-        for (ResolveResult resolveResult : resolvedResults) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
+        for (ResolveResult resolveResult : multiResolve(false)) {
             if (getElement().getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
                 return true;
             }
@@ -105,8 +103,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
 
     @NotNull
     public Collection<JavaStepDefinition> resolveToDefinitions() {
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        return index.findStepDefinitions(myStep);
+        return JBehaveStepsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
 
     @NotNull
@@ -115,10 +112,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
         List<ResolveResult> result = new ArrayList<>();
         List<PsiMethod> resolvedElements = new ArrayList<>();
 
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        Collection<JavaStepDefinition> resolvedStepDefinitions = index.findStepDefinitions(myStep);
-
-        for (JavaStepDefinition resolvedStepDefinition : resolvedStepDefinitions) {
+        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
             final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 resolvedElements.add(method);
@@ -134,6 +128,6 @@ public class StepPsiReference implements PsiPolyVariantReference {
             }
         }
 
-        return result.toArray(new ResolveResult[result.size()]);
+        return result.toArray(ResolveResult.EMPTY_ARRAY);
     }
 }

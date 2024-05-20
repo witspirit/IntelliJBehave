@@ -18,26 +18,5 @@ package com.github.kumaraman21.intellijbehave.resolver;
 import com.intellij.psi.PsiAnnotation;
 import org.jbehave.core.steps.StepType;
 
-public class StepDefinitionAnnotation {
-    private final StepType stepType;
-    private final String annotationText;
-    private final PsiAnnotation annotation;
-
-    public StepDefinitionAnnotation(StepType stepType, String annotationText, PsiAnnotation annotation) {
-        this.stepType = stepType;
-        this.annotationText = annotationText;
-        this.annotation = annotation;
-    }
-
-    public String getAnnotationText() {
-        return annotationText;
-    }
-
-    public StepType getStepType() {
-        return stepType;
-    }
-
-    public PsiAnnotation getAnnotation() {
-        return annotation;
-    }
+public record StepDefinitionAnnotation(StepType stepType, String annotationText, PsiAnnotation annotation) {
 }

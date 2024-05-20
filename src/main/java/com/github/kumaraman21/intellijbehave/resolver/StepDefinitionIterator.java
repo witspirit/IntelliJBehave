@@ -20,8 +20,14 @@ import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiCl
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiMethod;
 import org.jbehave.core.steps.StepType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -45,11 +51,10 @@ public abstract class StepDefinitionIterator implements ContentIterator {
     }
 
     @Override
-    public boolean processFile(VirtualFile virtualFile) {
-
+    public boolean processFile(@NotNull VirtualFile virtualFile) {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 
-        if (psiFile instanceof PsiClassOwner) {
+        if (psiFile instanceof PsiClassOwner psiClassOwner) {
             // System.out.println("Virtual File that is a PsiClassOwner: "+virtualFile);
 
             List<PsiClass> psiClasses = null;
@@ -57,14 +62,14 @@ public abstract class StepDefinitionIterator implements ContentIterator {
                 psiClasses = KotlinPsiClassesLoader.getInstance().getPsiClasses(psiFile);
             }
 
-            if (psiClasses == null) psiClasses = Arrays.asList(((PsiClassOwner) psiFile).getClasses());
+            if (psiClasses == null) psiClasses = Arrays.asList(psiClassOwner.getClasses());
 
             for (PsiClass psiClass : psiClasses) {
                 PsiMethod[] methods = psiClass.getMethods();
 
                 for (PsiMethod method : methods) {
                     PsiAnnotation[] annotations = method.getModifierList().getApplicableAnnotations();
-                    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(annotations);
+                    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = StepDefinitionAnnotationConverter.convertFrom(annotations);
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
                         if (stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.getStepType())) {

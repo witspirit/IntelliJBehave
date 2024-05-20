@@ -82,19 +82,16 @@ public class JavaStepDefinition {
     @Nullable
     public StepType getAnnotationType() {
         final PsiAnnotation element = getAnnotation();
-        if (element == null) {
-            return null;
-        }
-
-        String qualifiedName = ApplicationManager.getApplication().runReadAction((Computable<String>) element::getQualifiedName);
-        return ANNOTATION_TO_STEP_TYPE_MAPPING.get(qualifiedName);
+        return element == null
+               ? null
+               : ANNOTATION_TO_STEP_TYPE_MAPPING.get(ReadAction.compute(element::getQualifiedName));
     }
 
     @NotNull
     public Integer getAnnotationPriority() {
         PsiAnnotation element = getAnnotation();
 
-        return element != null ? JBehaveUtil.getAnnotationPriority(element) : -1;  
+        return element != null ? JBehaveUtil.getAnnotationPriority(element) : -1;
     }
 
     public boolean equals(Object o) {
@@ -115,9 +112,6 @@ public class JavaStepDefinition {
     }
 
     public boolean supportsStep(@NotNull JBehaveStep step) {
-        StepType stepType = step.getStepType();
-        StepType annotationType = getAnnotationType();
-
-        return Objects.equals(stepType, annotationType);
+        return Objects.equals(step.getStepType(), getAnnotationType());
     }
 }
