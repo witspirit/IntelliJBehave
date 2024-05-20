@@ -26,10 +26,10 @@ kotlin {
 
 dependencies {
     //https://kotlinlang.org/docs/reflection.html#jvm-dependency
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
     implementation("org.jbehave:jbehave-core:5.2.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
-    testImplementation("org.assertj:assertj-core:3.25.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23")
+    testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation("junit:junit:4.13.2")
 }
 
