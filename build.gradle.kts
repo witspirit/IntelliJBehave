@@ -92,8 +92,8 @@ tasks {
         //Required for running tests in 2021.3 due to it not finding test classes properly.
         //See https://app.slack.com/client/T5P9YATH9/C5U8BM1MK/thread/C5U8BM1MK-1639934273.054400
         isScanForTestClasses = false
-        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/service/*Test.class", "**/utility/*Test.class")
-        exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class")
+        exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     }
 
 //    runPluginVerifier {
@@ -102,7 +102,6 @@ tasks {
 }
 
 tasks.register<Test>("testWithJunit3") {
-    isScanForTestClasses = false
-    include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+    include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     exclude("**/highlighter/StoryLocalizedLexer_FrenchTest.class")
 }
