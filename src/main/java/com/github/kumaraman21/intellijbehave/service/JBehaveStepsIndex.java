@@ -3,20 +3,24 @@ package com.github.kumaraman21.intellijbehave.service;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
+import com.github.kumaraman21.intellijbehave.JBehaveStepDefClassesModificationTracker;
 import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinAnnotationsLoader;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
@@ -34,7 +38,7 @@ import java.util.Map;
  * Project service that provides Java step definitions for JBehave Story steps.
  */
 @Service(Service.Level.PROJECT)
-public final class JBehaveStepsIndex {
+public final class JBehaveStepsIndex implements Disposable {
 
     //Argument is necessary for project-level service creation
     public JBehaveStepsIndex(Project project) {
@@ -74,17 +78,15 @@ public final class JBehaveStepsIndex {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
         PsiClass givenAnnotationClass = findStepAnnotation(Given.class.getName(), module, dependenciesScope);
+        if (givenAnnotationClass == null) return emptyList();
         PsiClass whenAnnotationClass = findStepAnnotation(When.class.getName(), module, dependenciesScope);
+        if (whenAnnotationClass == null) return emptyList();
         PsiClass thenAnnotationClass = findStepAnnotation(Then.class.getName(), module, dependenciesScope);
-
-        if (givenAnnotationClass == null || whenAnnotationClass == null || thenAnnotationClass == null) {
-            return emptyList();
-        }
+        if (thenAnnotationClass == null) return emptyList();
 
         List<JavaStepDefinition> result = new ArrayList<>();
 
-        List<PsiClass> stepAnnotations = asList(givenAnnotationClass, whenAnnotationClass, thenAnnotationClass);
-        for (PsiClass stepAnnotation : stepAnnotations) {
+        for (PsiClass stepAnnotation : asList(givenAnnotationClass, whenAnnotationClass, thenAnnotationClass)) {
             for (PsiAnnotation stepDefAnnotation : getAllStepAnnotations(stepAnnotation, dependenciesScope)) {
                 result.add(new JavaStepDefinition(stepDefAnnotation));
             }
@@ -98,19 +100,33 @@ public final class JBehaveStepsIndex {
         return definition != null ? definition.getAnnotationPriority() : -1;
     }
 
+    /**
+     * Collects all {@link PsiAnnotation}s in the given {@code scope} that reference the {@code annClass}.
+     *
+     * @param annClass the PsiClass representing the {@code @Given}, {@code @When} or {@code @Then} step annotations
+     *                 Since the annotation classes doesn't change much, unless e.g. updating the library version,
+     *                 the same PsiClass instance will be available for the same annotations throughout the IDE session,
+     *                 thus it should be safe to use it as the cache location
+     */
     @NotNull
     private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
-        return ApplicationManager.getApplication().runReadAction((Computable<Collection<PsiAnnotation>>) () -> {
-            Project project = annClass.getProject();
-            Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
-            if (KotlinConfigKt.getPluginIsEnabled()) {
-                String qualifiedName = annClass.getQualifiedName();
-                if (qualifiedName != null) {
-                    psiAnnotations.addAll(KotlinAnnotationsLoader.getInstance().getAnnotations(QualifiedName.fromDottedString(qualifiedName), project, scope));
+        return CachedValuesManager.getCachedValue(annClass, (CachedValueProvider<? extends Collection<PsiAnnotation>>) () -> {
+            Collection<PsiAnnotation> annotations = ReadAction.compute(() -> {
+                Project project = annClass.getProject();
+                Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
+                if (KotlinConfigKt.getPluginIsEnabled()) {
+                    String annotationFqn = annClass.getQualifiedName();
+                    if (annotationFqn != null) {
+                        psiAnnotations.addAll(KotlinAnnotationsLoader.getAnnotations(QualifiedName.fromDottedString(annotationFqn), project, scope));
+                    }
                 }
-            }
-            psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annClass.getName(), project, scope));
-            return psiAnnotations;
+                psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annClass.getName(), project, scope));
+                return psiAnnotations;
+            });
+
+            return new CachedValueProvider.Result<>(annotations,
+                JBehaveStepDefClassesModificationTracker.getInstance(annClass.getProject()),
+                ProjectRootModificationTracker.getInstance(annClass.getProject()));
         });
     }
 
@@ -123,5 +139,10 @@ public final class JBehaveStepsIndex {
             }
         }
         return null;
+    }
+
+    @Override
+    public void dispose() {
+        //No-op. Used for ProjectStartupActivity as parent Disposable
     }
 }

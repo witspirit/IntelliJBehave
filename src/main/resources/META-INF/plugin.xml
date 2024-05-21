@@ -101,6 +101,8 @@
             Also, since multiple Run Configurations with the same name are not allowed to be saved by IntelliJ,
             this won't interfere with the default JBehave Story Runner.-->
         <configurationType implementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
+
+        <postStartupActivity implementation="com.github.kumaraman21.intellijbehave.startup.ProjectStartupActivity"/>
         
         <lang.psiStructureViewFactory language="Story" implementationClass="com.github.kumaraman21.intellijbehave.structure.StoryStructureViewFactory" />
     </extensions>
