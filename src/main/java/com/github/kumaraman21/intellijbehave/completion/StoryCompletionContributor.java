@@ -125,12 +125,12 @@ public class StoryCompletionContributor extends CompletionContributor {
     private static JBehaveStep getStepPsiElement(CompletionParameters parameters) {
         PsiElement position = parameters.getPosition();
         PsiElement positionParent = position.getParent();
-        if (positionParent instanceof JBehaveStep) {
-            return (JBehaveStep) positionParent;
-        } else if (position instanceof StepPsiReference) {
-            return ((StepPsiReference) position).getElement();
-        } else if (position instanceof JBehaveStep) {
-            return (JBehaveStep) position;
+        if (positionParent instanceof JBehaveStep step) {
+            return step;
+        } else if (position instanceof StepPsiReference reference) {
+            return reference.getElement();
+        } else if (position instanceof JBehaveStep step) {
+            return step;
         } else {
             return null;
         }
@@ -165,8 +165,7 @@ public class StoryCompletionContributor extends CompletionContributor {
             String annotationText = stepDefinitionAnnotation.annotationText();
             String adjustedAnnotationText = actualStepPrefix + " " + annotationText;
 
-            ParametrizedString pString = new ParametrizedString(adjustedAnnotationText);
-            String complete = pString.complete(textBeforeCaret);
+            String complete = new ParametrizedString(adjustedAnnotationText).complete(textBeforeCaret);
             if (StringUtil.isNotEmpty(complete)) {
                 PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.annotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, textBeforeCaret + complete));
