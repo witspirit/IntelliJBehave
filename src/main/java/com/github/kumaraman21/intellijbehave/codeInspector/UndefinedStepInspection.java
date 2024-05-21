@@ -30,6 +30,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Reports JBehave steps in Story files that have no Java step definition methods.
+ */
 public class UndefinedStepInspection extends LocalInspectionTool {
 
     @NotNull
@@ -47,24 +50,20 @@ public class UndefinedStepInspection extends LocalInspectionTool {
             public void visitElement(@NotNull PsiElement psiElement) {
                 super.visitElement(psiElement);
 
-                if (!(psiElement instanceof JBehaveStep)) {
+                if (!(psiElement instanceof JBehaveStep step)) {
                     return;
                 }
 
-                JBehaveStep step = (JBehaveStep) psiElement;
                 PsiReference[] references = step.getReferences();
 
-                if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-                    return;
-                }
+                if (references.length == 1 && references[0] instanceof StepPsiReference reference) {
+                    JavaStepDefinition definition = reference.resolveToDefinition();
 
-                StepPsiReference reference = (StepPsiReference) references[0];
-                JavaStepDefinition definition = reference.resolveToDefinition();
-
-                if (definition == null) {
-                    holder.registerProblem(step, "Step <code>#ref</code> is not defined");
-                } else {
-                    highlightParameters(step, definition, holder);
+                    if (definition == null) {
+                        holder.registerProblem(step, "Step <code>#ref</code> is not defined");
+                    } else {
+                        highlightParameters(step, definition, holder);
+                    }
                 }
             }
         };

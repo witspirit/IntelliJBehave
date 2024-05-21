@@ -6,6 +6,7 @@
 ### Changed
 - Did some optimizations on the unused step definition method inspection. Now it also marks the method name instead of
 the entire method.
+- Did some optimizations on the undefined step inspection.
 
 ## [1.63.0]
 ### Changed
