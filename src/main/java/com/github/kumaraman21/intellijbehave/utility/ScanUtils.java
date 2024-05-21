@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 
 import java.util.HashSet;
 
-public class ScanUtils {
+public final class ScanUtils {
 
     public static boolean iterateInContextOf(PsiElement storyRef, ContentIterator iterator) {
         Module module = ModuleUtil.findModuleForPsiElement(storyRef);
@@ -45,5 +45,6 @@ public class ScanUtils {
         return shouldContinue;
     }
 
-
+    private ScanUtils() {
+    }
 }
