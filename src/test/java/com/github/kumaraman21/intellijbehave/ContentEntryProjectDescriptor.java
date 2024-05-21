@@ -27,6 +27,7 @@ public final class ContentEntryProjectDescriptor extends DefaultLightProjectDesc
 
         String contentEntryUrl = contentEntry.getUrl();
         contentEntry.addSourceFolder(contentEntryUrl + "/main/java", JavaSourceRootType.SOURCE);
+        contentEntry.addSourceFolder(contentEntryUrl + "/main/kotlin", JavaSourceRootType.SOURCE);
         contentEntry.addSourceFolder(contentEntryUrl + "/main/resources", JavaResourceRootType.RESOURCE);
         contentEntry.addSourceFolder(contentEntryUrl + "/test/java", JavaSourceRootType.TEST_SOURCE);
         contentEntry.addSourceFolder(contentEntryUrl + "/test/resources", JavaResourceRootType.TEST_RESOURCE);

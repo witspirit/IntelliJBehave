@@ -79,7 +79,6 @@ public final class StepDefinitionAnnotationConverter {
     }
 
     private static Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
-
         return new PatternVariantBuilder(annotationText)
                 .allVariants()
                 .stream()

@@ -7,7 +7,7 @@ import com.intellij.testFramework.TestDataFile;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Base test class for inspection using content entries.
+ * Base test class for inspections using content entries.
  */
 abstract class ContentEntryInspectionTestBase extends JBehaveSupportTestBase {
 

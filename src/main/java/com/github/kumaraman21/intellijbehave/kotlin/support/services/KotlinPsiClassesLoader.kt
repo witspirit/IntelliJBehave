@@ -10,15 +10,10 @@ import org.jetbrains.kotlin.psi.KtFile
 class KotlinPsiClassesLoader private constructor() {
 
     companion object {
-
-        val INSTANCE = KotlinPsiClassesLoader();
-
         @JvmStatic
-        public fun getInstance() = INSTANCE
+        fun getPsiClasses(psiFile: PsiFile): Array<PsiClass>? = if (psiFile is KtFile) {
+            psiFile.classes
+        }
+        else null
     }
-
-    fun getPsiClasses(psiFile: PsiFile): List<PsiClass>? = if (psiFile is KtFile) {
-        psiFile.classes.toList()
-    }
-    else null
 }
