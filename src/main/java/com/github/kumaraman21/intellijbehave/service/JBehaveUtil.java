@@ -40,9 +40,9 @@ import com.intellij.psi.search.TextOccurenceProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 
-public class JBehaveUtil {
+public final class JBehaveUtil {
 
-    public static final Set<String> JBEHAVE_ANNOTATIONS_SET = Set.of(Given.class.getName(), When.class.getName(),
+    private static final Set<String> JBEHAVE_ANNOTATIONS_SET = Set.of(Given.class.getName(), When.class.getName(),
             Then.class.getName());
 
     public static boolean isJBehaveStepAnnotation(@NotNull PsiAnnotation annotation) {
@@ -60,7 +60,7 @@ public class JBehaveUtil {
 
     @Nullable
     private static String getAnnotationName(@NotNull final PsiAnnotation annotation) {
-        return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> annotation.getQualifiedName());
+        return ReadAction.compute(annotation::getQualifiedName);
     }
 
     @NotNull
@@ -167,15 +167,15 @@ public class JBehaveUtil {
 
         SearchScope searchScope = restrictScopeToJBehaveFiles(() -> effectiveSearchScope);
 
-        PsiSearchHelper instance = PsiSearchHelper.getInstance(stepDefinitionElement.getProject());
-        return instance.processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
+        return PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
+            .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
     }
 
     public static SearchScope restrictScopeToJBehaveFiles(final Computable<SearchScope> originalScopeComputation) {
-        return (SearchScope) ApplicationManager.getApplication().runReadAction((Computable<SearchScope>) () -> {
+        return ReadAction.compute(() -> {
             SearchScope originalScope = originalScopeComputation.compute();
-            if (originalScope instanceof GlobalSearchScope) {
-                return GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) originalScope, StoryFileType.STORY_FILE_TYPE);
+            if (originalScope instanceof GlobalSearchScope globalSearchScope) {
+                return GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, StoryFileType.STORY_FILE_TYPE);
             } else {
                 return originalScope;
             }
@@ -246,5 +246,8 @@ public class JBehaveUtil {
 
             return true;
         }
+    }
+
+    private JBehaveUtil() {
     }
 }
