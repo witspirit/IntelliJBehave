@@ -15,27 +15,32 @@
  */
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
+import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.isStepDefinition;
+
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.parser.StoryFile;
 import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.isStepDefinition;
-
+/**
+ * Reports Java JBehave step definition methods when they are not used in any Story file.
+ */
 public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspectionTool {
     @NotNull
     @Override
@@ -48,10 +53,8 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new JavaElementVisitor() {
             @Override
-            public void visitMethod(final PsiMethod method) {
-                Boolean isStepDefinition = ReadAction.compute(() -> isStepDefinition(method));
-
-                if (!isStepDefinition) {
+            public void visitMethod(final @NotNull PsiMethod method) {
+                if (method.getNameIdentifier() == null || !ReadAction.compute(() -> isStepDefinition(method))) {
                     return;
                 }
 
@@ -63,19 +66,19 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
                 for (JBehaveStep step : stepUsages) {
                     PsiReference[] references = step.getReferences();
 
-                    if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-                        return;
-                    }
+                    if (references.length == 1 && references[0] instanceof StepPsiReference reference) {
+                        JavaStepDefinition definition = reference.resolveToDefinition();
 
-                    StepPsiReference reference = (StepPsiReference) references[0];
-                    JavaStepDefinition definition = reference.resolveToDefinition();
-
-                    if (definition != null && definition.getAnnotatedMethod() != null && definition.getAnnotatedMethod().isEquivalentTo(method)) {
-                        return;
+                        if (definition != null) {
+                            PsiMethod annotatedMethod = definition.getAnnotatedMethod();
+                            if (annotatedMethod != null && annotatedMethod.isEquivalentTo(method)) {
+                                return;
+                            }
+                        }
                     }
                 }
 
-                holder.registerProblem(method, "Step <code>#ref</code> is never used");
+                holder.registerProblem(method.getNameIdentifier(), "Step <code>#ref</code> is never used");
             }
         };
     }

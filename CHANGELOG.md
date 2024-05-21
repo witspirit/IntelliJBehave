@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.64.0]
+### Changed
+- Did some optimizations on the unused step definition method inspection. Now it also marks the method name instead of
+the entire method.
+
 ## [1.63.0]
 ### Changed
 - New supported IDE version range: 2022.2.5-2024.1-EAP

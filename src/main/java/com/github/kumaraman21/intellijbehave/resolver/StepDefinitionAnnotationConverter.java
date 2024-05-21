@@ -78,7 +78,7 @@ public final class StepDefinitionAnnotationConverter {
         return res == null ? Collections.emptySet() : res;
     }
 
-    private Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
+    private static Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
 
         return new PatternVariantBuilder(annotationText)
                 .allVariants()

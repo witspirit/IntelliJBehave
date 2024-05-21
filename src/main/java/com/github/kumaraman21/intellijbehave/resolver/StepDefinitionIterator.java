@@ -72,7 +72,7 @@ public abstract class StepDefinitionIterator implements ContentIterator {
                     Set<StepDefinitionAnnotation> stepDefinitionAnnotations = StepDefinitionAnnotationConverter.convertFrom(annotations);
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
-                        if (stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.getStepType())) {
+                        if (stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.stepType())) {
 
                             boolean shouldContinue = processStepDefinition(stepDefinitionAnnotation);
                             if (!shouldContinue) {
