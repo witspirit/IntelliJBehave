@@ -70,8 +70,6 @@
                   fieldName="STORY_FILE_TYPE" language="Story" extensions="story"/>
         <lang.parserDefinition language="Story"
                                implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
-        <annotator language="Story"
-                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
         <lang.commenter language="Story"
                         implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
         <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>

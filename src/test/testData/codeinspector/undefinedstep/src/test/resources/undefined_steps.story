@@ -8,5 +8,5 @@ Scenario: open a url
 Given Open url 'http://some.url/path'
 When search for 'something'
 Then result list size is 10
-<error descr="No definition found for the step"><warning descr="Step 'Then check result list size is 10' is not defined">Then check result list size is 10</warning></error>
-<error descr="No definition found for the step"><warning descr="Step 'Then check that result contains \"an item\"' is not defined">Then check that result contains "an item"</warning></error>
+<warning descr="Step 'Then check result list size is 10' is not defined">Then check result list size is 10</warning>
+<warning descr="Step 'Then check that result contains \"an item\"' is not defined">Then check that result contains "an item"</warning>

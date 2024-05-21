@@ -7,6 +7,8 @@
 - Did some optimizations on the unused step definition method inspection. Now it also marks the method name instead of
 the entire method.
 - Did some optimizations on the undefined step inspection.
+- Removed duplicate reporting of steps that don't have step definition methods.
+- Removed the class `StoryAnnotator` that didn't seem to do much useful.
 
 ## [1.63.0]
 ### Changed
