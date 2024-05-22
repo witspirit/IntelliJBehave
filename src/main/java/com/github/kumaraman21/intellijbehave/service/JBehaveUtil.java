@@ -200,6 +200,9 @@ public final class JBehaveUtil {
      * @param stepText the step pattern value from a step annotation
      */
     public static String getTheBiggestWordToSearchByIndex(@NotNull String stepText) {
+        //This helps avoid the creation of the variables below in case of empty and blank step text
+        if (stepText.isBlank()) return "";
+
         String result = "";
 
         int par = 0;

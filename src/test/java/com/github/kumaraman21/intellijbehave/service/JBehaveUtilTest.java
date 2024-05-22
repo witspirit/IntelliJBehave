@@ -182,6 +182,23 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
     //getAnnotationTexts(PsiAnnotation)
 
     @Test
+    void shouldGetNoTextForInvalidAnnotation() {
+        var stepDefFile = getFixture().configureByText("AnnotationTexts.java", """
+            import org.jbehave.core.annotations.Then;
+
+            class AnnotationTexts {
+                @The<caret>n()
+                void stepDefMethod(int price) {
+                }
+            }
+            """);
+
+        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        assertThat(annotation).isInstanceOf(PsiAnnotation.class);
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).isEmpty();
+    }
+
+    @Test
     void shouldGetTextsWithoutAliases() {
         var stepDefFile = getFixture().configureByText("AnnotationTexts.java", """
             import org.jbehave.core.annotations.Then;
@@ -278,6 +295,23 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
     }
 
     //getAnnotationTexts(PsiMethod)
+
+    @Test
+    void shouldGetNoTextForMethodWithInvalidStepAnnotation() {
+        var stepDefFile = getFixture().configureByText("AnnotationTexts.java", """
+            import org.jbehave.core.annotations.Then;
+
+            class AnnotationTexts {
+                @Then()
+                void stepDef<caret>Method(int price) {
+                }
+            }
+            """);
+
+        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        assertThat(method).isInstanceOf(PsiMethod.class);
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).isEmpty();
+    }
 
     @Test
     void shouldGetTextsForMethodWithoutAliases() {
