@@ -6,11 +6,9 @@ import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.isStepDe
 
 import java.util.List;
 
+import com.intellij.openapi.application.ReadAction;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.SearchScope;
@@ -18,35 +16,31 @@ import com.intellij.psi.search.searches.ReferencesSearch.SearchParameters;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 
+/**
+ * Provides Story step references for JBehave Java step definition methods.
+ */
 public class JBehaveJavaStepDefinitionSearch implements QueryExecutor<PsiReference, SearchParameters> {
 
     @Override
     public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
-        PsiElement myElement = queryParameters.getElementToSearch();
-
-        if (!(myElement instanceof PsiMethod)) {
+        if (!(queryParameters.getElementToSearch() instanceof PsiMethod method) || !ReadAction.compute(() -> isStepDefinition(method))) {
             return true;
         }
 
-        final PsiMethod method = (PsiMethod) myElement;
-
-        Boolean isStepDefinition = ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> isStepDefinition(method));
-
-        if (!isStepDefinition) {
-            return true;
-        }
-
-        List<String> stepTexts = ApplicationManager.getApplication().runReadAction((Computable<List<String>>) () -> getAnnotationTexts(method));
-        SearchScope searchScope = ApplicationManager.getApplication().runReadAction((Computable<SearchScope>) queryParameters::getEffectiveSearchScope);
-
+        SearchScope searchScope = null;
         boolean result = true;
 
-        for (String stepText : stepTexts) {
+        for (String stepText : ReadAction.compute(() -> getAnnotationTexts(method))) {
             if (stepText == null) {
                 return true;
             }
 
-            result &= findJBehaveReferencesToElement(myElement, stepText, consumer, searchScope);
+            //Lazy-initializing the search scope in case the first step text is null
+            if (searchScope == null) {
+                searchScope = ReadAction.compute(queryParameters::getEffectiveSearchScope);
+            }
+
+            result &= findJBehaveReferencesToElement(method, stepText, consumer, searchScope);
         }
 
         return result;
