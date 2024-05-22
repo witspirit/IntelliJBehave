@@ -93,7 +93,7 @@ tasks {
         //Required for running tests in 2021.3 due to it not finding test classes properly.
         //See https://app.slack.com/client/T5P9YATH9/C5U8BM1MK/thread/C5U8BM1MK-1639934273.054400
         isScanForTestClasses = false
-        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/JBehaveUtil*Test.class", "**/service/JBehaveJavaStepDefinitionSearchTest.class")
+        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/JBehaveUtil*Test.class", "**/service/JBehaveJavaStepDefinitionSearchTest.class", "**/service/JBehaveJavaMethodUsageSearcherTest.class")
         exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/JBehaveStepsIndexTest.class", "**/service/JBehaveStepsIndexWithNoDependencyTest.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     }
 

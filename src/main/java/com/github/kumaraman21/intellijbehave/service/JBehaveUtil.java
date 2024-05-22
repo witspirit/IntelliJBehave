@@ -135,7 +135,7 @@ public final class JBehaveUtil {
      * Collects all possible step annotation pattern variants for the annotations on {@code method}.
      *
      * @param method the step definition method
-     * @return the collection of step patterns
+     * @return the list of step patterns
      */
     @NotNull
     public static List<String> getAnnotationTexts(@NotNull PsiMethod method) {
