@@ -62,7 +62,7 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
                     hasJBehaveStepDefTestClass.set(true)
             }
 
-            if (hasJBehaveStepDefTestClass.get()) {
+            if (!hasJBehaveStepDefTestClass.isNull && hasJBehaveStepDefTestClass.get()) {
                 JBehaveStepDefClassesModificationTracker.getInstance(project).increaseModificationCount()
             }
         }
