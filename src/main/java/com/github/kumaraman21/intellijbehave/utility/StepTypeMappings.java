@@ -20,23 +20,19 @@ import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.jbehave.core.steps.StepType;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class StepTypeMappings {
+/**
+ * Utility to provide {@link StepType} and step annotation mappings.
+ */
+public final class StepTypeMappings {
 
-  public static final Map<StepType, String> STEP_TYPE_TO_ANNOTATION_MAPPING = new HashMap<>();
-  static {
-    STEP_TYPE_TO_ANNOTATION_MAPPING.put(StepType.GIVEN, Given.class.getName());
-    STEP_TYPE_TO_ANNOTATION_MAPPING.put(StepType.WHEN, When.class.getName());
-    STEP_TYPE_TO_ANNOTATION_MAPPING.put(StepType.THEN, Then.class.getName());
-  }
+    public static final Map<String, StepType> ANNOTATION_TO_STEP_TYPE_MAPPING = Map.of(
+        Given.class.getName(), StepType.GIVEN,
+        When.class.getName(), StepType.WHEN,
+        Then.class.getName(), StepType.THEN
+    );
 
-  public static final Map<String, StepType> ANNOTATION_TO_STEP_TYPE_MAPPING = new HashMap<>();
-  static {
-      ANNOTATION_TO_STEP_TYPE_MAPPING.put(Given.class.getName(), StepType.GIVEN);
-      ANNOTATION_TO_STEP_TYPE_MAPPING.put(When.class.getName(), StepType.WHEN);
-      ANNOTATION_TO_STEP_TYPE_MAPPING.put(Then.class.getName(), StepType.THEN);
+    private StepTypeMappings() {
     }
-
 }
