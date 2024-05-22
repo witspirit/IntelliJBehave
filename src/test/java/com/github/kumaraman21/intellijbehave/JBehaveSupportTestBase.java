@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
@@ -16,6 +17,10 @@ import java.io.File;
  * Base test class for this plugin.
  */
 public abstract class JBehaveSupportTestBase extends LightJavaCodeInsightFixtureTestCase5 {
+
+    protected JBehaveSupportTestBase() {
+        super(new DefaultLightProjectDescriptor(() -> JavaSdk.getInstance().createJdk("Real JDK", System.getenv("JAVA_HOME"), false)));
+    }
 
     protected JBehaveSupportTestBase(DefaultLightProjectDescriptor projectDescriptor) {
         super(projectDescriptor);

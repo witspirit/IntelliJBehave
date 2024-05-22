@@ -30,6 +30,7 @@ dependencies {
     implementation("org.jbehave:jbehave-core:5.2.0")
     testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23")
     testImplementation("org.assertj:assertj-core:3.25.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
@@ -92,8 +93,8 @@ tasks {
         //Required for running tests in 2021.3 due to it not finding test classes properly.
         //See https://app.slack.com/client/T5P9YATH9/C5U8BM1MK/thread/C5U8BM1MK-1639934273.054400
         isScanForTestClasses = false
-        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class")
-        exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/JBehaveUtil*Test.class")
+        exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/JBehaveStepsIndexTest.class", "**/service/JBehaveStepsIndexWithNoDependencyTest.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     }
 
 //    runPluginVerifier {
@@ -102,6 +103,6 @@ tasks {
 }
 
 tasks.register<Test>("testWithJunit3") {
-    include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+    include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/service/JBehaveStepsIndexTest.class", "**/service/JBehaveStepsIndexWithNoDependencyTest.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     exclude("**/highlighter/StoryLocalizedLexer_FrenchTest.class")
 }
