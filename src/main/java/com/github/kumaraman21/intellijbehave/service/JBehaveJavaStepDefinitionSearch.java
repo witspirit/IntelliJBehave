@@ -4,8 +4,6 @@ import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.findJBeh
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getAnnotationTexts;
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.isStepDefinition;
 
-import java.util.List;
-
 import com.intellij.openapi.application.ReadAction;
 import org.jetbrains.annotations.NotNull;
 
