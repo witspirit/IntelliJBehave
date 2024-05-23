@@ -28,6 +28,10 @@ public abstract class JBehaveSupportTestBase extends LightJavaCodeInsightFixture
 
     @BeforeEach
     protected void setUp() {
+        loadLibraries();
+    }
+
+    protected void loadLibraries() {
         loadLibrary(getFixture().getProjectDisposable(), getFixture().getModule(), "JBehave Core", "jbehave-core-5.1.1.jar");
     }
 
