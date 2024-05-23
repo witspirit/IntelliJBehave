@@ -56,7 +56,7 @@ public final class JBehaveStepsIndex implements Disposable {
             return emptyList();
         }
 
-        Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<>();
+        Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<>(2);
         String stepText = step.getStepText();
 
         for (JavaStepDefinition stepDefinition : loadStepsFor(module)) {

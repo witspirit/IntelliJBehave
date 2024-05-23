@@ -7,7 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-public class StepPsiReferenceContributor extends PsiReferenceContributor {
+/**
+ * Provides references for JBehave steps in Story files.
+ *
+ * @see JBehaveStepReferenceProvider
+ * @see StepPsiReference
+ */
+public final class StepPsiReferenceContributor extends PsiReferenceContributor {
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class JBehaveStepReferenceProvider extends PsiReferenceProvider {
+public final class JBehaveStepReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
