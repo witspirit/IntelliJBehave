@@ -9,7 +9,7 @@ import org.jbehave.core.parsers.StepMatcher
  */
 private object StepPatterns {
     object Plain {
-        val VARIABLE = "(.*)"
+        const val VARIABLE = "(.*)"
     }
 
     object Regex {

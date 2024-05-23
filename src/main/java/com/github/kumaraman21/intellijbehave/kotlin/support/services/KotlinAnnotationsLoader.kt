@@ -15,28 +15,20 @@ import org.jetbrains.kotlin.psi.KtFunction
 class KotlinAnnotationsLoader private constructor() {
 
     companion object {
-
-        val INSTANCE = KotlinAnnotationsLoader()
-
         @JvmStatic
-        public fun getInstance() = INSTANCE
-    }
-
-    fun getAnnotations(qualifiedName: QualifiedName, project: Project, scope: GlobalSearchScope): Collection<PsiAnnotation> {
-        val name = qualifiedName.lastComponent
-        return if (name != null) {
-
-            KotlinAnnotationsIndex.getInstance().get(name, project, scope).asSequence()
-                    .filterNotNull()
-                    .map({ ktAnnotation ->
-
+        fun getAnnotations(qualifiedName: QualifiedName, project: Project, scope: GlobalSearchScope): Collection<PsiAnnotation> {
+            val name = qualifiedName.lastComponent
+            return if (name != null) {
+                KotlinAnnotationsIndex.get(name, project, scope)
+                    .asSequence()
+                    .map { ktAnnotation ->
                         val function = ktAnnotation.parent?.parent as? KtFunction
                         function?.let {
                             val psiAnnotation = LightClassUtil.getLightClassMethod(function)?.modifierList?.findAnnotation(qualifiedName.toString())
                             psiAnnotation?.let { NavigableKotlinPsiAnnotation(psiAnnotation, ktAnnotation) }
                         }
-
-                    }).filterNotNull().toList()
-        } else emptyList()
+                    }.filterNotNull().toList()
+            } else emptyList()
+        }
     }
 }

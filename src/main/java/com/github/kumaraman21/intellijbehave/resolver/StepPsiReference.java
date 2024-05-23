@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class StepPsiReference implements PsiPolyVariantReference {
     private final JBehaveStep myStep;
@@ -42,12 +42,12 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public JBehaveStep getElement() {
+    public @NotNull JBehaveStep getElement() {
         return myStep;
     }
 
     @Override
-    public TextRange getRangeInElement() {
+    public @NotNull TextRange getRangeInElement() {
         return myRange;
     }
 
@@ -64,7 +64,7 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         return myStep;
     }
 
@@ -74,21 +74,29 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
-        ResolveResult[] resolvedResults = multiResolve(false);
+    public boolean isReferenceTo(@NotNull PsiElement element) {
+        PsiManagerEx manager = null;
 
-        for (ResolveResult resolveResult : resolvedResults) {
-            if (getElement().getManager().areElementsEquivalent(resolveResult.getElement(), element)) {
-                return true;
+        //This part is a simplified version of 'multiResolve()', and using it instead of 'multiResolve()',
+        // so that unnecessary calls to 'getAnnotatedMethod()' and instantiation of ResolveResults can be avoided.
+        var resolvedElements = new ArrayList<PsiMethod>(4);
+
+        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
+            final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
+            if (method != null && !resolvedElements.contains(method)) {
+                if (manager == null) manager = getElement().getManager();
+                if (manager.areElementsEquivalent(method, element)) {
+                    return true;
+                }
+                resolvedElements.add(method);
             }
         }
 
         return false;
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
@@ -97,28 +105,26 @@ public class StepPsiReference implements PsiPolyVariantReference {
         return false;
     }
 
-    @Nullable
+    /**
+     * Returns the first Java step definition found for this reference.
+     */
+    @Nullable("When no definition could be resolved.")
     public JavaStepDefinition resolveToDefinition() {
         Collection<JavaStepDefinition> definitions = resolveToDefinitions();
         return definitions.isEmpty() ? null : definitions.iterator().next();
     }
 
     @NotNull
-    public Collection<JavaStepDefinition> resolveToDefinitions() {
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        return index.findStepDefinitions(myStep);
+    private Collection<JavaStepDefinition> resolveToDefinitions() {
+        return JBehaveStepsIndex.getInstance(myStep.getProject()).findStepDefinitions(myStep);
     }
 
-    @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
-        List<ResolveResult> result = new ArrayList<>();
-        List<PsiMethod> resolvedElements = new ArrayList<>();
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
+        var result = new ArrayList<ResolveResult>(4);
+        var resolvedElements = new ArrayList<PsiMethod>(4);
 
-        JBehaveStepsIndex index = JBehaveStepsIndex.getInstance(myStep.getProject());
-        Collection<JavaStepDefinition> resolvedStepDefinitions = index.findStepDefinitions(myStep);
-
-        for (JavaStepDefinition resolvedStepDefinition : resolvedStepDefinitions) {
+        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
             final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 resolvedElements.add(method);
@@ -134,6 +140,6 @@ public class StepPsiReference implements PsiPolyVariantReference {
             }
         }
 
-        return result.toArray(new ResolveResult[result.size()]);
+        return result.toArray(ResolveResult.EMPTY_ARRAY);
     }
 }

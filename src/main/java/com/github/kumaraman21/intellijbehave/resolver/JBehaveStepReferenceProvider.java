@@ -8,16 +8,12 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class JBehaveStepReferenceProvider extends PsiReferenceProvider {
+public final class JBehaveStepReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        if (element instanceof JBehaveStep) {
-            final JBehaveStep step = (JBehaveStep) element;
-
-            return new PsiReference[]{new StepPsiReference(step, TextRange.from(0, element.getTextLength()))};
-        }
-
-        return PsiReference.EMPTY_ARRAY;
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        return element instanceof JBehaveStep step
+               ? new PsiReference[]{new StepPsiReference(step, TextRange.from(0, element.getTextLength()))}
+               : PsiReference.EMPTY_ARRAY;
     }
 }

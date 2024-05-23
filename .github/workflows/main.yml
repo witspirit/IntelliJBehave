@@ -55,8 +55,12 @@ jobs:
           ./gradlew listProductsReleases # prepare list of IDEs for Plugin Verifier
 
       # Run tests
-      - name: Run Tests
+      - name: Run JUnit 5 Tests
         run: ./gradlew test -Pidea.home.path=./intellij-community
+
+      # Run tests
+      - name: Run JUnit 3 Tests
+        run: ./gradlew testWithJunit3 -Pidea.home.path=./intellij-community
 
       # Collect Tests Result of failed tests
       - name: Collect Tests Result

@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [1.64.0]
+### Changed
+- New supported IDE version range: 2023.1.6-2024.2-EAP
+- Did some optimizations on the unused step definition method inspection. Now it also marks the method name instead of
+the entire method.
+- Did some optimizations on the undefined step inspection.
+- Removed duplicate reporting of steps that don't have step definition methods.
+- Removed the class `StoryAnnotator` that didn't seem to do much useful.
+- Improved the implementations of JBehave step reference handling.
+
 ## [1.63.0]
 ### Changed
 - New supported IDE version range: 2022.2.5-2024.1-EAP

@@ -6,6 +6,6 @@ import com.intellij.openapi.extensions.PluginId
 /**
  * Created by Rodrigo Quesada on 20/09/15.
  */
-private val kotlinPluginId = "org.jetbrains.kotlin"
+private const val kotlinPluginId = "org.jetbrains.kotlin"
 
 val pluginIsEnabled = PluginManagerCore.getPlugin(PluginId.getId(kotlinPluginId))?.isEnabled ?: false

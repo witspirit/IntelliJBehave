@@ -21,13 +21,12 @@ import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -38,8 +37,8 @@ public class StoryCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void fillCompletionVariants(CompletionParameters parameters, final CompletionResultSet _result) {
-        if (parameters.getCompletionType() == CompletionType.BASIC && getIsStoryAutoCompletion()) {
+    public void fillCompletionVariants(CompletionParameters parameters, @NotNull final CompletionResultSet _result) {
+        if (parameters.getCompletionType() == CompletionType.BASIC && JBehaveSettings.getInstance().isStoryAutoCompletion()) {
             String prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(parameters);
             CompletionResultSet result = _result.withPrefixMatcher(prefix);
 
@@ -51,13 +50,6 @@ public class StoryCompletionContributor extends CompletionContributor {
                 result::addElement,
                 keywords);
         }
-    }
-
-    private boolean getIsStoryAutoCompletion() {
-        Application application = ApplicationManager.getApplication();
-        JBehaveSettings component = application.getService(JBehaveSettings.class);
-
-        return component.isStoryAutoCompletion();
     }
 
     private LocalizedKeywords lookupLocalizedKeywords(CompletionParameters parameters) {
@@ -133,12 +125,12 @@ public class StoryCompletionContributor extends CompletionContributor {
     private static JBehaveStep getStepPsiElement(CompletionParameters parameters) {
         PsiElement position = parameters.getPosition();
         PsiElement positionParent = position.getParent();
-        if (positionParent instanceof JBehaveStep) {
-            return (JBehaveStep) positionParent;
-        } else if (position instanceof StepPsiReference) {
-            return ((StepPsiReference) position).getElement();
-        } else if (position instanceof JBehaveStep) {
-            return (JBehaveStep) position;
+        if (positionParent instanceof JBehaveStep step) {
+            return step;
+        } else if (position instanceof StepPsiReference reference) {
+            return reference.getElement();
+        } else if (position instanceof JBehaveStep step) {
+            return step;
         } else {
             return null;
         }
@@ -166,20 +158,19 @@ public class StoryCompletionContributor extends CompletionContributor {
 
         @Override
         public boolean processStepDefinition(StepDefinitionAnnotation stepDefinitionAnnotation) {
-            StepType annotationStepType = stepDefinitionAnnotation.getStepType();
+            StepType annotationStepType = stepDefinitionAnnotation.stepType();
             if (annotationStepType != getStepType()) {
                 return true;
             }
-            String annotationText = stepDefinitionAnnotation.getAnnotationText();
+            String annotationText = stepDefinitionAnnotation.annotationText();
             String adjustedAnnotationText = actualStepPrefix + " " + annotationText;
 
-            ParametrizedString pString = new ParametrizedString(adjustedAnnotationText);
-            String complete = pString.complete(textBeforeCaret);
+            String complete = new ParametrizedString(adjustedAnnotationText).complete(textBeforeCaret);
             if (StringUtil.isNotEmpty(complete)) {
-                PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
+                PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.annotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, textBeforeCaret + complete));
             } else if (prefixMatcher.prefixMatches(adjustedAnnotationText)) {
-                PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.getAnnotation();
+                PsiAnnotation matchingAnnotation = stepDefinitionAnnotation.annotation();
                 consumer.consume(LookupElementBuilder.create(matchingAnnotation, adjustedAnnotationText));
             }
             return true;

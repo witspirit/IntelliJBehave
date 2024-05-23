@@ -30,6 +30,9 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Reports JBehave steps in Story files that have no Java step definition methods.
+ */
 public class UndefinedStepInspection extends LocalInspectionTool {
 
     @NotNull
@@ -44,27 +47,23 @@ public class UndefinedStepInspection extends LocalInspectionTool {
         return new PsiElementVisitor() {
 
             @Override
-            public void visitElement(PsiElement psiElement) {
+            public void visitElement(@NotNull PsiElement psiElement) {
                 super.visitElement(psiElement);
 
-                if (!(psiElement instanceof JBehaveStep)) {
+                if (!(psiElement instanceof JBehaveStep step)) {
                     return;
                 }
 
-                JBehaveStep step = (JBehaveStep) psiElement;
                 PsiReference[] references = step.getReferences();
 
-                if (references.length != 1 || !(references[0] instanceof StepPsiReference)) {
-                    return;
-                }
+                if (references.length == 1 && references[0] instanceof StepPsiReference reference) {
+                    JavaStepDefinition definition = reference.resolveToDefinition();
 
-                StepPsiReference reference = (StepPsiReference) references[0];
-                JavaStepDefinition definition = reference.resolveToDefinition();
-
-                if (definition == null) {
-                    holder.registerProblem(step, "Step <code>#ref</code> is not defined");
-                } else {
-                    highlightParameters(step, definition, holder);
+                    if (definition == null) {
+                        holder.registerProblem(step, "Step <code>#ref</code> is not defined");
+                    } else {
+                        highlightParameters(step, definition, holder);
+                    }
                 }
             }
         };
@@ -73,24 +72,22 @@ public class UndefinedStepInspection extends LocalInspectionTool {
 
     private void highlightParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition, ProblemsHolder holder) {
         String stepText = step.getStepText();
-
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
-        ParametrizedString pString = new ParametrizedString(annotationText);
 
         int offset = step.getStepTextOffset();
-        for (StringToken token : pString.tokenize(stepText)) {
+        for (StringToken token : new ParametrizedString(annotationText).tokenize(stepText)) {
             int length = token.getValue().length();
             if (token.isIdentifier()) {
-                registerHiglighting(StorySyntaxHighlighter.TABLE_CELL, step, TextRange.from(offset, length), holder);
+                registerHighlighting(StorySyntaxHighlighter.TABLE_CELL, step, TextRange.from(offset, length), holder);
             }
             offset += length;
         }
     }
 
-    private static void registerHiglighting(TextAttributesKey attributesKey,
-                                            JBehaveStep step,
-                                            TextRange range,
-                                            ProblemsHolder holder) {
+    private static void registerHighlighting(TextAttributesKey attributesKey,
+                                             JBehaveStep step,
+                                             TextRange range,
+                                             ProblemsHolder holder) {
         final ProblemDescriptor descriptor = new ProblemDescriptorImpl(
                 step, step, "", LocalQuickFix.EMPTY_ARRAY,
                 ProblemHighlightType.INFORMATION, false, range, false, null,

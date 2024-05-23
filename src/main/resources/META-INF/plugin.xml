@@ -43,7 +43,7 @@
   ]]></description>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
-    <idea-version since-build="222.4554.10" until-build="241.*"/>
+    <idea-version since-build="231.9414.13" until-build="242.*"/>
 
     <depends>com.intellij.modules.java</depends>
     <depends optional="true" config-file="kotlin-config.xml">org.jetbrains.kotlin</depends>
@@ -70,8 +70,6 @@
                   fieldName="STORY_FILE_TYPE" language="Story" extensions="story"/>
         <lang.parserDefinition language="Story"
                                implementationClass="com.github.kumaraman21.intellijbehave.parser.StoryParserDefinition"/>
-        <annotator language="Story"
-                   implementationClass="com.github.kumaraman21.intellijbehave.resolver.StoryAnnotator"/>
         <lang.commenter language="Story"
                         implementationClass="com.github.kumaraman21.intellijbehave.commenter.StoryCommenter"/>
         <colorSettingsPage implementation="com.github.kumaraman21.intellijbehave.highlighter.StoryColorsAndFontsPage"/>
@@ -103,6 +101,8 @@
             Also, since multiple Run Configurations with the same name are not allowed to be saved by IntelliJ,
             this won't interfere with the default JBehave Story Runner.-->
         <configurationType implementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
+
+        <postStartupActivity implementation="com.github.kumaraman21.intellijbehave.startup.ProjectStartupActivity"/>
         
         <lang.psiStructureViewFactory language="Story" implementationClass="com.github.kumaraman21.intellijbehave.structure.StoryStructureViewFactory" />
     </extensions>

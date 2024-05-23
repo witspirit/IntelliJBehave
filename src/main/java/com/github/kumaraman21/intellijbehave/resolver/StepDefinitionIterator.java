@@ -16,24 +16,28 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
-import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesLoader;
+import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiMethod;
 import org.jbehave.core.steps.StepType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
+/**
+ * Processes VirtualFiles to see if step annotations match the pre-configured step type.
+ */
 public abstract class StepDefinitionIterator implements ContentIterator {
-
-    private final StepDefinitionAnnotationConverter stepDefinitionAnnotationConverter = new StepDefinitionAnnotationConverter();
-    private StepType stepType;
-    private Project project;
+    private final StepType stepType;
+    private final Project project;
 
     public StepDefinitionIterator(@Nullable StepType stepType, Project project) {
         this.stepType = stepType;
@@ -45,34 +49,18 @@ public abstract class StepDefinitionIterator implements ContentIterator {
     }
 
     @Override
-    public boolean processFile(VirtualFile virtualFile) {
-
+    public boolean processFile(@NotNull VirtualFile virtualFile) {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 
-        if (psiFile instanceof PsiClassOwner) {
-            // System.out.println("Virtual File that is a PsiClassOwner: "+virtualFile);
-
-            List<PsiClass> psiClasses = null;
-            if (KotlinConfigKt.getPluginIsEnabled()) {
-                psiClasses = KotlinPsiClassesLoader.getInstance().getPsiClasses(psiFile);
-            }
-
-            if (psiClasses == null) psiClasses = Arrays.asList(((PsiClassOwner) psiFile).getClasses());
-
-            for (PsiClass psiClass : psiClasses) {
-                PsiMethod[] methods = psiClass.getMethods();
-
-                for (PsiMethod method : methods) {
+        if (psiFile instanceof PsiClassOwner psiClassOwner) {
+            for (PsiClass psiClass : getPsiClasses(psiFile, psiClassOwner)) {
+                for (PsiMethod method : psiClass.getMethods()) {
                     PsiAnnotation[] annotations = method.getModifierList().getApplicableAnnotations();
-                    Set<StepDefinitionAnnotation> stepDefinitionAnnotations = stepDefinitionAnnotationConverter.convertFrom(annotations);
 
-                    for (StepDefinitionAnnotation stepDefinitionAnnotation : stepDefinitionAnnotations) {
-                        if (stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.getStepType())) {
-
-                            boolean shouldContinue = processStepDefinition(stepDefinitionAnnotation);
-                            if (!shouldContinue) {
-                                return false;
-                            }
+                    for (StepDefinitionAnnotation stepDefinitionAnnotation : StepDefinitionAnnotationConverter.convertFrom(annotations)) {
+                        if ((stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.stepType()))
+                            && !processStepDefinition(stepDefinitionAnnotation)) {
+                            return false;
                         }
                     }
                 }
@@ -80,6 +68,22 @@ public abstract class StepDefinitionIterator implements ContentIterator {
         }
 
         return true;
+    }
+
+    /**
+     * Returns the PSI classes from the provided file and class owner
+     *
+     * @param psiFile       the Java or Kotlin step definitions file
+     * @param psiClassOwner {@code psiFile} as a {@link PsiClassOwner}
+     * @return the classes contained by the file
+     */
+    private static PsiClass[] getPsiClasses(PsiFile psiFile, PsiClassOwner psiClassOwner) {
+        PsiClass[] psiClasses = null;
+        if (KotlinConfigKt.getPluginIsEnabled()) {
+            psiClasses = KotlinPsiClassesHandler.getPsiClasses(psiFile);
+        }
+
+        return psiClasses != null ? psiClasses : psiClassOwner.getClasses();
     }
 
     public abstract boolean processStepDefinition(StepDefinitionAnnotation stepDefinitionAnnotation);
