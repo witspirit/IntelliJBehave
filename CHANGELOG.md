@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.65.0]
+### Changed
+- Added caching for the JBehave step reference resolution and Given-When-Then step annotation lookup.
+
 ## [1.64.0]
 ### Changed
 - New supported IDE version range: 2023.1.6-2024.2-EAP

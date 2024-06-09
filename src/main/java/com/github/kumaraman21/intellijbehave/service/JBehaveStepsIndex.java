@@ -17,14 +17,10 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,16 +73,13 @@ public final class JBehaveStepsIndex implements Disposable {
     private List<JavaStepDefinition> loadStepsFor(@NotNull Module module) {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
-        PsiClass givenAnnotationClass = findStepAnnotation(Given.class.getName(), module, dependenciesScope);
-        if (givenAnnotationClass == null) return emptyList();
-        PsiClass whenAnnotationClass = findStepAnnotation(When.class.getName(), module, dependenciesScope);
-        if (whenAnnotationClass == null) return emptyList();
-        PsiClass thenAnnotationClass = findStepAnnotation(Then.class.getName(), module, dependenciesScope);
-        if (thenAnnotationClass == null) return emptyList();
+        var stepAnnotations = StepAnnotationsCache.getInstance(module.getProject()).cacheStepAnnotations(module, dependenciesScope);
+        if (stepAnnotations.isAnyAnnotationMissing())
+            return emptyList();
 
         List<JavaStepDefinition> result = new ArrayList<>();
 
-        for (PsiClass stepAnnotation : asList(givenAnnotationClass, whenAnnotationClass, thenAnnotationClass)) {
+        for (PsiClass stepAnnotation : asList(stepAnnotations.given(), stepAnnotations.when(), stepAnnotations.then())) {
             for (PsiAnnotation stepDefAnnotation : getAllStepAnnotations(stepAnnotation, dependenciesScope)) {
                 result.add(new JavaStepDefinition(stepDefAnnotation));
             }
@@ -128,17 +121,6 @@ public final class JBehaveStepsIndex implements Disposable {
                 JBehaveStepDefClassesModificationTracker.getInstance(annClass.getProject()),
                 ProjectRootModificationTracker.getInstance(annClass.getProject()));
         });
-    }
-
-    @Nullable
-    private PsiClass findStepAnnotation(String stepClass, Module module, GlobalSearchScope dependenciesScope) {
-        var stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(stepClass, module.getProject(), dependenciesScope);
-        for (PsiClass stepDefAnnotations : stepDefAnnotationCandidates) {
-            if (stepClass.equals(stepDefAnnotations.getQualifiedName())) {
-                return stepDefAnnotations;
-            }
-        }
-        return null;
     }
 
     @Override
