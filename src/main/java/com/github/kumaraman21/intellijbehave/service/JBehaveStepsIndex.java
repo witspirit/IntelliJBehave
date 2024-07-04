@@ -17,14 +17,10 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Project service that provides Java step definitions for JBehave Story steps.
@@ -50,49 +45,53 @@ public final class JBehaveStepsIndex implements Disposable {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(step);
+        return CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
+            Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
-        if (module == null) {
-            return emptyList();
-        }
+            if (module == null) {
+                return new CachedValueProvider.Result<>(
+                    emptyList(),
+                    JBehaveStepDefClassesModificationTracker.getInstance(step.getProject()),
+                    ProjectRootModificationTracker.getInstance(step.getProject()));
+            }
 
-        Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<>(2);
-        String stepText = step.getStepText();
+            var definitionsByClass = new HashMap<Class, JavaStepDefinition>(2);
+            String stepText = step.getStepText();
 
-        for (JavaStepDefinition stepDefinition : loadStepsFor(module)) {
-            if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
-                Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
-                Integer newPriority = getPriorityByDefinition(stepDefinition);
+            for (var javaStepDefinition : loadStepsFor(module)) {
+                if (javaStepDefinition.supportsStepAndMatches(step, stepText)) {
+                    Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(javaStepDefinition.getClass()));
+                    Integer newPriority = getPriorityByDefinition(javaStepDefinition);
 
-                if (newPriority > currentHighestPriority) {
-                    definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
+                    if (newPriority > currentHighestPriority) {
+                        definitionsByClass.put(javaStepDefinition.getClass(), javaStepDefinition);
+                    }
                 }
             }
-        }
 
-        return definitionsByClass.values();
+            return new CachedValueProvider.Result<>(definitionsByClass.values(),
+                JBehaveStepDefClassesModificationTracker.getInstance(step.getProject()),
+                ProjectRootModificationTracker.getInstance(step.getProject()));
+        });
     }
 
     @NotNull
     private List<JavaStepDefinition> loadStepsFor(@NotNull Module module) {
         GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
-        PsiClass givenAnnotationClass = findStepAnnotation(Given.class.getName(), module, dependenciesScope);
-        if (givenAnnotationClass == null) return emptyList();
-        PsiClass whenAnnotationClass = findStepAnnotation(When.class.getName(), module, dependenciesScope);
-        if (whenAnnotationClass == null) return emptyList();
-        PsiClass thenAnnotationClass = findStepAnnotation(Then.class.getName(), module, dependenciesScope);
-        if (thenAnnotationClass == null) return emptyList();
+        var stepAnnotations = StepAnnotationsCache.getInstance(module.getProject()).cacheStepAnnotations(module, dependenciesScope);
+        if (stepAnnotations.isAnyAnnotationMissing())
+            return emptyList();
 
-        List<JavaStepDefinition> result = new ArrayList<>();
+        var javaStepDefs = new ArrayList<JavaStepDefinition>();
 
-        for (PsiClass stepAnnotation : asList(givenAnnotationClass, whenAnnotationClass, thenAnnotationClass)) {
+        for (PsiClass stepAnnotation : asList(stepAnnotations.given(), stepAnnotations.when(), stepAnnotations.then())) {
             for (PsiAnnotation stepDefAnnotation : getAllStepAnnotations(stepAnnotation, dependenciesScope)) {
-                result.add(new JavaStepDefinition(stepDefAnnotation));
+                javaStepDefs.add(new JavaStepDefinition(stepDefAnnotation));
             }
         }
 
-        return result;
+        return javaStepDefs;
     }
 
     @NotNull
@@ -128,17 +127,6 @@ public final class JBehaveStepsIndex implements Disposable {
                 JBehaveStepDefClassesModificationTracker.getInstance(annClass.getProject()),
                 ProjectRootModificationTracker.getInstance(annClass.getProject()));
         });
-    }
-
-    @Nullable
-    private PsiClass findStepAnnotation(String stepClass, Module module, GlobalSearchScope dependenciesScope) {
-        var stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(stepClass, module.getProject(), dependenciesScope);
-        for (PsiClass stepDefAnnotations : stepDefAnnotationCandidates) {
-            if (stepClass.equals(stepDefAnnotations.getQualifiedName())) {
-                return stepDefAnnotations;
-            }
-        }
-        return null;
     }
 
     @Override

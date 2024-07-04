@@ -15,10 +15,10 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.intellij.psi.*;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
-import org.jbehave.core.steps.PatternVariantBuilder;
 import org.jbehave.core.steps.StepType;
 
 import java.util.Collections;

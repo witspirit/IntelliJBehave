@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.service;
 
 import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
 
+import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.openapi.application.ReadAction;
@@ -22,8 +23,8 @@ import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-import org.jbehave.core.steps.PatternVariantBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -92,11 +93,12 @@ public final class JBehaveUtil {
      * @return the collection of step patterns
      */
     @NotNull
-    public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation) {
-        Set<String> annotationTexts = new HashSet<>(4);
+    public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation, @Nullable PsiMethod parentMethod) {
+        var annotationTexts = new HashSet<String>(4);
         getAnnotationText(stepAnnotation).ifPresent(annotationTexts::add);
 
-        PsiMethod method = PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
+        //If the parent method is available, e.g. from JBehaveJavaStepDefinitionSearch, then use that, otherwise compute it
+        PsiMethod method = parentMethod != null ? parentMethod : PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
         if (method != null) {
             for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
                 if (isAnnotationOfClass(annotation, Alias.class)) {
@@ -109,8 +111,7 @@ public final class JBehaveUtil {
 
         return annotationTexts.stream()
             .map(PatternVariantBuilder::new)
-            .map(PatternVariantBuilder::allVariants)
-            .flatMap(Set::stream)
+            .flatMap(builder -> builder.allVariants().stream())
             .collect(Collectors.toSet());
     }
 
@@ -141,7 +142,7 @@ public final class JBehaveUtil {
     public static List<String> getAnnotationTexts(@NotNull PsiMethod method) {
         return getJBehaveStepAnnotations(method)
             .stream()
-            .map(JBehaveUtil::getAnnotationTexts)
+            .map(annotation -> JBehaveUtil.getAnnotationTexts(annotation, method))
             .flatMap(Set::stream)
             .collect(Collectors.toList());
     }
@@ -167,27 +168,26 @@ public final class JBehaveUtil {
      * @param stepDefinitionElement a step definition method
      * @param stepText              the step pattern value of the step annotation
      * @param consumer
-     * @param effectiveSearchScope  the search scope to find references in
+     * @param searchScope  the search scope to find references in. Already restricted to JBehave Story files.
+     *                     See {@link JBehaveJavaStepDefinitionSearch}.
      * @return true if the corresponding query execution in {@link JBehaveJavaStepDefinitionSearch} should continue,
      * false if it should stop
      */
-    public static boolean findJBehaveReferencesToElement(@NotNull PsiElement stepDefinitionElement, @NotNull String stepText, @NotNull Processor<? super PsiReference> consumer, @NotNull final SearchScope effectiveSearchScope) {
+    public static boolean findJBehaveReferencesToElement(@NotNull PsiElement stepDefinitionElement,
+                                                         @NotNull String stepText,
+                                                         @NotNull Processor<? super PsiReference> consumer,
+                                                         @NotNull final SearchScope searchScope) {
         String word = getTheBiggestWordToSearchByIndex(stepText);
 
-        if (isEmptyOrSpaces(word)) {
-            return true;
-        }
-
-        SearchScope searchScope = restrictScopeToJBehaveFiles(effectiveSearchScope);
-
-        return PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
-            .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
+        return isEmptyOrSpaces(word)
+               || PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
+                   .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
     }
 
     /**
      * Returns a search scope that is based on the {@code originalScopeComputation} but that is restricted to JBehave Story file types.
      */
-    private static SearchScope restrictScopeToJBehaveFiles(final SearchScope originalScope) {
+    public static SearchScope restrictScopeToJBehaveFiles(final SearchScope originalScope) {
         return ReadAction.compute(() ->
             originalScope instanceof GlobalSearchScope globalSearchScope
             ? GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, StoryFileType.STORY_FILE_TYPE)

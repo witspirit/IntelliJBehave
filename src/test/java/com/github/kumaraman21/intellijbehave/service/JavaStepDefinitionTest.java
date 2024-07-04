@@ -23,32 +23,113 @@ class JavaStepDefinitionTest extends JBehaveSupportTestBase {
         return "";
     }
 
-    //matches
+    //supportsStepAndMatches
 
     @Test
     void shouldMatchStepText() {
         var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
-            import org.jbehave.core.annotations.Aliases;
-                        
+            import org.jbehave.core.annotations.Then;
+
             class JavaStepDefinition {
-                @Alia<caret>ses(values = {
-                    "the price should be $price",
-                    "the cost should be $price"
-                })
+                @The<caret>n(value = "the price should be $price", priority = 500)
                 void steDefMethod(int price) {
                 }
             }
             """);
 
         var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
-        assertThat(new JavaStepDefinition(annotation).matches("the cost should be 200")).isTrue();
+
+        var storyFile = getFixture().configureByText("matches_step_text.story", """
+            Scenario: Product price
+
+            Then the <caret>price should be 200
+            """);
+
+        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+
+        assertThat(new JavaStepDefinition(annotation).supportsStepAndMatches(step, "the price should be 200")).isTrue();
     }
 
     @Test
     void shouldNotMatchStepText() {
         var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
+            import org.jbehave.core.annotations.Then;
+
+            class JavaStepDefinition {
+                @The<caret>n(value = "the price should be $price", priority = 500)
+                void steDefMethod(int price) {
+                }
+            }
+            """);
+
+        var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+
+        var storyFile = getFixture().configureByText("matches_step_text.story", """
+            Scenario: Product price
+
+            Then the <caret>price should be 200
+            """);
+
+        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+
+        assertThat(new JavaStepDefinition(annotation).supportsStepAndMatches(step, "the price is 200")).isFalse();
+    }
+
+    @Test
+    void shouldSupportStep() {
+        var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
+            import org.jbehave.core.annotations.Then;
+
+            class JavaStepDefinition {
+                @The<caret>n(value = "the price should be $price", priority = 500)
+                void steDefMethod(int price) {
+                }
+            }
+            """);
+
+        var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+
+        var storyFile = getFixture().configureByText("supports_step.story", """
+            Scenario: Product price
+
+            Then the <caret>price should be 200
+            """);
+
+        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+
+        assertThat(new JavaStepDefinition(annotation).supportsStepAndMatches(step, "the price should be 200")).isTrue();
+    }
+
+    @Test
+    void shouldNotSupportStep() {
+        var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
+            import org.jbehave.core.annotations.Given;
+
+            class JavaStepDefinition {
+                @Giv<caret>en(value = "the price should be $price", priority = 500)
+                void steDefMethod(int price) {
+                }
+            }
+            """);
+
+        var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+
+        var storyFile = getFixture().configureByText("supports_step.story", """
+            Scenario: Product price
+
+            Then the <caret>price should be 200
+            """);
+
+        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+
+        assertThat(new JavaStepDefinition(annotation).supportsStepAndMatches(step, "the price should be 200")).isFalse();
+    }
+
+    @Test
+    void shouldNotSupportStepForAliasAnnotation() {
+        var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
             import org.jbehave.core.annotations.Aliases;
-                        
+
             class JavaStepDefinition {
                 @Alia<caret>ses(values = {
                     "the price should be $price",
@@ -60,7 +141,16 @@ class JavaStepDefinitionTest extends JBehaveSupportTestBase {
             """);
 
         var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
-        assertThat(new JavaStepDefinition(annotation).matches("the price is 200")).isFalse();
+
+        var storyFile = getFixture().configureByText("supports_step.story", """
+            Scenario: Product price
+
+            Then the <caret>price should be 200
+            """);
+
+        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+
+        assertThat(new JavaStepDefinition(annotation).supportsStepAndMatches(step, "the price should be 200")).isFalse();
     }
 
     //getAnnotationTextFor
@@ -212,54 +302,4 @@ class JavaStepDefinitionTest extends JBehaveSupportTestBase {
 //    @Test
 //    void shouldReturnFallbackValueForNoAnnotation() {
 //    }
-
-    //supportsStep
-
-    @Test
-    void shouldSupportStep() {
-        var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
-            import org.jbehave.core.annotations.Then;
-
-            class JavaStepDefinition {
-                @The<caret>n(value = "the price should be $price", priority = 500)
-                void steDefMethod(int price) {
-                }
-            }
-            """);
-
-        var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
-
-        var storyFile = getFixture().configureByText("supports_step.story", """
-            Scenario: Product price
-                        
-            Then the <caret>price should be 200
-            """);
-
-        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
-        assertThat(new JavaStepDefinition(annotation).supportsStep(step)).isTrue();
-    }
-
-    @Test
-    void shouldNotSupportStep() {
-        var stepDefFile = getFixture().configureByText("JavaStepDefinition.java", """
-            import org.jbehave.core.annotations.Given;
-
-            class JavaStepDefinition {
-                @Giv<caret>en(value = "the price should be $price", priority = 500)
-                void steDefMethod(int price) {
-                }
-            }
-            """);
-
-        var annotation = (PsiAnnotation) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
-
-        var storyFile = getFixture().configureByText("supports_step.story", """
-            Scenario: Product price
-                        
-            Then the <caret>price should be 200
-            """);
-
-        var step = (JBehaveStep) storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
-        assertThat(new JavaStepDefinition(annotation).supportsStep(step)).isFalse();
-    }
 }

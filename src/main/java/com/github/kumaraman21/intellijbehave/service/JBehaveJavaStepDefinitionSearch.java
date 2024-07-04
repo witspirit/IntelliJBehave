@@ -35,7 +35,7 @@ public class JBehaveJavaStepDefinitionSearch implements QueryExecutor<PsiReferen
 
             //Lazy-initializing the search scope in case the first step text is null
             if (searchScope == null) {
-                searchScope = ReadAction.compute(queryParameters::getEffectiveSearchScope);
+                searchScope = JBehaveUtil.restrictScopeToJBehaveFiles(ReadAction.compute(queryParameters::getEffectiveSearchScope));
             }
 
             result &= findJBehaveReferencesToElement(method, stepText, consumer, searchScope);

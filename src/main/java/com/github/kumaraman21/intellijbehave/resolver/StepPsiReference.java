@@ -20,11 +20,13 @@ import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.util.ArrayUtil;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.impl.source.resolve.reference.impl.CachingReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +34,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class StepPsiReference implements PsiPolyVariantReference {
+/**
+ * This reference extends {@link CachingReference}, so that resolved results are cached.
+ * <p>
+ * This prevents other parts of the IntelliJ Platform, that constantly call {@code resolve()},
+ * to call {@link #resolveToDefinitions()} and in turn {@link JBehaveStepsIndex#findStepDefinitions(JBehaveStep)}
+ * over and over again.
+ */
+public class StepPsiReference extends CachingReference implements PsiPolyVariantReference {
     private final JBehaveStep myStep;
     private final TextRange myRange;
 
@@ -40,6 +49,8 @@ public class StepPsiReference implements PsiPolyVariantReference {
         myStep = element;
         myRange = range;
     }
+
+    //Getters and handlers
 
     @Override
     public @NotNull JBehaveStep getElement() {
@@ -49,12 +60,6 @@ public class StepPsiReference implements PsiPolyVariantReference {
     @Override
     public @NotNull TextRange getRangeInElement() {
         return myRange;
-    }
-
-    @Override
-    public PsiElement resolve() {
-        ResolveResult[] result = multiResolve(true);
-        return result.length == 1 ? result[0].getElement() : null;
     }
 
     @NotNull
@@ -74,6 +79,13 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
+    public boolean isSoft() {
+        return false;
+    }
+
+    //Resolution
+
+    @Override
     public boolean isReferenceTo(@NotNull PsiElement element) {
         PsiManagerEx manager = null;
 
@@ -81,8 +93,8 @@ public class StepPsiReference implements PsiPolyVariantReference {
         // so that unnecessary calls to 'getAnnotatedMethod()' and instantiation of ResolveResults can be avoided.
         var resolvedElements = new ArrayList<PsiMethod>(4);
 
-        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
-            final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
+        for (var resolvedJavaStepDefinition : resolveToDefinitions()) {
+            final PsiMethod method = resolvedJavaStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 if (manager == null) manager = getElement().getManager();
                 if (manager.areElementsEquivalent(method, element)) {
@@ -92,16 +104,6 @@ public class StepPsiReference implements PsiPolyVariantReference {
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public Object @NotNull [] getVariants() {
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
-    }
-
-    @Override
-    public boolean isSoft() {
         return false;
     }
 
@@ -120,12 +122,21 @@ public class StepPsiReference implements PsiPolyVariantReference {
     }
 
     @Override
+    public @Nullable PsiElement resolveInner() {
+        var resolveResults = ResolveCache.getInstance(myStep.getProject())
+            .resolveWithCaching(this, DelegatingResolver.INSTANCE, false, false, myStep.getContainingFile());
+        return resolveResults.length > 0
+               ? resolveResults[0].getElement()
+               : null;
+    }
+
+    @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         var result = new ArrayList<ResolveResult>(4);
         var resolvedElements = new ArrayList<PsiMethod>(4);
 
-        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
-            final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
+        for (var resolvedJavaStepDefinition : resolveToDefinitions()) {
+            final PsiMethod method = resolvedJavaStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 resolvedElements.add(method);
                 result.add(new ResolveResult() {
@@ -141,5 +152,21 @@ public class StepPsiReference implements PsiPolyVariantReference {
         }
 
         return result.toArray(ResolveResult.EMPTY_ARRAY);
+    }
+
+    /**
+     * {@link ResolveCache#resolveWithCaching} calls this to resolve and cache the resolve results.
+     * <p>
+     * This resolver delegates to {@link #multiResolve(boolean)}.
+     * <p>
+     * Currently, it doesn't utilize the passed in {@link PsiFile} instance.
+     */
+    private static final class DelegatingResolver implements ResolveCache.PolyVariantContextResolver<StepPsiReference> {
+        private static final DelegatingResolver INSTANCE = new DelegatingResolver();
+
+        @Override
+        public ResolveResult @NotNull [] resolve(@NotNull StepPsiReference ref, @NotNull PsiFile containingFile, boolean incompleteCode) {
+            return ref.multiResolve(false);
+        }
     }
 }
