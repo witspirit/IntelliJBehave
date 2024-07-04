@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.service;
 
 import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
 
+import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.openapi.application.ReadAction;
@@ -22,7 +23,6 @@ import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-import org.jbehave.core.steps.PatternVariantBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
