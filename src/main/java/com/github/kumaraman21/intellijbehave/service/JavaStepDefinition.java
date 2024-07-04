@@ -23,22 +23,27 @@ import java.util.Set;
  * Represents a Java step definition as a step annotation.
  */
 public final class JavaStepDefinition {
+    private static final StepPatternParser STEP_PATTERN_PARSER = new RegexPrefixCapturingPatternParser();
     private final SmartPsiElementPointer<PsiAnnotation> annotationPointer;
-    private final StepPatternParser stepPatternParser = new RegexPrefixCapturingPatternParser();
 
     public JavaStepDefinition(PsiAnnotation annotation) {
         annotationPointer = SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation);
     }
 
     /**
-     * Returns if any of the step annotation patterns match the provided Story step text.
+     * Returns if the step type of the provided Story step is the same as the step
+     * type of the current annotation, and if any of the step annotation patterns match
+     * the provided Story step text.
      *
+     * @param step a step from a Story file
      * @param stepText the text of a step in a Story file
      */
-    public boolean matches(String stepText) {
-        final StepType annotationType = getAnnotationType();
+    public boolean supportsStepAndMatches(@NotNull JBehaveStep step, String stepText) {
+        StepType annotationType = getAnnotationType();
+        if (!Objects.equals(step.getStepType(), annotationType)) return false;
+
         for (String annotationText : getAnnotationTexts()) {
-            if (new OptimizedStepMatcher(stepPatternParser.parseStep(annotationType, annotationText)).matches(stepText))
+            if (new OptimizedStepMatcher(STEP_PATTERN_PARSER.parseStep(annotationType, annotationText)).matches(stepText))
                 return true;
         }
 
@@ -63,7 +68,7 @@ public final class JavaStepDefinition {
 
         final StepType annotationType = getAnnotationType();
         for (String annotationText : annotationTexts) {
-            OptimizedStepMatcher stepMatcher = new OptimizedStepMatcher(stepPatternParser.parseStep(annotationType, annotationText));
+            OptimizedStepMatcher stepMatcher = new OptimizedStepMatcher(STEP_PATTERN_PARSER.parseStep(annotationType, annotationText));
             if (stepMatcher.matches(stepText)) {
                 return stepMatcher.pattern().annotated();
             }
@@ -112,16 +117,6 @@ public final class JavaStepDefinition {
         PsiAnnotation annotation = getAnnotation();
 
         return annotation != null ? JBehaveUtil.getAnnotationPriority(annotation) : -1;
-    }
-
-    /**
-     * Returns if the step type of the provided Story step is the same as the step
-     * type of the current annotation.
-     *
-     * @param step a step from a Story file
-     */
-    public boolean supportsStep(@NotNull JBehaveStep step) {
-        return Objects.equals(step.getStepType(), getAnnotationType());
     }
 
     //Equals and hashcode

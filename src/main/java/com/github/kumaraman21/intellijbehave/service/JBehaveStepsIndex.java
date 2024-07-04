@@ -55,7 +55,7 @@ public final class JBehaveStepsIndex implements Disposable {
         String stepText = step.getStepText();
 
         for (var javaStepDefinition : loadStepsFor(module)) {
-            if (javaStepDefinition.matches(stepText) && javaStepDefinition.supportsStep(step)) {
+            if (javaStepDefinition.supportsStepAndMatches(step, stepText)) {
                 Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(javaStepDefinition.getClass()));
                 Integer newPriority = getPriorityByDefinition(javaStepDefinition);
 
