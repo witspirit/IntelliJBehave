@@ -93,8 +93,8 @@ public class StepPsiReference extends CachingReference implements PsiPolyVariant
         // so that unnecessary calls to 'getAnnotatedMethod()' and instantiation of ResolveResults can be avoided.
         var resolvedElements = new ArrayList<PsiMethod>(4);
 
-        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
-            final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
+        for (var resolvedJavaStepDefinition : resolveToDefinitions()) {
+            final PsiMethod method = resolvedJavaStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 if (manager == null) manager = getElement().getManager();
                 if (manager.areElementsEquivalent(method, element)) {
@@ -135,8 +135,8 @@ public class StepPsiReference extends CachingReference implements PsiPolyVariant
         var result = new ArrayList<ResolveResult>(4);
         var resolvedElements = new ArrayList<PsiMethod>(4);
 
-        for (JavaStepDefinition resolvedStepDefinition : resolveToDefinitions()) {
-            final PsiMethod method = resolvedStepDefinition.getAnnotatedMethod();
+        for (var resolvedJavaStepDefinition : resolveToDefinitions()) {
+            final PsiMethod method = resolvedJavaStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
                 resolvedElements.add(method);
                 result.add(new ResolveResult() {

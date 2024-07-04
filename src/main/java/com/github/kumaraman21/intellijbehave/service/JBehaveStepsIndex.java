@@ -52,16 +52,16 @@ public final class JBehaveStepsIndex implements Disposable {
             return emptyList();
         }
 
-        Map<Class, JavaStepDefinition> definitionsByClass = new HashMap<>(2);
+        var definitionsByClass = new HashMap<Class, JavaStepDefinition>(2);
         String stepText = step.getStepText();
 
-        for (JavaStepDefinition stepDefinition : loadStepsFor(module)) {
-            if (stepDefinition.matches(stepText) && stepDefinition.supportsStep(step)) {
-                Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(stepDefinition.getClass()));
-                Integer newPriority = getPriorityByDefinition(stepDefinition);
+        for (var javaStepDefinition : loadStepsFor(module)) {
+            if (javaStepDefinition.matches(stepText) && javaStepDefinition.supportsStep(step)) {
+                Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(javaStepDefinition.getClass()));
+                Integer newPriority = getPriorityByDefinition(javaStepDefinition);
 
                 if (newPriority > currentHighestPriority) {
-                    definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
+                    definitionsByClass.put(javaStepDefinition.getClass(), javaStepDefinition);
                 }
             }
         }
@@ -77,15 +77,15 @@ public final class JBehaveStepsIndex implements Disposable {
         if (stepAnnotations.isAnyAnnotationMissing())
             return emptyList();
 
-        List<JavaStepDefinition> result = new ArrayList<>();
+        var javaStepDefs = new ArrayList<JavaStepDefinition>();
 
         for (PsiClass stepAnnotation : asList(stepAnnotations.given(), stepAnnotations.when(), stepAnnotations.then())) {
             for (PsiAnnotation stepDefAnnotation : getAllStepAnnotations(stepAnnotation, dependenciesScope)) {
-                result.add(new JavaStepDefinition(stepDefAnnotation));
+                javaStepDefs.add(new JavaStepDefinition(stepDefAnnotation));
             }
         }
 
-        return result;
+        return javaStepDefs;
     }
 
     @NotNull

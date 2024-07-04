@@ -38,8 +38,7 @@ public final class JavaStepDefinition {
     public boolean matches(String stepText) {
         final StepType annotationType = getAnnotationType();
         for (String annotationText : getAnnotationTexts()) {
-            OptimizedStepMatcher stepMatcher = new OptimizedStepMatcher(stepPatternParser.parseStep(annotationType, annotationText));
-            if (stepMatcher.matches(stepText))
+            if (new OptimizedStepMatcher(stepPatternParser.parseStep(annotationType, annotationText)).matches(stepText))
                 return true;
         }
 

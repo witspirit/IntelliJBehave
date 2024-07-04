@@ -93,7 +93,7 @@ public final class JBehaveUtil {
      */
     @NotNull
     public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation) {
-        Set<String> annotationTexts = new HashSet<>(4);
+        var annotationTexts = new HashSet<String>(4);
         getAnnotationText(stepAnnotation).ifPresent(annotationTexts::add);
 
         PsiMethod method = PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
@@ -109,8 +109,7 @@ public final class JBehaveUtil {
 
         return annotationTexts.stream()
             .map(PatternVariantBuilder::new)
-            .map(PatternVariantBuilder::allVariants)
-            .flatMap(Set::stream)
+            .flatMap(builder -> builder.allVariants().stream())
             .collect(Collectors.toSet());
     }
 
