@@ -45,27 +45,34 @@ public final class JBehaveStepsIndex implements Disposable {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(step);
+        return CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
+            Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
-        if (module == null) {
-            return emptyList();
-        }
+            if (module == null) {
+                return new CachedValueProvider.Result<>(
+                    emptyList(),
+                    JBehaveStepDefClassesModificationTracker.getInstance(step.getProject()),
+                    ProjectRootModificationTracker.getInstance(step.getProject()));
+            }
 
-        var definitionsByClass = new HashMap<Class, JavaStepDefinition>(2);
-        String stepText = step.getStepText();
+            var definitionsByClass = new HashMap<Class, JavaStepDefinition>(2);
+            String stepText = step.getStepText();
 
-        for (var javaStepDefinition : loadStepsFor(module)) {
-            if (javaStepDefinition.supportsStepAndMatches(step, stepText)) {
-                Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(javaStepDefinition.getClass()));
-                Integer newPriority = getPriorityByDefinition(javaStepDefinition);
+            for (var javaStepDefinition : loadStepsFor(module)) {
+                if (javaStepDefinition.supportsStepAndMatches(step, stepText)) {
+                    Integer currentHighestPriority = getPriorityByDefinition(definitionsByClass.get(javaStepDefinition.getClass()));
+                    Integer newPriority = getPriorityByDefinition(javaStepDefinition);
 
-                if (newPriority > currentHighestPriority) {
-                    definitionsByClass.put(javaStepDefinition.getClass(), javaStepDefinition);
+                    if (newPriority > currentHighestPriority) {
+                        definitionsByClass.put(javaStepDefinition.getClass(), javaStepDefinition);
+                    }
                 }
             }
-        }
 
-        return definitionsByClass.values();
+            return new CachedValueProvider.Result<>(definitionsByClass.values(),
+                JBehaveStepDefClassesModificationTracker.getInstance(step.getProject()),
+                ProjectRootModificationTracker.getInstance(step.getProject()));
+        });
     }
 
     @NotNull
