@@ -1,0 +1,7 @@
+This product includes software developed in the JBehave project. (https://github.com/jbehave/jbehave-core).
+
+The classes 'com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder' and
+'com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilderTest' are the simplified
+and modified versions of 'org.jbehave.core.steps.PatternVariantBuilder' and 'org.jbehave.core.steps.PatternVariantBuilderBehaviour'.
+
+Those classes are licensed under the BSD-3-Clause license.
