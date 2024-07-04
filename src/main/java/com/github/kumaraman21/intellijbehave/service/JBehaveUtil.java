@@ -24,6 +24,7 @@ import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -92,11 +93,12 @@ public final class JBehaveUtil {
      * @return the collection of step patterns
      */
     @NotNull
-    public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation) {
+    public static Set<String> getAnnotationTexts(@NotNull PsiAnnotation stepAnnotation, @Nullable PsiMethod parentMethod) {
         var annotationTexts = new HashSet<String>(4);
         getAnnotationText(stepAnnotation).ifPresent(annotationTexts::add);
 
-        PsiMethod method = PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
+        //If the parent method is available, e.g. from JBehaveJavaStepDefinitionSearch, then use that, otherwise compute it
+        PsiMethod method = parentMethod != null ? parentMethod : PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
         if (method != null) {
             for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
                 if (isAnnotationOfClass(annotation, Alias.class)) {
@@ -140,7 +142,7 @@ public final class JBehaveUtil {
     public static List<String> getAnnotationTexts(@NotNull PsiMethod method) {
         return getJBehaveStepAnnotations(method)
             .stream()
-            .map(JBehaveUtil::getAnnotationTexts)
+            .map(annotation -> JBehaveUtil.getAnnotationTexts(annotation, method))
             .flatMap(Set::stream)
             .collect(Collectors.toList());
     }

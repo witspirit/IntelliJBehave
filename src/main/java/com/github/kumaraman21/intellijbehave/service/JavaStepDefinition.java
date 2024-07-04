@@ -89,7 +89,7 @@ public final class JavaStepDefinition {
     private Set<String> getAnnotationTexts() {
         PsiAnnotation annotation = getAnnotation();
 
-        return annotation == null ? Collections.emptySet() : JBehaveUtil.getAnnotationTexts(annotation);
+        return annotation == null ? Collections.emptySet() : JBehaveUtil.getAnnotationTexts(annotation, null);
     }
 
     /**

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.github.kumaraman21.intellijbehave.JBehaveSupportTestBase;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.junit5.RunInEdt;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.When;
@@ -195,7 +196,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
         var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
-        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).isEmpty();
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).isEmpty();
     }
 
     @Test
@@ -212,7 +213,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
         var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
-        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).containsExactlyInAnyOrder(
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).containsExactlyInAnyOrder(
             "the price of the product should be $price",
             "the cost of the product should be $price");
     }
@@ -233,12 +234,13 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
         var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
-        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).containsExactlyInAnyOrder(
-            "the price of the product should be $price",
-            "the product should cost $price",
-            "the cost of the product should be $price",
-            "the product should be sold for $price"
-        );
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, PsiTreeUtil.getParentOfType(annotation, PsiMethod.class)))
+            .containsExactlyInAnyOrder(
+                "the price of the product should be $price",
+                "the product should cost $price",
+                "the cost of the product should be $price",
+                "the product should be sold for $price"
+            );
     }
 
     @Test
@@ -258,12 +260,13 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
         var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
-        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).containsExactlyInAnyOrder(
-            "the price of the product should be $price",
-            "the product should cost $price",
-            "the cost of the product should be $price",
-            "the product should be sold for $price"
-        );
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, PsiTreeUtil.getParentOfType(annotation, PsiMethod.class)))
+            .containsExactlyInAnyOrder(
+                "the price of the product should be $price",
+                "the product should cost $price",
+                "the cost of the product should be $price",
+                "the product should be sold for $price"
+            );
     }
 
     @Test
@@ -285,7 +288,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
         var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
-        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation)).containsExactlyInAnyOrder(
+        assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).containsExactlyInAnyOrder(
             "the product should worth $price",
             "the price of the product should be $price",
             "the product should cost $price",
