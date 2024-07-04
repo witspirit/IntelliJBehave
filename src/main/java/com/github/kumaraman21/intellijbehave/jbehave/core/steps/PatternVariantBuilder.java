@@ -153,7 +153,7 @@ public class PatternVariantBuilder {
         }
 
         // Store current invocation's results
-        Set<String> variants = new HashSet<>();
+        Set<String> variants = new HashSet<>(8);
 
         if (!patternParts.isEmpty()) {
             // isolate the part before the first pattern
@@ -189,6 +189,6 @@ public class PatternVariantBuilder {
      * @return a {@link Set} of all variants without whitespace compression
      */
     public Set<String> allVariants() {
-        return new HashSet<>(variants);
+        return variants.size() == 1 ? Collections.singleton(variants.iterator().next()) : new HashSet<>(variants);
     }
 }
