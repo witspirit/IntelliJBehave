@@ -168,27 +168,26 @@ public final class JBehaveUtil {
      * @param stepDefinitionElement a step definition method
      * @param stepText              the step pattern value of the step annotation
      * @param consumer
-     * @param effectiveSearchScope  the search scope to find references in
+     * @param searchScope  the search scope to find references in. Already restricted to JBehave Story files.
+     *                     See {@link JBehaveJavaStepDefinitionSearch}.
      * @return true if the corresponding query execution in {@link JBehaveJavaStepDefinitionSearch} should continue,
      * false if it should stop
      */
-    public static boolean findJBehaveReferencesToElement(@NotNull PsiElement stepDefinitionElement, @NotNull String stepText, @NotNull Processor<? super PsiReference> consumer, @NotNull final SearchScope effectiveSearchScope) {
+    public static boolean findJBehaveReferencesToElement(@NotNull PsiElement stepDefinitionElement,
+                                                         @NotNull String stepText,
+                                                         @NotNull Processor<? super PsiReference> consumer,
+                                                         @NotNull final SearchScope searchScope) {
         String word = getTheBiggestWordToSearchByIndex(stepText);
 
-        if (isEmptyOrSpaces(word)) {
-            return true;
-        }
-
-        SearchScope searchScope = restrictScopeToJBehaveFiles(effectiveSearchScope);
-
-        return PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
-            .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
+        return isEmptyOrSpaces(word)
+               || PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
+                   .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
     }
 
     /**
      * Returns a search scope that is based on the {@code originalScopeComputation} but that is restricted to JBehave Story file types.
      */
-    private static SearchScope restrictScopeToJBehaveFiles(final SearchScope originalScope) {
+    public static SearchScope restrictScopeToJBehaveFiles(final SearchScope originalScope) {
         return ReadAction.compute(() ->
             originalScope instanceof GlobalSearchScope globalSearchScope
             ? GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, StoryFileType.STORY_FILE_TYPE)
