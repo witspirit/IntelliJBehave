@@ -5,6 +5,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
+ * Represents a Kotlin PSI annotation with its PSI and Kotlin element counterparts.
+ * This type also provides (overrides) some of the navigation behaviours from its parent class.
+ *
  * Created by Rodrigo Quesada on 20/09/15.
  */
 class NavigableKotlinPsiAnnotation(

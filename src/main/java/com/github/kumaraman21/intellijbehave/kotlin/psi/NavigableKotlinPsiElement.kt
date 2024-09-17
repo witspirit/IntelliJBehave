@@ -6,6 +6,9 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
+ * Represents a Kotlin PSI element with its PSI and Kotlin element counterparts.
+ * This type also provides (overrides) some of the navigation behaviours from its parent class.
+ *
  * Created by Rodrigo Quesada on 20/09/15.
  */
 open class NavigableKotlinPsiElement(
@@ -15,6 +18,9 @@ open class NavigableKotlinPsiElement(
 
     override fun getTextOffset(): Int = ktElement.textOffset
 
+    /**
+     * Returns the parent element as one of the custom `NavigableKotlin*` element types.
+     */
     override fun getParent(): PsiElement {
         val psiParent = psiElement.parent
         val ktParent = ktElement.parent

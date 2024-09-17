@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.66.0]
+### Changed
+- Added code documentation to a handful of Kotlin step definitions related classes.
+
 ## [1.65.0]
 ### Changed
 - Added caching for the JBehave step reference resolution and Given-When-Then step annotation lookup.
