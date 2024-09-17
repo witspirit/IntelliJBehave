@@ -1,11 +1,11 @@
 package com.github.kumaraman21.intellijbehave.service;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
 
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.codeInsight.AnnotationUtil;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -44,7 +44,7 @@ public final class JBehaveUtil {
      * Returns if the provided annotation is one of {@link #JBEHAVE_ANNOTATIONS_SET}.
      */
     public static boolean isJBehaveStepAnnotation(@NotNull PsiAnnotation annotation) {
-        String annotationName = annotation.getQualifiedName();
+        String annotationName = compute(annotation::getQualifiedName);
 
         return annotationName != null && JBEHAVE_ANNOTATIONS_SET.contains(annotationName);
     }
@@ -56,7 +56,7 @@ public final class JBehaveUtil {
      */
     public static boolean isAnnotationOfClass(@NotNull PsiAnnotation annotation,
                                               @NotNull Class<? extends Annotation> annotationClass) {
-        String annotationName = annotation.getQualifiedName();
+        String annotationName = compute(annotation::getQualifiedName);
 
         return annotationName != null && annotationName.equals(annotationClass.getName());
     }
@@ -66,7 +66,7 @@ public final class JBehaveUtil {
      */
     @NotNull
     private static List<PsiAnnotation> getJBehaveStepAnnotations(@NotNull PsiMethod method) {
-        return Stream.of(method.getModifierList().getAnnotations())
+        return Stream.of(compute(() -> method.getModifierList().getAnnotations()))
             .filter(JBehaveUtil::isJBehaveStepAnnotation)
             .collect(Collectors.toList());
     }
@@ -80,7 +80,7 @@ public final class JBehaveUtil {
      */
     public static boolean isStepDefinition(@NotNull PsiMethod method) {
         return getJBehaveStepAnnotations(method).stream()
-            .map(stepAnnotation -> stepAnnotation.findAttributeValue("value"))
+            .map(stepAnnotation -> compute(() -> stepAnnotation.findAttributeValue("value")))
             .anyMatch(Objects::nonNull);
     }
 
@@ -98,9 +98,9 @@ public final class JBehaveUtil {
         getAnnotationText(stepAnnotation).ifPresent(annotationTexts::add);
 
         //If the parent method is available, e.g. from JBehaveJavaStepDefinitionSearch, then use that, otherwise compute it
-        PsiMethod method = parentMethod != null ? parentMethod : PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class);
+        PsiMethod method = parentMethod != null ? parentMethod : compute(() -> PsiTreeUtil.getParentOfType(stepAnnotation, PsiMethod.class));
         if (method != null) {
-            for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
+            for (PsiAnnotation annotation : compute(() -> method.getModifierList().getAnnotations())) {
                 if (isAnnotationOfClass(annotation, Alias.class)) {
                     getAnnotationText(annotation).ifPresent(annotationTexts::add);
                 } else if (isAnnotationOfClass(annotation, Aliases.class)) {
@@ -121,14 +121,14 @@ public final class JBehaveUtil {
      * @param annotation a JBehave annotation: Given, When, Then, Alias or Aliases
      */
     private static Optional<String> getAnnotationText(@NotNull PsiAnnotation annotation) {
-        return Optional.ofNullable(AnnotationUtil.getStringAttributeValue(annotation, "value"));
+        return Optional.ofNullable(compute(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")));
     }
 
     @NotNull
     private static Set<String> getAliasesAnnotationTexts(@NotNull PsiAnnotation aliasAnnotation) {
-        return AnnotationUtil.arrayAttributeValues(aliasAnnotation.findAttributeValue("values"))
+        return compute(() -> AnnotationUtil.arrayAttributeValues(aliasAnnotation.findAttributeValue("values")))
             .stream()
-            .map(AnnotationUtil::getStringAttributeValue)
+            .map(attr -> compute(() -> AnnotationUtil.getStringAttributeValue(attr)))
             .collect(Collectors.toSet());
     }
 
@@ -153,10 +153,12 @@ public final class JBehaveUtil {
      */
     @NotNull
     public static Integer getAnnotationPriority(@NotNull PsiAnnotation stepAnnotation) {
-        PsiAnnotationMemberValue attrValue = stepAnnotation.findAttributeValue("priority");
+        PsiAnnotationMemberValue attrValue = compute(() -> stepAnnotation.findAttributeValue("priority"));
         // TODO test change doesn't break other languages; this change works as a quick fix for Kotlin
         //Object constValue = JavaPsiFacade.getInstance(stepAnnotation.getProject()).getConstantEvaluationHelper().computeConstantExpression(attrValue);
-        Object constValue = JavaPsiFacade.getInstance(stepAnnotation.getProject()).getConstantEvaluationHelper().computeConstantExpression(attrValue.getOriginalElement());
+        Object constValue = compute(() -> JavaPsiFacade.getInstance(compute(stepAnnotation::getProject))
+            .getConstantEvaluationHelper()
+            .computeConstantExpression(attrValue.getOriginalElement()));
         Integer priority = constValue instanceof Integer ? (Integer) constValue : null;
 
         return priority != null ? priority : -1;
@@ -180,7 +182,7 @@ public final class JBehaveUtil {
         String word = getTheBiggestWordToSearchByIndex(stepText);
 
         return isEmptyOrSpaces(word)
-               || PsiSearchHelper.getInstance(stepDefinitionElement.getProject())
+               || PsiSearchHelper.getInstance(compute(stepDefinitionElement::getProject))
                    .processElementsWithWord(new MyReferenceCheckingProcessor(stepDefinitionElement, consumer), searchScope, word, (short) 5, true);
     }
 
@@ -188,7 +190,7 @@ public final class JBehaveUtil {
      * Returns a search scope that is based on the {@code originalScopeComputation} but that is restricted to JBehave Story file types.
      */
     public static SearchScope restrictScopeToJBehaveFiles(final SearchScope originalScope) {
-        return ReadAction.compute(() ->
+        return compute(() ->
             originalScope instanceof GlobalSearchScope globalSearchScope
             ? GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, StoryFileType.STORY_FILE_TYPE)
             : originalScope);

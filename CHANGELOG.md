@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.67.0]
+### Changed
+- New supported IDE version range: 2024.2.1 - 2024.3-EAP.
+The previous version, 1.66.0 (and bugfixes of it) of JBehave Support will remain to support IDEs up to version 2024.2.0.2. 
+- Updated the project to use the IntelliJ Platform Gradle Plugin 2.0.
+- Updated the project to use JDK 21.
+
 ## [1.66.0]
 ### Changed
 - New supported IDE version range: 2023.2.8 - 2024.2.0.2

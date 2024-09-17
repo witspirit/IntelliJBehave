@@ -1,10 +1,12 @@
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
+
 import com.github.kumaraman21.intellijbehave.ContentEntryProjectDescriptor;
 import com.github.kumaraman21.intellijbehave.JBehaveSupportTestBase;
 import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.testFramework.TestDataFile;
-import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base test class for inspections using content entries.
@@ -12,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 abstract class ContentEntryInspectionTestBase extends JBehaveSupportTestBase {
 
     public ContentEntryInspectionTestBase() {
-        super(new ContentEntryProjectDescriptor());
+        super(new ContentEntryProjectDescriptor().withRepositoryLibrary("org.jbehave:jbehave-core:5.2.0"));
     }
 
     /**
@@ -20,11 +22,12 @@ abstract class ContentEntryInspectionTestBase extends JBehaveSupportTestBase {
      */
     protected abstract InspectionProfileEntry getInspection();
 
-    @Override
-    @BeforeEach
-    protected void setUp() {
-        super.setUp();
-        getFixture().copyDirectoryToProject("src", "");
+    /**
+     * The directory has to be copied in each related test method, instead of in a before hooks,
+     * so that it is called properly on EDT in write-safe context.
+     */
+    protected void copySrcDirectoryToProject() {
+        getApplication().invokeAndWait(() -> getFixture().copyDirectoryToProject("src", ""), ModalityState.nonModal());
     }
 
     /**

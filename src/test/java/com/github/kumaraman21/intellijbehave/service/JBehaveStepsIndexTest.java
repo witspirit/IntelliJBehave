@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -7,15 +8,14 @@ import static org.assertj.core.api.Assertions.fail;
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.junit.jupiter.api.Test;
 
 /**
  * Functional test for {@link JBehaveStepsIndex}.
  */
-@RunInEdt
 class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
     @Override
@@ -27,6 +27,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
     @Test
     void shouldFindsSingleStepDefinition() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/StepDefs.java");
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
 
@@ -36,8 +37,8 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
         assertThat(stepDefinitions).hasSize(1);
         assertThat(stepDefinitions.iterator().next().getAnnotatedMethod().getContainingClass().getQualifiedName()).isEqualTo("StepDefs");
-        assertThat(stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY))
-            .hasToString("MethodSignatureBackedByPsiMethod: openAUrl([PsiType:String])");
+        assertThat(compute(() -> stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY).toString()))
+            .isEqualTo("MethodSignatureBackedByPsiMethod: openAUrl([PsiType:String])");
     }
 
     //NOTE: at the moment, this only returns the first found step definition, regardless of the step pattern
@@ -45,6 +46,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
     //Supporting returning multiple matching step definitions should be revisited.
     @Test
     void shouldFindsMultipleStepDefinitions() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/StepDefs.java");
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().configureByFile("test/resources/has_multiple_java_step_def.story");
@@ -59,6 +61,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
     @Test
     void shouldFindsNoStepDefinition() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/StepDefs.java");
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().configureByFile("test/resources/has_no_java_step_def.story");
@@ -72,6 +75,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
     @Test
     void shouldFindAllAnnotations() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/StepDefs.java");
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("main/kotlin/AnotherStepDefs.kt");
@@ -79,14 +83,14 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
         getFixture().configureByFile("test/resources/has_java_step_def.story");
 
         var scope = getFixture().getModule().getModuleWithDependenciesAndLibrariesScope(true);
-        var thenAnnotations = JavaFullClassNameIndex.getInstance().get("org.jbehave.core.annotations.Then", getFixture().getProject(), scope);
+        var thenAnnotations = ReadAction.compute(() -> JavaFullClassNameIndex.getInstance().getClasses("org.jbehave.core.annotations.Then", getFixture().getProject(), scope));
         if (thenAnnotations.isEmpty()) fail("The @Then step def annotation was not found.");
 
         var stepDefinitions = JBehaveStepsIndex.getInstance(getFixture().getProject()).getAllStepAnnotations(thenAnnotations.iterator().next(), scope);
 
         assertThat(stepDefinitions).hasSize(3);
         var stepTexts = stepDefinitions.stream()
-            .map(annotation -> AnnotationUtil.getStringAttributeValue(annotation, "value"))
+            .map(annotation -> ReadAction.compute(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")))
             .collect(toSet());
 
         assertThat(stepTexts).containsExactlyInAnyOrder(
@@ -96,6 +100,6 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
     }
 
     private JBehaveStep getStep() {
-        return (JBehaveStep) getFixture().getFile().findElementAt(getFixture().getCaretOffset()).getParent();
+        return (JBehaveStep) getParentOfElementAtCaretIn(getFixture().getFile());
     }
 }

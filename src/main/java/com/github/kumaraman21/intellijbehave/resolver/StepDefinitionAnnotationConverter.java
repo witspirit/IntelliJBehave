@@ -15,8 +15,18 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
+import static com.intellij.openapi.application.ReadAction.compute;
+import static org.apache.commons.lang.StringUtils.remove;
+import static org.apache.commons.lang.StringUtils.removeEnd;
+import static org.apache.commons.lang.StringUtils.removeStart;
+
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLiteral;
+import com.intellij.psi.PsiNameValuePair;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.steps.StepType;
@@ -26,9 +36,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
-import static org.apache.commons.lang.StringUtils.*;
-
 public final class StepDefinitionAnnotationConverter {
 
     public static Set<StepDefinitionAnnotation> convertFrom(PsiAnnotation[] annotations) {
@@ -37,28 +44,28 @@ public final class StepDefinitionAnnotationConverter {
         StepType stepType = null;
 
         for (PsiAnnotation annotation : annotations) {
-            String annotationQualifiedName = annotation.getQualifiedName();
+            String annotationQualifiedName = compute(annotation::getQualifiedName);
             // Given, When, Then
-            final PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
+            final PsiNameValuePair[] attributes = compute(() -> annotation.getParameterList().getAttributes());
 
             // When there are no attributes for the annotation, we got nothing to do here
             if (attributes.length > 0) {
                 if (ANNOTATION_TO_STEP_TYPE_MAPPING.containsKey(annotationQualifiedName)) {
                     stepType = ANNOTATION_TO_STEP_TYPE_MAPPING.get(annotationQualifiedName);
-                    String annotationText = getTextFromValue(attributes[0].getValue());
+                    String annotationText = getTextFromValue(compute(() -> attributes[0].getValue()));
                     if (res == null) {
                         res = new HashSet<>();
                     }
                     res.addAll(getPatternVariants(stepType, annotationText, annotation));
                 } else if (annotationQualifiedName != null) {
                     if (annotationQualifiedName.equals(Alias.class.getName())) {
-                        String annotationText = getTextFromValue(attributes[0].getValue());
+                        String annotationText = getTextFromValue(compute(() -> attributes[0].getValue()));
                         if (res == null) {
                             res = new HashSet<>();
                         }
                         res.addAll(getPatternVariants(stepType, annotationText, annotation));
                     } else if (annotationQualifiedName.equals(Aliases.class.getName())) {
-                        PsiAnnotationMemberValue attributeValue = attributes[0].getValue();
+                        PsiAnnotationMemberValue attributeValue = compute(() -> attributes[0].getValue());
                         if (attributeValue != null) {
                             PsiElement[] values = attributeValue.getChildren();
                             for (PsiElement value : values) {
@@ -80,13 +87,13 @@ public final class StepDefinitionAnnotationConverter {
 
     private static Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
         return new PatternVariantBuilder(annotationText)
-                .allVariants()
-                .stream()
-                .map(variant -> new StepDefinitionAnnotation(stepType, variant, annotation))
-                .collect(Collectors.toSet());
+            .allVariants()
+            .stream()
+            .map(variant -> new StepDefinitionAnnotation(stepType, variant, annotation))
+            .collect(Collectors.toSet());
     }
 
     private static String getTextFromValue(PsiElement value) {
-        return remove(removeStart(removeEnd(value.getText(), "\""), "\""), "\\");
+        return remove(removeStart(removeEnd(compute(value::getText), "\""), "\""), "\\");
     }
 }

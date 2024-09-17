@@ -15,6 +15,8 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import static com.intellij.openapi.application.ReadAction.compute;
+
 import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesHandler;
 import com.intellij.openapi.project.Project;
@@ -50,12 +52,12 @@ public abstract class StepDefinitionIterator implements ContentIterator {
 
     @Override
     public boolean processFile(@NotNull VirtualFile virtualFile) {
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+        PsiFile psiFile = compute(() -> PsiManager.getInstance(project).findFile(virtualFile));
 
         if (psiFile instanceof PsiClassOwner psiClassOwner) {
             for (PsiClass psiClass : getPsiClasses(psiFile, psiClassOwner)) {
-                for (PsiMethod method : psiClass.getMethods()) {
-                    PsiAnnotation[] annotations = method.getModifierList().getApplicableAnnotations();
+                for (PsiMethod method : compute(psiClass::getMethods)) {
+                    PsiAnnotation[] annotations = compute(() -> method.getModifierList().getApplicableAnnotations());
 
                     for (StepDefinitionAnnotation stepDefinitionAnnotation : StepDefinitionAnnotationConverter.convertFrom(annotations)) {
                         if ((stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.stepType()))
@@ -80,10 +82,10 @@ public abstract class StepDefinitionIterator implements ContentIterator {
     private static PsiClass[] getPsiClasses(PsiFile psiFile, PsiClassOwner psiClassOwner) {
         PsiClass[] psiClasses = null;
         if (KotlinConfigKt.getPluginIsEnabled()) {
-            psiClasses = KotlinPsiClassesHandler.getPsiClasses(psiFile);
+            psiClasses = compute(() -> KotlinPsiClassesHandler.getPsiClasses(psiFile));
         }
 
-        return psiClasses != null ? psiClasses : psiClassOwner.getClasses();
+        return psiClasses != null ? psiClasses : compute(psiClassOwner::getClasses);
     }
 
     public abstract boolean processStepDefinition(StepDefinitionAnnotation stepDefinitionAnnotation);

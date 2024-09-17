@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
@@ -7,14 +8,12 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link StepPsiReference}.
  */
-@RunInEdt
 class StepPsiReferenceTest extends ContentEntryTestBase {
 
     @Nullable
@@ -27,25 +26,27 @@ class StepPsiReferenceTest extends ContentEntryTestBase {
 
     @Test
     void shouldBeReferenceToPsiMethod() {
+        copySrcDirectoryToProject();
         var storyFile = getFixture().configureByFile("test/resources/step_reference.story");
         getFixture().copyFileToProject("main/java/StepDefs.java");
-        var step = storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var step = getParentOfElementAtCaretIn(storyFile);
 
         PsiReference[] references = step.getReferences();
         assertThat(references).hasSize(1);
 
-        var resolvedMethod = (PsiMethod) references[0].resolve();
+        var resolvedMethod = (PsiMethod) compute(() -> references[0].resolve());
 
         assertThat(references[0].isReferenceTo(resolvedMethod)).isTrue();
     }
 
     @Test
     void shouldNotBeReferenceToElement() {
+        copySrcDirectoryToProject();
         var storyFile = getFixture().configureByFile("test/resources/step_reference.story");
         var stepDefVirtualFile = getFixture().copyFileToProject("main/java/StepDefs.java");
-        var step = storyFile.findElementAt(getFixture().getCaretOffset()).getParent();
-        var stepDefFile = PsiManager.getInstance(getFixture().getProject()).findFile(stepDefVirtualFile);
-        var notReferencedStepDefMethod = ((PsiJavaFile) stepDefFile).getClasses()[0].findMethodsByName("openAUrl", false)[0];
+        var step = getParentOfElementAtCaretIn(storyFile);
+        var stepDefFile = compute(() -> PsiManager.getInstance(getFixture().getProject()).findFile(stepDefVirtualFile));
+        var notReferencedStepDefMethod = compute(() -> ((PsiJavaFile) stepDefFile).getClasses()[0].findMethodsByName("openAUrl", false)[0]);
 
         PsiReference[] references = step.getReferences();
         assertThat(references).hasSize(1);

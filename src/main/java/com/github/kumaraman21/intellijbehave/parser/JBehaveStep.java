@@ -18,6 +18,7 @@ package com.github.kumaraman21.intellijbehave.parser;
 import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jbehave.core.steps.StepType;
@@ -37,7 +38,7 @@ public class JBehaveStep extends ASTWrapperPsiElement {
     @Override
     @NotNull
     public PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this);
+        return ReadAction.compute(() -> ReferenceProvidersRegistry.getReferencesFromProviders(this));
     }
 
     public StepType getStepType() {

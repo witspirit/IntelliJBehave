@@ -28,7 +28,7 @@ class KotlinAnnotationsLoader private constructor() {
         fun getAnnotations(qualifiedName: QualifiedName, project: Project, scope: GlobalSearchScope): Collection<PsiAnnotation> {
             val name = qualifiedName.lastComponent
             return if (name != null) {
-                KotlinAnnotationsIndex.get(name, project, scope)
+                KotlinAnnotationsIndex[name, project, scope]
                     .asSequence()
                     .map { ktAnnotation ->
                         val function = ktAnnotation.parent?.parent as? KtFunction
