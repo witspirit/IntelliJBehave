@@ -23,6 +23,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,13 +103,14 @@ public final class JBehaveStepsIndex implements Disposable {
     /**
      * Collects all {@link PsiAnnotation}s in the given {@code scope} that reference the {@code annClass}.
      *
-     * @param annClass the PsiClass representing the {@code @Given}, {@code @When} or {@code @Then} step annotations
+     * @param annClass the PsiClass representing the {@code @Given}, {@code @When} or {@code @Then} step annotations.
      *                 Since the annotation classes doesn't change much, unless e.g. updating the library version,
      *                 the same PsiClass instance will be available for the same annotations throughout the IDE session,
      *                 thus it should be safe to use it as the cache location
      */
     @NotNull
-    private static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
+    @VisibleForTesting
+    static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
         return CachedValuesManager.getCachedValue(annClass, (CachedValueProvider<? extends Collection<PsiAnnotation>>) () -> {
             Collection<PsiAnnotation> annotations = ReadAction.compute(() -> {
                 Project project = annClass.getProject();

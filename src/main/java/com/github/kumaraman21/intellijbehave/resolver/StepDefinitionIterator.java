@@ -71,7 +71,7 @@ public abstract class StepDefinitionIterator implements ContentIterator {
     }
 
     /**
-     * Returns the PSI classes from the provided file and class owner
+     * Returns the PSI classes from the provided file and class owner.
      *
      * @param psiFile       the Java or Kotlin step definitions file
      * @param psiClassOwner {@code psiFile} as a {@link PsiClassOwner}

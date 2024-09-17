@@ -26,13 +26,13 @@ kotlin {
 
 dependencies {
     //https://kotlinlang.org/docs/reflection.html#jvm-dependency
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
     implementation("org.jbehave:jbehave-core:5.2.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23")
+    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25")
     testImplementation("org.assertj:assertj-core:3.25.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -96,10 +96,6 @@ tasks {
         include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
         exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
     }
-
-//    runPluginVerifier {
-//        ideVersions.set(listOf("IC-232.7754.73"))
-//    }
 }
 
 tasks.register<Test>("testWithJunit3") {

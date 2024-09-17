@@ -15,6 +15,15 @@ import org.jetbrains.kotlin.psi.KtFunction
 class KotlinAnnotationsLoader private constructor() {
 
     companion object {
+        /**
+         * Returns all occurrences of the step annotation referenced by [qualifiedName] in Kotlin files, in the given [scope].
+         *
+         * @param qualifiedName a step annotation, e.g. `@org.jbehave.core.annotations.Given`
+         * @param project       the current project
+         * @param scope         the search scope where to look up the annotation usage
+         *
+         * @see com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex.getAllStepAnnotations
+         */
         @JvmStatic
         fun getAnnotations(qualifiedName: QualifiedName, project: Project, scope: GlobalSearchScope): Collection<PsiAnnotation> {
             val name = qualifiedName.lastComponent
