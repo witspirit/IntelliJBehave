@@ -4,7 +4,7 @@
 
 ## [1.66.0]
 ### Changed
-- New supported IDE version range: 2023.2.8 - 2024.3-EAP
+- New supported IDE version range: 2023.2.8 - 2024.2.0.2
 - Added code documentation to a handful of Kotlin step definitions related classes.
 
 ## [1.65.0]
