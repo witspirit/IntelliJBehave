@@ -11,7 +11,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="testWithJunit3" />
+          <option value="runJUnit3TestsInIJCommunity" />
         </list>
       </option>
       <option name="vmOptions" value="" />
