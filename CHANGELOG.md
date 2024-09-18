@@ -12,6 +12,7 @@ The previous version, 1.66.0 (and bugfixes of it) of JBehave Support will remain
 
 ### Fixed
 - Fixed the listener that tracks modifications of JBehave step def classes. It no longer fails when it encounters invalid files.
+- Fixed a potential exception during highlighting undefined steps.
 
 ## [1.66.0]
 ### Changed
