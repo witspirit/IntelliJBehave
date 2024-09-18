@@ -118,6 +118,22 @@ intellijPlatformTesting {
         }
     }
 
+    val runTestsWithK2InIJCommunity by intellijPlatformTesting.testIde.registering {
+        type = IntelliJPlatformType.IntellijIdeaCommunity
+        version = "2024.2.1"
+        task {
+            //See https://kotlin.github.io/analysis-api/testing-in-k2-locally.html
+            jvmArgumentProviders += CommandLineArgumentProvider {
+                listOf("-Didea.kotlin.plugin.use.k2=true")
+            }
+            useJUnitPlatform {
+                isScanForTestClasses = false
+                include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
+                exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+            }
+        }
+    }
+
     val runJUnit3TestsInIJCommunity by intellijPlatformTesting.testIde.registering {
         type = IntelliJPlatformType.IntellijIdeaCommunity
         version = "2024.2.1"
@@ -129,6 +145,13 @@ intellijPlatformTesting {
         }
     }
 }
+
+//Uncomment this to start the IDE with the K2 Kotlin compiler enabled
+//tasks.named<RunIdeTask>("runIde") {
+//    jvmArgumentProviders += CommandLineArgumentProvider {
+//        listOf("-Didea.kotlin.plugin.use.k2=true")
+//    }
+//}
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {

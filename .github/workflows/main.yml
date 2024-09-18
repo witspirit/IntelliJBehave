@@ -120,8 +120,12 @@ jobs:
           gradle-home-cache-cleanup: true
 
       # Run tests
-      - name: Run Tests
-        run: ./gradlew check
+      - name: Run JUnit 5 Tests
+        run: ./gradlew runTestsInIJCommunity
+
+      # Run tests
+      - name: Run JUnit 5 Tests with K2
+        run: ./gradlew runTestsWithK2InIJCommunity
 
       # Run tests
       - name: Run JUnit 3 Tests
@@ -134,12 +138,6 @@ jobs:
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
-
-      # Upload the Kover report to CodeCov
-      - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v4
-        with:
-          files: ${{ github.workspace }}/build/reports/kover/report.xml
 
   # Run plugin structure verification along with IntelliJ Plugin Verifier
   verify:
