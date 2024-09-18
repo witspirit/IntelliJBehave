@@ -25,7 +25,7 @@ import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 public class JBehaveStep extends ASTWrapperPsiElement {
     private StepType stepType;

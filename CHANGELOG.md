@@ -9,6 +9,7 @@ The previous version, 1.66.0 (and bugfixes of it) of JBehave Support will remain
 - Updated the project to use the IntelliJ Platform Gradle Plugin 2.0.
 - Updated the project to use JDK 21.
 - Updated project configuration to make sure the plugin works when the K2 Kotlin compiler is enabled.
+- Removed a couple of deprecated API usage.
 
 ### Fixed
 - Fixed the listener that tracks modifications of JBehave step def classes. It no longer fails when it encounters invalid files.
