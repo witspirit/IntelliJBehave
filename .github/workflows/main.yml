@@ -129,7 +129,7 @@ jobs:
 
       # Run tests
       - name: Run JUnit 3 Tests
-        run: ./gradlew testWithJunit3 -Pidea.home.path=./intellij-community
+        run: ./gradlew runJUnit3TestsInIJCommunity -Pidea.home.path=./intellij-community
 
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
