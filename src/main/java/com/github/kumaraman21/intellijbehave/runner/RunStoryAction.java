@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType.JBEHAVE_STORY_RUNNER;
 import static com.intellij.openapi.ui.Messages.getErrorIcon;
 import static com.intellij.openapi.ui.Messages.showMessageDialog;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class RunStoryAction extends AnAction {
 

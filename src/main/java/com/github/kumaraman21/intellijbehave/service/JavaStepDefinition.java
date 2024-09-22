@@ -1,9 +1,9 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
+import static com.intellij.openapi.application.ReadAction.compute;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.SmartPointerManager;
@@ -27,7 +27,7 @@ public final class JavaStepDefinition {
     private final SmartPsiElementPointer<PsiAnnotation> annotationPointer;
 
     public JavaStepDefinition(PsiAnnotation annotation) {
-        annotationPointer = SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation);
+        annotationPointer = compute(() -> SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation));
     }
 
     /**
@@ -87,7 +87,7 @@ public final class JavaStepDefinition {
      */
     @Nullable
     public PsiMethod getAnnotatedMethod() {
-        return PsiTreeUtil.getParentOfType(getAnnotation(), PsiMethod.class);
+        return compute(() -> PsiTreeUtil.getParentOfType(getAnnotation(), PsiMethod.class));
     }
 
     @NotNull
@@ -106,7 +106,7 @@ public final class JavaStepDefinition {
         final PsiAnnotation annotation = getAnnotation();
         return annotation == null
                ? null
-               : ANNOTATION_TO_STEP_TYPE_MAPPING.get(ReadAction.compute(annotation::getQualifiedName));
+               : ANNOTATION_TO_STEP_TYPE_MAPPING.get(compute(annotation::getQualifiedName));
     }
 
     /**

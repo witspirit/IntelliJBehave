@@ -1,72 +1,83 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-
-fun properties(key: String) = providers.gradleProperty(key)
-fun environment(key: String) = providers.environmentVariable(key)
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java") // Java support
     alias(libs.plugins.kotlin) // Kotlin support
-    alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
+    alias(libs.plugins.intelliJPlatform) // IntelliJ Platform Gradle Plugin
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
 }
 
-group = properties("pluginGroup").get()
-version = properties("pluginVersion").get()
+group = providers.gradleProperty("pluginGroup").get()
+version = providers.gradleProperty("pluginVersion").get()
+
+// Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
+kotlin {
+    jvmToolchain(21)
+}
 
 // Configure project's dependencies
 repositories {
     mavenCentral()
-}
-
-// Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
-kotlin {
-    jvmToolchain(17)
+    // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
-    //https://kotlinlang.org/docs/reflection.html#jvm-dependency
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
+    //JBehave
+
     implementation("org.jbehave:jbehave-core:5.2.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.25")
-    testImplementation("org.assertj:assertj-core:3.25.3")
+
+    //Testing
+
+    //Required for 'junit.framework.TestCase' referenced in 'com.intellij.testFramework.UsefulTestCase'
+    testImplementation(libs.junit)
+    testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
-}
 
-// Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-    pluginName = properties("pluginName")
-    version = properties("platformVersion")
-    type = properties("platformType")
+    //Others
 
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
-}
+    implementation("org.apache.commons:commons-text:1.12.0")
 
-// Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
-changelog {
-    groups.empty()
-    repositoryUrl = properties("pluginRepositoryUrl")
-}
+    // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 
-tasks {
-    wrapper {
-        gradleVersion = properties("gradleVersion").get()
+    intellijPlatform {
+        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+
+        // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
+        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+
+        // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
+        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+
+        instrumentationTools()
+        pluginVerifier()
+        zipSigner()
+        testFramework(TestFrameworkType.Platform)
+        //Required for 'LightJavaCodeInsightFixtureTestCase5'
+        testFramework(TestFrameworkType.Plugin.Java)
+        //Required for the 'com.intellij.testFramework.junit5' package
+        testFramework(TestFrameworkType.JUnit5)
     }
+}
 
-    patchPluginXml {
-        version = properties("pluginVersion")
-        sinceBuild = properties("pluginSinceBuild")
-        untilBuild = properties("pluginUntilBuild")
+// Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
+intellijPlatform {
+    pluginConfiguration {
+        version = providers.gradleProperty("pluginVersion")
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-        pluginDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
+        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
             val start = "<!-- Plugin description -->"
             val end = "<!-- Plugin description end -->"
 
-            with (it.lines()) {
+            with(it.lines()) {
                 if (!containsAll(listOf(start, end))) {
                     throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
                 }
@@ -76,7 +87,7 @@ tasks {
 
         val changelog = project.changelog // local variable for configuration cache compatibility
         // Get the latest available change notes from the changelog file
-        changeNotes = properties("pluginVersion").map { pluginVersion ->
+        changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
             with(changelog) {
                 renderItem(
                     (getOrNull(pluginVersion) ?: getUnreleased())
@@ -86,19 +97,76 @@ tasks {
                 )
             }
         }
+
+        ideaVersion {
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+            untilBuild = providers.gradleProperty("pluginUntilBuild")
+        }
     }
 
-    test {
-        useJUnitPlatform()
-        //Required for running tests in 2021.3 due to it not finding test classes properly.
-        //See https://app.slack.com/client/T5P9YATH9/C5U8BM1MK/thread/C5U8BM1MK-1639934273.054400
-        isScanForTestClasses = false
-        include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
-        exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+    pluginVerification {
+        ides {
+            recommended()
+        }
     }
 }
 
-tasks.register<Test>("testWithJunit3") {
-    include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
-    exclude("**/highlighter/StoryLocalizedLexer_FrenchTest.class")
+intellijPlatformTesting {
+    val runTestsInIJCommunity by intellijPlatformTesting.testIde.registering {
+        type = IntelliJPlatformType.IntellijIdeaCommunity
+        version = "2024.2.1"
+        task {
+            useJUnitPlatform {
+                isScanForTestClasses = false
+                include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
+                exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+            }
+        }
+    }
+
+    val runTestsWithK2InIJCommunity by intellijPlatformTesting.testIde.registering {
+        type = IntelliJPlatformType.IntellijIdeaCommunity
+        version = "2024.2.1"
+        task {
+            //See https://kotlin.github.io/analysis-api/testing-in-k2-locally.html
+            jvmArgumentProviders += CommandLineArgumentProvider {
+                listOf("-Didea.kotlin.plugin.use.k2=true")
+            }
+            useJUnitPlatform {
+                isScanForTestClasses = false
+                include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
+                exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+            }
+        }
+    }
+
+    val runJUnit3TestsInIJCommunity by intellijPlatformTesting.testIde.registering {
+        type = IntelliJPlatformType.IntellijIdeaCommunity
+        version = "2024.2.1"
+        task {
+            useJUnit {
+                include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
+                exclude("**/highlighter/StoryLocalizedLexer_FrenchTest.class")
+            }
+        }
+    }
+}
+
+//Uncomment this to start the IDE with the K2 Kotlin compiler enabled
+//tasks.named<RunIdeTask>("runIde") {
+//    jvmArgumentProviders += CommandLineArgumentProvider {
+//        listOf("-Didea.kotlin.plugin.use.k2=true")
+//    }
+//}
+
+// Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
+changelog {
+    groups.empty()
+    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+}
+
+tasks {
+    wrapper {
+        gradleVersion = providers.gradleProperty("gradleVersion").get()
+    }
 }

@@ -1,12 +1,12 @@
 package com.github.kumaraman21.intellijbehave.service;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.kumaraman21.intellijbehave.JBehaveSupportTestBase;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.When;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 /**
  * Integration test for {@link JBehaveUtil}.
  */
-@RunInEdt
 class JBehaveUtilTest extends JBehaveSupportTestBase {
     @Nullable
     @Override
@@ -39,7 +38,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
 
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isJBehaveStepAnnotation((PsiAnnotation) annotation)).isTrue();
@@ -57,7 +56,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
 
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isJBehaveStepAnnotation((PsiAnnotation) annotation)).isFalse();
@@ -73,7 +72,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
 
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isJBehaveStepAnnotation((PsiAnnotation) annotation)).isFalse();
@@ -93,7 +92,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isAnnotationOfClass((PsiAnnotation) annotation, Given.class)).isTrue();
     }
@@ -110,7 +109,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isAnnotationOfClass((PsiAnnotation) annotation, When.class)).isFalse();
     }
@@ -125,7 +124,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.isAnnotationOfClass((PsiAnnotation) annotation, When.class)).isFalse();
     }
@@ -144,7 +143,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.isStepDefinition((PsiMethod) method)).isTrue();
     }
@@ -158,7 +157,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.isStepDefinition((PsiMethod) method)).isFalse();
     }
@@ -175,7 +174,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.isStepDefinition((PsiMethod) method)).isFalse();
     }
@@ -194,7 +193,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).isEmpty();
     }
@@ -211,7 +210,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).containsExactlyInAnyOrder(
             "the price of the product should be $price",
@@ -232,7 +231,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, PsiTreeUtil.getParentOfType(annotation, PsiMethod.class)))
             .containsExactlyInAnyOrder(
@@ -258,7 +257,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, PsiTreeUtil.getParentOfType(annotation, PsiMethod.class)))
             .containsExactlyInAnyOrder(
@@ -286,7 +285,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiAnnotation) annotation, null)).containsExactlyInAnyOrder(
             "the product should worth $price",
@@ -311,7 +310,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).isEmpty();
     }
@@ -328,7 +327,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).containsExactlyInAnyOrder(
             "the price of the product should be $price",
@@ -349,7 +348,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).containsExactlyInAnyOrder(
             "the price of the product should be $price",
@@ -374,7 +373,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).containsExactlyInAnyOrder(
             "the price of the product should be $price",
@@ -386,6 +385,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
 
     @Test
     void shouldGetTextsForMethodWithAliasAndAliases() {
+
         var stepDefFile = getFixture().configureByText("AnnotationTexts.java", """
             import org.jbehave.core.annotations.Then;
             import org.jbehave.core.annotations.Alias;
@@ -401,7 +401,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var method = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = getParentOfElementAtCaretIn(stepDefFile);
         assertThat(method).isInstanceOf(PsiMethod.class);
         assertThat(JBehaveUtil.getAnnotationTexts((PsiMethod) method)).containsExactlyInAnyOrder(
             "the product should worth $price",
@@ -426,7 +426,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationPriority((PsiAnnotation) annotation)).isEqualTo(0);
     }
@@ -443,7 +443,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationPriority((PsiAnnotation) annotation)).isEqualTo(30);
     }
@@ -460,7 +460,7 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
             }
             """);
 
-        var annotation = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent();
+        var annotation = compute(() -> stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent().getParent());
         assertThat(annotation).isInstanceOf(PsiAnnotation.class);
         assertThat(JBehaveUtil.getAnnotationPriority((PsiAnnotation) annotation)).isEqualTo(-1);
     }

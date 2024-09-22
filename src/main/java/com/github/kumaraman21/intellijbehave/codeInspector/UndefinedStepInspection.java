@@ -73,6 +73,8 @@ public class UndefinedStepInspection extends LocalInspectionTool {
     private void highlightParameters(JBehaveStep step, JavaStepDefinition javaStepDefinition, ProblemsHolder holder) {
         String stepText = step.getStepText();
         String annotationText = javaStepDefinition.getAnnotationTextFor(stepText);
+        //ParametrizedString cannot be created with null content
+        if (annotationText == null) return;
 
         int offset = step.getStepTextOffset();
         for (StringToken token : new ParametrizedString(annotationText).tokenize(stepText)) {

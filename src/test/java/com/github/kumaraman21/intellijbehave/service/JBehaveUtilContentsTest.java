@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link JBehaveUtil}.
  */
-@RunInEdt
 class JBehaveUtilContentsTest extends ContentEntryTestBase {
 
     @Nullable
@@ -24,9 +22,10 @@ class JBehaveUtilContentsTest extends ContentEntryTestBase {
 
     @Test
     void shouldContinueReferenceSearchForEmptyBiggestWord() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/StepDefs.java");
 
-        var stepDefMethod = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var stepDefMethod = getParentOfElementAtCaretIn(stepDefFile);
 
         boolean findRef = JBehaveUtil.findJBehaveReferencesToElement(
             stepDefMethod,
@@ -38,10 +37,11 @@ class JBehaveUtilContentsTest extends ContentEntryTestBase {
 
     @Test
     void shouldContinueReferenceSearchForValidMethod() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("src/test/resources/reference.story");
         var stepDefFile = getFixture().configureByFile("main/java/StepDefs.java");
 
-        var stepDefMethod = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var stepDefMethod = getParentOfElementAtCaretIn(stepDefFile);
 
         boolean findRef = JBehaveUtil.findJBehaveReferencesToElement(
             stepDefMethod,
@@ -53,10 +53,11 @@ class JBehaveUtilContentsTest extends ContentEntryTestBase {
 
     @Test
     void shouldNotContinueReferenceSearchForValidMethodWithFalseConsumer() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("src/test/resources/reference.story");
         var stepDefFile = getFixture().configureByFile("main/java/StepDefs.java");
 
-        var stepDefMethod = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var stepDefMethod = getParentOfElementAtCaretIn(stepDefFile);
 
         boolean findRef = JBehaveUtil.findJBehaveReferencesToElement(
             stepDefMethod,
@@ -68,10 +69,11 @@ class JBehaveUtilContentsTest extends ContentEntryTestBase {
 
     @Test
     void shouldContinueReferenceSearchForMethodWithNoReference() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("src/test/resources/reference.story");
         var stepDefFile = getFixture().configureByFile("main/java/OtherStepDefs.java");
 
-        var stepDefMethod = stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var stepDefMethod = getParentOfElementAtCaretIn(stepDefFile);
 
         boolean findRef = JBehaveUtil.findJBehaveReferencesToElement(
             stepDefMethod,

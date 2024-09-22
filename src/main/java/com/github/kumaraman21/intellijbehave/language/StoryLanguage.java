@@ -27,7 +27,7 @@ public class StoryLanguage extends CompositeLanguage {
 
   private StoryLanguage() {
     super("Story", "text/story");
-    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
+    SyntaxHighlighterFactory.getLanguageFactory().addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
       @NotNull
       protected SyntaxHighlighter createHighlighter() {
         return new StorySyntaxHighlighter();

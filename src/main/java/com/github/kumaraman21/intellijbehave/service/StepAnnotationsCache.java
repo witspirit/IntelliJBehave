@@ -49,7 +49,7 @@ final class StepAnnotationsCache {
      */
     @Nullable("When there is no annotation class found.")
     private PsiClass findStepAnnotation(String stepAnnotationClassFqn, GlobalSearchScope dependenciesScope) {
-        var stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(stepAnnotationClassFqn, project, dependenciesScope);
+        var stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().getClasses(stepAnnotationClassFqn, project, dependenciesScope);
         for (PsiClass stepDefAnnotations : stepDefAnnotationCandidates) {
             if (stepAnnotationClassFqn.equals(stepDefAnnotations.getQualifiedName())) {
                 return stepDefAnnotations;

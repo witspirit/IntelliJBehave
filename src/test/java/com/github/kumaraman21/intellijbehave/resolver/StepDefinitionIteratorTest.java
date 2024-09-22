@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jbehave.core.steps.StepType;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import java.util.function.Predicate;
 /**
  * Integration test for {@link StepDefinitionIterator}.
  */
-@RunInEdt
 class StepDefinitionIteratorTest extends ContentEntryTestBase {
 
     @Nullable
@@ -25,6 +23,7 @@ class StepDefinitionIteratorTest extends ContentEntryTestBase {
 
     @Test
     void processesEverything() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("main/kotlin/AnotherStepDefs.kt");
         getFixture().copyFileToProject("src/test/resources/iterator.story");
@@ -38,6 +37,7 @@ class StepDefinitionIteratorTest extends ContentEntryTestBase {
 
     @Test
     void processesNothing() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("main/kotlin/AnotherStepDefs.kt");
         getFixture().copyFileToProject("src/test/resources/iterator.story");
@@ -51,6 +51,7 @@ class StepDefinitionIteratorTest extends ContentEntryTestBase {
 
     @Test
     void processesFiltered() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("main/kotlin/AnotherStepDefs.kt");
         getFixture().copyFileToProject("src/test/resources/iterator.story");
@@ -64,6 +65,7 @@ class StepDefinitionIteratorTest extends ContentEntryTestBase {
 
     @Test
     void processesFilteredKotlin() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("main/java/StepDefs.java");
         getFixture().copyFileToProject("src/test/resources/iterator.story");

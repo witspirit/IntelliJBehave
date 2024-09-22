@@ -9,7 +9,6 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Integration test for {@link JBehaveJavaMethodUsageSearcher}.
  */
-@RunInEdt
 class JBehaveJavaMethodUsageSearcherTest extends ContentEntryTestBase {
 
     @Nullable
@@ -28,8 +26,9 @@ class JBehaveJavaMethodUsageSearcherTest extends ContentEntryTestBase {
 
     @Test
     void shouldReturnTrueIfThereIsNoStepText() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/StepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new MethodReferencesSearch.SearchParameters(method, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         var ref = new Ref<Boolean>();
@@ -43,8 +42,9 @@ class JBehaveJavaMethodUsageSearcherTest extends ContentEntryTestBase {
 
     @Test
     void shouldNotProcessQueryIfStepTextIsEmpty() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/MoreStepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new MethodReferencesSearch.SearchParameters(method, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         var ref = new Ref<Boolean>();
@@ -58,8 +58,9 @@ class JBehaveJavaMethodUsageSearcherTest extends ContentEntryTestBase {
 
     @Test
     void shouldNotProcessQueryIfSearchScopeIsNotGlobal() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/OtherStepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new MethodReferencesSearch.SearchParameters(method, new DummyScope(), false);
 
         var ref = new Ref<Boolean>();

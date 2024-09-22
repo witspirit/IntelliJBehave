@@ -6,14 +6,12 @@ import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link JBehaveJavaStepDefinitionSearch}.
  */
-@RunInEdt
 class JBehaveJavaStepDefinitionSearchTest extends ContentEntryTestBase {
 
     @Nullable
@@ -24,8 +22,9 @@ class JBehaveJavaStepDefinitionSearchTest extends ContentEntryTestBase {
 
     @Test
     void shouldReturnTrueForNonPsiMethodElement() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/OtherStepDefs.java");
-        var element = stepDefFile.findElementAt(getFixture().getCaretOffset());
+        var element = stepDefFile.findElementAt(getCaretOffset());
         var queryParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         boolean shouldContinue = new JBehaveJavaStepDefinitionSearch().execute(queryParameters, __ -> true);
@@ -35,8 +34,9 @@ class JBehaveJavaStepDefinitionSearchTest extends ContentEntryTestBase {
 
     @Test
     void shouldReturnTrueForNonStepDefinitionMethod() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/StepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new ReferencesSearch.SearchParameters(method, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         boolean shouldContinue = new JBehaveJavaStepDefinitionSearch().execute(queryParameters, __ -> true);
@@ -52,8 +52,9 @@ class JBehaveJavaStepDefinitionSearchTest extends ContentEntryTestBase {
 
     @Test
     void shouldReturnTrueForValidStepDefinitionMethod() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/MoreStepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new ReferencesSearch.SearchParameters(method, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         boolean shouldContinue = new JBehaveJavaStepDefinitionSearch().execute(queryParameters, ref -> true);
@@ -63,8 +64,9 @@ class JBehaveJavaStepDefinitionSearchTest extends ContentEntryTestBase {
 
     @Test
     void shouldReturnFalseForValidStepDefinitionMethodAndFalseConsumer() {
+        copySrcDirectoryToProject();
         var stepDefFile = getFixture().configureByFile("main/java/MoreStepDefs.java");
-        var method = (PsiMethod) stepDefFile.findElementAt(getFixture().getCaretOffset()).getParent();
+        var method = (PsiMethod) getParentOfElementAtCaretIn(stepDefFile);
         var queryParameters = new ReferencesSearch.SearchParameters(method, GlobalSearchScope.projectScope(getFixture().getProject()), false);
 
         boolean shouldContinue = new JBehaveJavaStepDefinitionSearch().execute(queryParameters, ref -> false);

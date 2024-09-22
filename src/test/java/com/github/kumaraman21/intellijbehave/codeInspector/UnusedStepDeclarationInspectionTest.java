@@ -1,14 +1,12 @@
 package com.github.kumaraman21.intellijbehave.codeInspector;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.testFramework.junit5.RunInEdt;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link UnusedStepDeclarationInspection}.
  */
-@RunInEdt
 class UnusedStepDeclarationInspectionTest extends ContentEntryInspectionTestBase {
 
     @Nullable
@@ -24,6 +22,7 @@ class UnusedStepDeclarationInspectionTest extends ContentEntryInspectionTestBase
 
     @Test
     void highlightingUnusedStepDeclaration() {
+        copySrcDirectoryToProject();
         getFixture().copyFileToProject("main/java/OtherStepDefs.java");
         getFixture().copyFileToProject("test/resources/unused_step_declarations.story");
         doTest("main/java/StepDefs.java");

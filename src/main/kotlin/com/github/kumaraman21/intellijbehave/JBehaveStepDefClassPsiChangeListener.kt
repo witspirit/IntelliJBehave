@@ -26,13 +26,13 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
 
     private fun updateJBehaveTestClassModificationTracker(event: PsiTreeChangeEvent) {
         val file = event.file
-        if (file != null) {
+        if (file != null && file.isValid) {
             updateModificationTrackerIfFileContainsJBehaveStepDefClass(file)
         }
         //file is null when the file has just been deleted
         else {
             val child = event.child
-            if (child is PsiJavaFile) {
+            if (child is PsiJavaFile && child.isValid) {
                 updateModificationTrackerIfFileContainsJBehaveStepDefClass(child)
             }
         }

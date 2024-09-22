@@ -46,7 +46,7 @@ public final class JBehaveStepsIndex implements Disposable {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        return CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
+        return ReadAction.compute(() -> CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
             Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
             if (module == null) {
@@ -73,7 +73,7 @@ public final class JBehaveStepsIndex implements Disposable {
             return new CachedValueProvider.Result<>(definitionsByClass.values(),
                 JBehaveStepDefClassesModificationTracker.getInstance(step.getProject()),
                 ProjectRootModificationTracker.getInstance(step.getProject()));
-        });
+        }));
     }
 
     @NotNull
@@ -121,7 +121,7 @@ public final class JBehaveStepsIndex implements Disposable {
                         psiAnnotations.addAll(KotlinAnnotationsLoader.getAnnotations(QualifiedName.fromDottedString(annotationFqn), project, scope));
                     }
                 }
-                psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annClass.getName(), project, scope));
+                psiAnnotations.addAll(JavaAnnotationIndex.getInstance().getAnnotations(annClass.getName(), project, scope));
                 return psiAnnotations;
             });
 

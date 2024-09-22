@@ -43,7 +43,7 @@
   ]]></description>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
-    <idea-version since-build="231.9414.13" until-build="242.20224.419"/>
+    <idea-version since-build="242.21829.142" until-build="243.*"/>
 
     <depends>com.intellij.modules.java</depends>
     <depends optional="true" config-file="kotlin-config.xml">org.jetbrains.kotlin</depends>
@@ -61,6 +61,11 @@
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift F8"/>
         </action>
     </actions>
+
+    <!-- See https://kotlin.github.io/analysis-api/declaring-k2-compatibility.html -->
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <org.jetbrains.kotlin.supportsKotlinPluginMode supportsK2="true" />
+    </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable instance="com.github.kumaraman21.intellijbehave.settings.JBehaveConfigurable" displayName="JBehave"/>

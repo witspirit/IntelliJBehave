@@ -43,6 +43,7 @@ IntelliJBehave.zip
 *.ipr
 *.iws
 .idea
+.intellijPlatform
 
 # Atlassian Plugin Configuration
 atlassian-ide-plugin.xml
