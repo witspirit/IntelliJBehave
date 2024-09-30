@@ -43,8 +43,6 @@
   ]]></description>
     <vendor url="https://github.com/witspirit" email="witspirit@gmail.com">Bert Van Vlerken, Victor Rosenberg</vendor>
 
-    <idea-version since-build="242.21829.142" until-build="243.*"/>
-
     <depends>com.intellij.modules.java</depends>
     <depends optional="true" config-file="kotlin-config.xml">org.jetbrains.kotlin</depends>
 
