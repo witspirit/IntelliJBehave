@@ -64,7 +64,7 @@
 
     <!-- See https://kotlin.github.io/analysis-api/declaring-k2-compatibility.html -->
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <org.jetbrains.kotlin.supportsKotlinPluginMode supportsK2="true" />
+        <supportsKotlinPluginMode supportsK2="true" />
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

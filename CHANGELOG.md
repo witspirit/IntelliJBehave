@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.67.1]
+### Fixed
+- Fixed the K2 compiler compatibility configuration.
+
 ## [1.67.0]
 ### Changed
 - New supported IDE version range: 2024.2.1 - 2024.3.*.
