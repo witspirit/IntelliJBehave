@@ -100,7 +100,7 @@ public class PatternVariantBuilder {
      * Regular expression that locates patterns to be evaluated in the input
      * pattern.
      */
-    private static final Pattern REGEX = Pattern.compile("([^\\n{]*+)(\\{(([^|}]++)(\\|)?+)*+\\})([^\\n]*+)");
+    private static final Pattern REGEX = Pattern.compile("([^\\n{]*+)(\\{(([^|}]++)(\\|)?+)*+})([^\\n]*+)");
 
     private final Set<String> variants;
 
@@ -143,7 +143,7 @@ public class PatternVariantBuilder {
         }
 
         // isolate the pattern itself, removing its wrapping {}
-        String patternGroup = m.group(2).replaceAll("[\\{\\}]", "");
+        String patternGroup = m.group(2).replaceAll("[{}]", "");
 
         // split the pattern into its options and add an empty
         // string if it ends with a separator
@@ -152,10 +152,10 @@ public class PatternVariantBuilder {
             patternParts.add("");
         }
 
-        // Store current invocation's results
-        Set<String> variants = new HashSet<>(8);
-
         if (!patternParts.isEmpty()) {
+            // Store current invocation's results
+            Set<String> variants = new HashSet<>(8);
+
             // isolate the part before the first pattern
             String head = m.group(1);
 
@@ -164,23 +164,27 @@ public class PatternVariantBuilder {
 
             var variantsForTail = variantsFor(tail);
 
-            // Iterate over the current pattern's
-            // variants and construct the result.
-            for (String part : patternParts) {
-                var partString = head != null ? head + part : part;
+            if (!variantsForTail.isEmpty()) {
+                // Iterate over the current pattern's
+                // variants and construct the result.
+                for (String part : patternParts) {
+                    var partString = head != null ? head + part : part;
 
-                // recurse on the tail of the input
-                // to handle the next pattern
+                    // recurse on the tail of the input
+                    // to handle the next pattern
 
-                // append all variants of the tail end
-                // and add each of them to the part we have
-                // built up so far.
-                for (String tailVariant : variantsForTail) {
-                    variants.add(partString + tailVariant);
+                    // append all variants of the tail end
+                    // and add each of them to the part we have
+                    // built up so far.
+                    for (String tailVariant : variantsForTail) {
+                        variants.add(partString + tailVariant);
+                    }
                 }
             }
+
+            return variants;
         }
-        return variants;
+        return Collections.emptySet();
     }
 
     /**
