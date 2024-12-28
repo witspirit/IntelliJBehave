@@ -36,14 +36,14 @@ dependencies {
 
     //Required for 'junit.framework.TestCase' referenced in 'com.intellij.testFramework.UsefulTestCase'
     testImplementation(libs.junit)
-    testImplementation("org.assertj:assertj-core:3.26.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+    testImplementation("org.assertj:assertj-core:3.27.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
 
     //Others
 
-    implementation("org.apache.commons:commons-text:1.12.0")
+    implementation("org.apache.commons:commons-text:1.13.0")
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 
