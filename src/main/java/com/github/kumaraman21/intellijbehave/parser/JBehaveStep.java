@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 public class JBehaveStep extends ASTWrapperPsiElement {
-    private StepType stepType;
+    private final StepType stepType;
 
     public JBehaveStep(@NotNull ASTNode node, StepType stepType) {
         super(node);
@@ -36,8 +36,7 @@ public class JBehaveStep extends ASTWrapperPsiElement {
     }
 
     @Override
-    @NotNull
-    public PsiReference[] getReferences() {
+    public PsiReference @NotNull [] getReferences() {
         return ReadAction.compute(() -> ReferenceProvidersRegistry.getReferencesFromProviders(this));
     }
 
@@ -50,6 +49,10 @@ public class JBehaveStep extends ASTWrapperPsiElement {
         return getNode().findChildByType(StoryTokenType.STEP_TYPES);
     }
 
+    /**
+     * Returns the step text without the step type. For example:
+     * for the step {@code Given I opened the homepage} it returns {@code I opened the homepage}.
+     */
     public String getStepText() {
         int offset = getStepTextOffset();
         String text = getText();
@@ -61,7 +64,11 @@ public class JBehaveStep extends ASTWrapperPsiElement {
         }
     }
 
-    @Nullable
+    /**
+     * Returns the step type keyword, for example {@code Given} for the step
+     * {@code Given I opened the homepage}.
+     */
+    @Nullable("When the keyword is null.")
     public String getActualStepPrefix() {
         ASTNode keyword = getKeyword();
         if (keyword == null) { // that's weird!
@@ -70,6 +77,12 @@ public class JBehaveStep extends ASTWrapperPsiElement {
         return keyword.getText();
     }
 
+    /**
+     * Returns the off set the step text after the step type keyword. For example:
+     * for {@code Given I opened the homepage}, it would return 6.
+     * <p>
+     * Returns 0 when the step type prefix is null.
+     */
     public int getStepTextOffset() {
         String stepPrefix = getActualStepPrefix();
         return stepPrefix != null ? stepPrefix.length() + 1 : 0;

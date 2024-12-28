@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.67.2]
+### Changed
+- Added a minor performance improvement to pattern variant building.
+
+### Fixed
+- [#94](https://github.com/witspirit/IntelliJBehave/issues/94): Improved matching steps with patterns with empty parameter values.
+
 ## [1.67.1]
 ### Fixed
 - Fixed the K2 compiler compatibility configuration.
