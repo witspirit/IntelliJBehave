@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.67.2]
+### Fixed
+- [#94](https://github.com/witspirit/IntelliJBehave/issues/94): Improved matching steps with patterns with empty parameter values.
+
 ## [1.67.1]
 ### Fixed
 - Fixed the K2 compiler compatibility configuration.
