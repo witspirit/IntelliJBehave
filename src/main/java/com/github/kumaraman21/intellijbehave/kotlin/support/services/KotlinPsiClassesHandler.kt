@@ -17,8 +17,15 @@ import kotlin.jvm.internal.Ref.BooleanRef
 class KotlinPsiClassesHandler private constructor() {
 
     companion object {
+        private val GIVEN = FqName("org.jbehave.core.annotations.Given")
+        private val WHEN = FqName("org.jbehave.core.annotations.When")
+        private val THEN = FqName("org.jbehave.core.annotations.Then")
+        private val ALIAS = FqName("org.jbehave.core.annotations.Alias")
+        private val ALIASES = FqName("org.jbehave.core.annotations.Aliases")
+        private val COMPOSITE = FqName("org.jbehave.core.annotations.Composite")
+
         /**
-         * Returns the classes in [psiFile] if it is a Kotlin files, otherwise returns null.
+         * Returns the classes in [psiFile] if it is a Kotlin file, otherwise returns null.
          */
         @JvmStatic
         fun getPsiClasses(psiFile: PsiFile): Array<PsiClass>? = if (psiFile is KtFile) {
@@ -56,14 +63,18 @@ class KotlinPsiClassesHandler private constructor() {
          * Returns if any of the functions in the provided Kotlin class is a step definition function.
          */
         private fun isKotlinJBehaveStepDefClass(aClass: KtClass): Boolean {
-            return !aClass.isEnum() && !aClass.isInterface() && aClass.fqName != null && aClass.body?.functions?.any {
-                it.findAnnotation(FqName("org.jbehave.core.annotations.Given")) != null
-                        || it.findAnnotation(FqName("org.jbehave.core.annotations.When")) != null
-                        || it.findAnnotation(FqName("org.jbehave.core.annotations.Then")) != null
-                        || it.findAnnotation(FqName("org.jbehave.core.annotations.Alias")) != null
-                        || it.findAnnotation(FqName("org.jbehave.core.annotations.Aliases")) != null
-                        || it.findAnnotation(FqName("org.jbehave.core.annotations.Composite")) != null
-            } == true
+            return try {
+                !aClass.isEnum() && !aClass.isInterface() && aClass.fqName != null && aClass.body?.functions?.any {
+                    it.findAnnotation(GIVEN) != null
+                            || it.findAnnotation(WHEN) != null
+                            || it.findAnnotation(THEN) != null
+                            || it.findAnnotation(ALIAS) != null
+                            || it.findAnnotation(ALIASES) != null
+                            || it.findAnnotation(COMPOSITE) != null
+                } == true
+            } catch (e: Exception) {
+                false
+            }
         }
     }
 }
