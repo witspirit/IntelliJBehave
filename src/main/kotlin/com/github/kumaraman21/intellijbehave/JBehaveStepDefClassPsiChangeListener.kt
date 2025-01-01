@@ -14,6 +14,8 @@ import com.intellij.psi.PsiTreeChangeEvent
 
 /**
  * Reacts to changes in JBehave Java step definition files.
+ *
+ * TODO: this should probably have a counterpart for Kotlin step def classes
  */
 class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChangeAdapter() {
 
@@ -47,7 +49,7 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
         if (!DumbService.isDumb(project)) {
             val hasJBehaveStepDefTestClass = Ref<Boolean>()
             if (file is PsiJavaFile) {
-                //If it finds a Citrus test class in the file, then modification tracker will be eligible for update
+                //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
                 file.accept(object : JavaRecursiveElementVisitor() {
                     override fun visitClass(aClass: PsiClass) {
                         if (isJavaJBehaveStepDefClass(aClass)) {
