@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [1.67.4]
+- Added exception handling when analyzing Java classes if they are step definition classes.
+
 ## [1.67.3]
 ### Fixed
 - Added exception handling when analyzing Kotlin classes if they are step definition classes.
