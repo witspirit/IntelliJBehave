@@ -14,6 +14,8 @@ import com.intellij.psi.PsiTreeChangeEvent
 
 /**
  * Reacts to changes in JBehave Java step definition files.
+ *
+ * TODO: this should probably have a counterpart for Kotlin step def classes
  */
 class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChangeAdapter() {
 
@@ -47,7 +49,7 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
         if (!DumbService.isDumb(project)) {
             val hasJBehaveStepDefTestClass = Ref<Boolean>()
             if (file is PsiJavaFile) {
-                //If it finds a Citrus test class in the file, then modification tracker will be eligible for update
+                //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
                 file.accept(object : JavaRecursiveElementVisitor() {
                     override fun visitClass(aClass: PsiClass) {
                         if (isJavaJBehaveStepDefClass(aClass)) {
@@ -69,14 +71,17 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
     }
 
     private fun isJavaJBehaveStepDefClass(aClass: PsiClass): Boolean {
-        return !aClass.isEnum && !aClass.isRecord && !aClass.isInterface && aClass.qualifiedName != null
-                && aClass.allMethods.any {
-            it.hasAnnotation("org.jbehave.core.annotations.Given")
+        return try {
+            !aClass.isEnum && !aClass.isRecord && !aClass.isInterface && aClass.qualifiedName != null && aClass.allMethods.any {
+                it.hasAnnotation("org.jbehave.core.annotations.Given")
                     || it.hasAnnotation("org.jbehave.core.annotations.When")
                     || it.hasAnnotation("org.jbehave.core.annotations.Then")
                     || it.hasAnnotation("org.jbehave.core.annotations.Alias")
                     || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
                     || it.hasAnnotation("org.jbehave.core.annotations.Composite")
+            }
+        } catch (e: Exception) {
+            false
         }
     }
 }
