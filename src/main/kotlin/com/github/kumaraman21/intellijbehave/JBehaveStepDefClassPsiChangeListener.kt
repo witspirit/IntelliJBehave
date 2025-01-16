@@ -73,12 +73,16 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
     private fun isJavaJBehaveStepDefClass(aClass: PsiClass): Boolean {
         return try {
             !aClass.isEnum && !aClass.isRecord && !aClass.isInterface && aClass.qualifiedName != null && aClass.allMethods.any {
-                it.hasAnnotation("org.jbehave.core.annotations.Given")
-                    || it.hasAnnotation("org.jbehave.core.annotations.When")
-                    || it.hasAnnotation("org.jbehave.core.annotations.Then")
-                    || it.hasAnnotation("org.jbehave.core.annotations.Alias")
-                    || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
-                    || it.hasAnnotation("org.jbehave.core.annotations.Composite")
+                return@any try {
+                    it.hasAnnotation("org.jbehave.core.annotations.Given")
+                            || it.hasAnnotation("org.jbehave.core.annotations.When")
+                            || it.hasAnnotation("org.jbehave.core.annotations.Then")
+                            || it.hasAnnotation("org.jbehave.core.annotations.Alias")
+                            || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
+                            || it.hasAnnotation("org.jbehave.core.annotations.Composite")
+                } catch (e: Exception) {
+                    false
+                }
             }
         } catch (e: Exception) {
             false
