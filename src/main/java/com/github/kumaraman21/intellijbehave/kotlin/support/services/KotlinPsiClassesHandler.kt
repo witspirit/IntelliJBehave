@@ -65,12 +65,16 @@ class KotlinPsiClassesHandler private constructor() {
         private fun isKotlinJBehaveStepDefClass(aClass: KtClass): Boolean {
             return try {
                 !aClass.isEnum() && !aClass.isInterface() && aClass.fqName != null && aClass.body?.functions?.any {
-                    it.findAnnotation(GIVEN) != null
-                            || it.findAnnotation(WHEN) != null
-                            || it.findAnnotation(THEN) != null
-                            || it.findAnnotation(ALIAS) != null
-                            || it.findAnnotation(ALIASES) != null
-                            || it.findAnnotation(COMPOSITE) != null
+                    return@any try {
+                        it.findAnnotation(GIVEN) != null
+                                || it.findAnnotation(WHEN) != null
+                                || it.findAnnotation(THEN) != null
+                                || it.findAnnotation(ALIAS) != null
+                                || it.findAnnotation(ALIASES) != null
+                                || it.findAnnotation(COMPOSITE) != null
+                    } catch (e: Exception) {
+                        false
+                    }
                 } == true
             } catch (e: Exception) {
                 false
