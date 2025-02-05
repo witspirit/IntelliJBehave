@@ -114,7 +114,7 @@ intellijPlatform {
 intellijPlatformTesting {
     val runTestsInIJCommunity by intellijPlatformTesting.testIde.registering {
         type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.2.1"
+        version = "2024.3"
         task {
             useJUnitPlatform {
                 isScanForTestClasses = false
@@ -126,7 +126,7 @@ intellijPlatformTesting {
 
     val runTestsWithK2InIJCommunity by intellijPlatformTesting.testIde.registering {
         type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.2.1"
+        version = "2024.3"
         task {
             //See https://kotlin.github.io/analysis-api/testing-in-k2-locally.html
             jvmArgumentProviders += CommandLineArgumentProvider {
@@ -142,7 +142,7 @@ intellijPlatformTesting {
 
     val runJUnit3TestsInIJCommunity by intellijPlatformTesting.testIde.registering {
         type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.2.1"
+        version = "2024.3"
         task {
             useJUnit {
                 include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")

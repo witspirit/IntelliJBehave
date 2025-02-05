@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.68.0]
+### Changed
+- New supported IDE version range: 2024.3 - 2025.1-EAP.
+
 ## [1.67.5]
 ### Fixed
 - Added further exception handling when analyzing Java and Kotlin classes if they are step definition classes.
