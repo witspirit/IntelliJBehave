@@ -2,8 +2,7 @@ package com.github.kumaraman21.intellijbehave.highlighter;
 
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.intellij.psi.tree.IElementType;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import static com.github.kumaraman21.intellijbehave.Samples.EXAMPLES_SAMPLE;
 import static com.github.kumaraman21.intellijbehave.Samples.LONG_SAMPLE;
@@ -14,13 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class StoryLocalizedLexer_SamplesTest {
+public class StoryLocalizedLexer_SamplesTest extends BasePlatformTestCase {
 
     private StoryLocalizedLexer storyLexer;
 
-    @Test
-    @Ignore
-    public void traceAll() {
+    public void _testTraceAll() {
         //traceAll(SIMPLE_SAMPLE);
         traceAll(LONG_SAMPLE);
         //traceAll(META_SAMPLE);
@@ -28,8 +25,7 @@ public class StoryLocalizedLexer_SamplesTest {
         //traceAll(COMPLEX_SAMPLE);
     }
 
-    @Test
-    public void parseSimpleSample() {
+    public void testParseSimpleSample() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start(SIMPLE_SAMPLE);
 
@@ -51,8 +47,7 @@ public class StoryLocalizedLexer_SamplesTest {
         advanceAndAssert(StoryTokenType.WHITE_SPACE);
     }
 
-    @Test
-    public void parseMetaSample() {
+    public void testParseMetaSample() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start(META_SAMPLE);
 
@@ -72,8 +67,7 @@ public class StoryLocalizedLexer_SamplesTest {
         advanceAndAssert(StoryTokenType.WHITE_SPACE);
     }
 
-    @Test
-    public void parseLongSample() {
+    public void testParseLongSample() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start(LONG_SAMPLE);
 
@@ -136,8 +130,7 @@ public class StoryLocalizedLexer_SamplesTest {
         // ...
     }
 
-    @Test
-    public void parseExamples() {
+    public void testParseExamples() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start(EXAMPLES_SAMPLE);
 

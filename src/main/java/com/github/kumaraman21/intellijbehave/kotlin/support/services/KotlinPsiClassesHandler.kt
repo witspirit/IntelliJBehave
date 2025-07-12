@@ -72,11 +72,11 @@ class KotlinPsiClassesHandler private constructor() {
                                 || it.findAnnotation(ALIAS) != null
                                 || it.findAnnotation(ALIASES) != null
                                 || it.findAnnotation(COMPOSITE) != null
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         false
                     }
                 } == true
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 false
             }
         }

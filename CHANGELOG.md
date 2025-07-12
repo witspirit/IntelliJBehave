@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.69.0]
+### Changed
+- New supported IDE version range: 2025.1+.
+
+### Fixed
+- Fixed a step reference resolution issue. Contributed by @tomb50
+
 ## [1.68.0]
 ### Changed
 - New supported IDE version range: 2024.3 - 2025.1-EAP.

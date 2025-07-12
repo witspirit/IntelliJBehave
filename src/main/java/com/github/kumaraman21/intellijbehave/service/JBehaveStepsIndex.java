@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
@@ -113,7 +114,7 @@ public final class JBehaveStepsIndex implements Disposable {
     @VisibleForTesting
     static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
         return CachedValuesManager.getCachedValue(annClass, (CachedValueProvider<? extends Collection<PsiAnnotation>>) () -> {
-            Collection<PsiAnnotation> annotations = ReadAction.compute(() -> {
+            Collection<PsiAnnotation> annotations = compute(() -> {
                 Project project = annClass.getProject();
                 Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
                 if (KotlinConfigKt.getPluginIsEnabled()) {

@@ -120,7 +120,7 @@ public class StepPsiReference extends CachingReference implements PsiPolyVariant
 
     @NotNull
     private Collection<JavaStepDefinition> resolveToDefinitions() {
-        return JBehaveStepsIndex.getInstance(compute(() -> myStep.getProject())).findStepDefinitions(myStep);
+        return JBehaveStepsIndex.getInstance(compute(myStep::getProject)).findStepDefinitions(myStep);
     }
 
     @Override

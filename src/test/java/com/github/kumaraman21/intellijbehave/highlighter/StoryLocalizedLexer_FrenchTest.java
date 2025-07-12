@@ -14,7 +14,6 @@ public class StoryLocalizedLexer_FrenchTest extends BasePlatformTestCase {
 
     private StoryLocalizedLexer storyLexer;
 
-    //FIXME
     public void test_parse_basicScenario() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.changeLocale("fr");
@@ -37,7 +36,6 @@ public class StoryLocalizedLexer_FrenchTest extends BasePlatformTestCase {
         advanceAndAssert(null);
     }
 
-    //FIXME
     public void test_parse_commentAllowsToSwitchLanguage() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         // make sure one is not in fr by default
