@@ -30,24 +30,6 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    //JBehave
-
-    implementation("org.jbehave:jbehave-core:5.2.0")
-
-    //Testing
-
-    //Required for 'junit.framework.TestCase' referenced in 'com.intellij.testFramework.UsefulTestCase'
-    testImplementation(libs.junit)
-    testImplementation(libs.opentest4j)
-    testImplementation("org.assertj:assertj-core:3.27.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
-
-    //Others
-
-    implementation("org.apache.commons:commons-text:1.13.0")
-
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
 
     intellijPlatform {
@@ -66,7 +48,18 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java)
         //Required for the 'com.intellij.testFramework.junit5' package
         testFramework(TestFrameworkType.JUnit5)
+
+        //Required for 'junit.framework.TestCase' referenced in 'com.intellij.testFramework.UsefulTestCase'
+        testImplementation(libs.junit)
+        testImplementation(libs.opentest4j)
+        testImplementation("org.assertj:assertj-core:3.27.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
     }
+
+    implementation("org.jbehave:jbehave-core:5.2.0")
+    implementation("org.apache.commons:commons-text:1.13.0")
 }
 
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
@@ -114,47 +107,6 @@ intellijPlatform {
     }
 }
 
-intellijPlatformTesting {
-    val runTestsInIJCommunity by intellijPlatformTesting.testIde.registering {
-        type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.3"
-        task {
-            useJUnitPlatform {
-                isScanForTestClasses = false
-                include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
-                exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
-            }
-        }
-    }
-
-    val runTestsWithK2InIJCommunity by intellijPlatformTesting.testIde.registering {
-        type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.3"
-        task {
-            //See https://kotlin.github.io/analysis-api/testing-in-k2-locally.html
-            jvmArgumentProviders += CommandLineArgumentProvider {
-                listOf("-Didea.kotlin.plugin.use.k2=true")
-            }
-            useJUnitPlatform {
-                isScanForTestClasses = false
-                include("**/codeInspector/*Test.class", "**/resolver/*Test.class", "**/utility/*Test.class", "**/service/*Test.class", "**/jbehave/core/steps/*Test.class")
-                exclude("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
-            }
-        }
-    }
-
-    val runJUnit3TestsInIJCommunity by intellijPlatformTesting.testIde.registering {
-        type = IntelliJPlatformType.IntellijIdeaCommunity
-        version = "2024.3"
-        task {
-            useJUnit {
-                include("**/highlighter/*Test.class", "**/parser/*Test.class", "**/spellchecker/*Test.class", "**/structure/*Test.class")
-                exclude("**/highlighter/StoryLocalizedLexer_FrenchTest.class")
-            }
-        }
-    }
-}
-
 //Uncomment this to start the IDE with the K2 Kotlin compiler enabled
 //tasks.named<RunIdeTask>("runIde") {
 //    jvmArgumentProviders += CommandLineArgumentProvider {
@@ -171,5 +123,9 @@ changelog {
 tasks {
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
