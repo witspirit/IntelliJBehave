@@ -9,11 +9,13 @@ import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinAnnotationsLoader;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
@@ -46,7 +48,7 @@ public final class JBehaveStepsIndex implements Disposable {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        return compute(() -> CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
+        return ReadAction.compute(() -> CachedValuesManager.getCachedValue(step, Key.create(step.getStepText()), (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
             Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
             if (module == null) {
