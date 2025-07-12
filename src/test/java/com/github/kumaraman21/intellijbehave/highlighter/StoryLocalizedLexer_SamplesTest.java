@@ -3,8 +3,6 @@ package com.github.kumaraman21.intellijbehave.highlighter;
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static com.github.kumaraman21.intellijbehave.Samples.EXAMPLES_SAMPLE;
 import static com.github.kumaraman21.intellijbehave.Samples.LONG_SAMPLE;
