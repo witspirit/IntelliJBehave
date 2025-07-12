@@ -2,20 +2,19 @@ package com.github.kumaraman21.intellijbehave.highlighter;
 
 import com.github.kumaraman21.intellijbehave.utility.LocalizedStorySupport;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class StoryLocalizedLexer_MalformedTest {
+public class StoryLocalizedLexer_MalformedTest extends BasePlatformTestCase {
 
     private StoryLocalizedLexer storyLexer;
 
-    @Test
-    public void parse_tableWithoutPreamble() {
+    public void testParse_tableWithoutPreamble() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start("| Travis | Pacman |");
 
@@ -27,8 +26,7 @@ public class StoryLocalizedLexer_MalformedTest {
         advanceAndAssert(null);
     }
 
-    @Test
-    public void parse_scenarioWithoutText() {
+    public void testParse_scenarioWithoutText() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start("Scenario:\n" +
                 "Given\n" +
@@ -49,8 +47,7 @@ public class StoryLocalizedLexer_MalformedTest {
         advanceAndAssert(null);
     }
 
-    @Test
-    public void parse_scenarioWithStepAsText() {
+    public void testParse_scenarioWithStepAsText() {
         storyLexer = new StoryLocalizedLexer(new LocalizedStorySupport());
         storyLexer.start("Scenario: Given a nice\n" +
                 "Given\n" +
