@@ -58,7 +58,16 @@ dependencies {
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
     }
 
-    implementation("org.jbehave:jbehave-core:5.2.0")
+    implementation("org.jbehave:jbehave-core:5.2.0") {
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter")
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter-api")
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter-engine")
+        exclude(group = "org.junit.jupiter", module = "junit-jupiter-params")
+        exclude(group = "org.junit.platform", module = "junit-platform-commons")
+        exclude(group = "org.junit.platform", module = "junit-platform-engine")
+        exclude(group = "org.junit.platform", module = "junit-platform-launcher")
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
     implementation("org.apache.commons:commons-text:1.13.0")
 }
 

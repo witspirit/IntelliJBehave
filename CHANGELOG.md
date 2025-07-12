@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.69.1]
+### Changed
+- JUnit Jupiter test dependencies brought in by jbehave-core are now excluded from the built plugin archive.
+
 ## [1.69.0]
 ### Changed
 - New supported IDE version range: 2025.1+.
