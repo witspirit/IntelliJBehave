@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
+import static com.intellij.openapi.application.ReadAction.compute;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
@@ -8,7 +9,6 @@ import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinAnnotationsLoader;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -46,7 +46,7 @@ public final class JBehaveStepsIndex implements Disposable {
 
     @NotNull
     public Collection<JavaStepDefinition> findStepDefinitions(@NotNull JBehaveStep step) {
-        return ReadAction.compute(() -> CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
+        return compute(() -> CachedValuesManager.getCachedValue(step, (CachedValueProvider<? extends Collection<JavaStepDefinition>>) () -> {
             Module module = ModuleUtilCore.findModuleForPsiElement(step);
 
             if (module == null) {
@@ -112,7 +112,7 @@ public final class JBehaveStepsIndex implements Disposable {
     @VisibleForTesting
     static Collection<PsiAnnotation> getAllStepAnnotations(@NotNull final PsiClass annClass, @NotNull final GlobalSearchScope scope) {
         return CachedValuesManager.getCachedValue(annClass, (CachedValueProvider<? extends Collection<PsiAnnotation>>) () -> {
-            Collection<PsiAnnotation> annotations = ReadAction.compute(() -> {
+            Collection<PsiAnnotation> annotations = compute(() -> {
                 Project project = annClass.getProject();
                 Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
                 if (KotlinConfigKt.getPluginIsEnabled()) {
