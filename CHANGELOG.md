@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.69.2]
+### Fixed
+- Attempting to fix UI freezes when making modifications in nested class structures.
+
 ## [1.69.1]
 ### Changed
 - JUnit Jupiter test dependencies brought in by jbehave-core are now excluded from the built plugin archive.
