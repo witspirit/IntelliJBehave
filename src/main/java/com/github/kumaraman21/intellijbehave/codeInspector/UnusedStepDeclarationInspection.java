@@ -54,7 +54,7 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
         return new JavaElementVisitor() {
             @Override
             public void visitMethod(final @NotNull PsiMethod method) {
-                if (method.getNameIdentifier() == null || !ReadAction.compute(() -> isStepDefinition(method))) {
+                if (method.getNameIdentifier() == null || !isStepDefinition(method)) {
                     return;
                 }
 
