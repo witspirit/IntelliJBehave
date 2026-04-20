@@ -3,8 +3,8 @@
 ## [Unreleased]
 
 ## [1.69.2]
-### Fixed
-- Attempting to fix UI freezes when making modifications in nested class structures.
+### Changed
+- Improved some of the step definition and annotation handling logic by reducing the number of `Stream` creations.
 
 ## [1.69.1]
 ### Changed
