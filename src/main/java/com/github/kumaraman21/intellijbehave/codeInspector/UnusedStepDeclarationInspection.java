@@ -23,7 +23,6 @@ import com.github.kumaraman21.intellijbehave.resolver.StepPsiReference;
 import com.github.kumaraman21.intellijbehave.service.JavaStepDefinition;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -51,17 +50,17 @@ public class UnusedStepDeclarationInspection extends AbstractBaseJavaLocalInspec
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+        var project = holder.getProject();
+        var stepUsageFinder = new StepUsageFinder(project);
+        ProjectRootManager.getInstance(project).getFileIndex().iterateContent(stepUsageFinder);
+        var stepUsages = stepUsageFinder.getStepUsages();
+
         return new JavaElementVisitor() {
             @Override
             public void visitMethod(final @NotNull PsiMethod method) {
                 if (method.getNameIdentifier() == null || !isStepDefinition(method)) {
                     return;
                 }
-
-                Project project = method.getProject();
-                StepUsageFinder stepUsageFinder = new StepUsageFinder(project);
-                ProjectRootManager.getInstance(project).getFileIndex().iterateContent(stepUsageFinder);
-                Set<JBehaveStep> stepUsages = stepUsageFinder.getStepUsages();
 
                 for (JBehaveStep step : stepUsages) {
                     PsiReference[] references = step.getReferences();
