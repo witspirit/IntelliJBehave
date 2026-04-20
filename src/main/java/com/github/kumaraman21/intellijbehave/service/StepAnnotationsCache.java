@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service(Service.Level.PROJECT)
 final class StepAnnotationsCache {
+
+    //TODO: clean up stale module entries upon project root changes or module root additions/removals
     private final Map<Module, StepAnnotations> stepAnnotationClasses = new ConcurrentHashMap<>(4);
     private final Project project;
 
