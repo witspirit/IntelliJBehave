@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import kotlin.jvm.internal.Ref.BooleanRef
 
 /**
@@ -64,7 +65,10 @@ class KotlinPsiClassesHandler private constructor() {
          */
         private fun isKotlinJBehaveStepDefClass(aClass: KtClass): Boolean {
             return try {
-                !aClass.isEnum() && !aClass.isInterface() && aClass.fqName != null && aClass.body?.functions?.any {
+                !aClass.isEnum()
+                    && !aClass.isInterface()
+                    && aClass.fqName != null
+                    && aClass.body?.functions?.asSequence()?.filter { it.isPublic }?.any {
                     return@any try {
                         it.findAnnotation(GIVEN) != null
                                 || it.findAnnotation(WHEN) != null

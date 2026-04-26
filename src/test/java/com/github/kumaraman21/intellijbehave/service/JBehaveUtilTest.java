@@ -132,12 +132,31 @@ class JBehaveUtilTest extends JBehaveSupportTestBase {
     //isStepDefinition
 
     @Test
-    void shouldBeStepDefinitionMethod() {
+    void shouldBeStepDefinitionMethodWithSingleStepAnnotation() {
         var stepDefFile = getFixture().configureByText("StepDefinitionMethod.java", """
             import org.jbehave.core.annotations.Given;
 
             class StepDefinitionMethod {
                 @Given("")
+                void ste<caret>pDefMethod() {
+                }
+            }
+            """);
+
+        var method = getParentOfElementAtCaretIn(stepDefFile);
+        assertThat(method).isInstanceOf(PsiMethod.class);
+        assertThat(JBehaveUtil.isStepDefinition((PsiMethod) method)).isTrue();
+    }
+
+    @Test
+    void shouldBeStepDefinitionMethodWithMultipleStepAnnotations() {
+        var stepDefFile = getFixture().configureByText("StepDefinitionMethod.java", """
+            import org.jbehave.core.annotations.Given;
+            import org.jbehave.core.annotations.When;
+
+            class StepDefinitionMethod {
+                @Given("")
+                @When("")
                 void ste<caret>pDefMethod() {
                 }
             }

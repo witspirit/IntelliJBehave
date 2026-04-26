@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [1.69.2]
+### Changed
+- Improved some of the step definition and annotation handling logic by reducing the number of `Stream` creations.
+- Improved the performance of finding unused step declarations by reducing the number of necessary project content iterations.
+- Improved and deduplicated some logic regarding the step annotations processing for step completions in Story files.
+
+### Fixed
+- [#103](https://github.com/witspirit/IntelliJBehave/issues/103): Improved the performance of the listener that processes changes in step definition methods.
+
 ## [1.69.1]
 ### Changed
 - JUnit Jupiter test dependencies brought in by jbehave-core are now excluded from the built plugin archive.

@@ -6,6 +6,7 @@ import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -66,7 +68,13 @@ public final class JBehaveUtil {
      */
     @NotNull
     private static List<PsiAnnotation> getJBehaveStepAnnotations(@NotNull PsiMethod method) {
-        return Stream.of(compute(() -> method.getModifierList().getAnnotations()))
+        var annotations = compute(() -> method.getModifierList().getAnnotations());
+
+        //Optimizations to avoid creating unnecessary Streams
+        if (annotations.length == 0) return Collections.emptyList();
+        if (annotations.length == 1 && JBehaveUtil.isJBehaveStepAnnotation(annotations[0])) return Collections.singletonList(annotations[0]);
+
+        return Stream.of(annotations)
             .filter(JBehaveUtil::isJBehaveStepAnnotation)
             .collect(Collectors.toList());
     }
@@ -79,9 +87,20 @@ public final class JBehaveUtil {
      * </ul>
      */
     public static boolean isStepDefinition(@NotNull PsiMethod method) {
-        return getJBehaveStepAnnotations(method).stream()
-            .map(stepAnnotation -> compute(() -> stepAnnotation.findAttributeValue("value")))
-            .anyMatch(Objects::nonNull);
+        return ReadAction.compute(() -> {
+            var jBehaveStepAnnotations = getJBehaveStepAnnotations(method);
+
+            //Optimizations to avoid creating unnecessary Streams
+            if (jBehaveStepAnnotations.isEmpty()) return false;
+            if (jBehaveStepAnnotations.size() == 1) {
+                var attributeValue = compute(() -> jBehaveStepAnnotations.getFirst().findAttributeValue("value"));
+                return attributeValue != null;
+            } else {
+                return jBehaveStepAnnotations.stream()
+                    .map(stepAnnotation -> compute(() -> stepAnnotation.findAttributeValue("value")))
+                    .anyMatch(Objects::nonNull);
+            }
+        });
     }
 
     /**
@@ -140,7 +159,12 @@ public final class JBehaveUtil {
      */
     @NotNull
     public static List<String> getAnnotationTexts(@NotNull PsiMethod method) {
-        return getJBehaveStepAnnotations(method)
+        var annotations = getJBehaveStepAnnotations(method);
+
+        //Optimization to avoid creating unnecessary Streams
+        if (annotations.isEmpty()) return Collections.emptyList();
+
+        return annotations
             .stream()
             .map(annotation -> JBehaveUtil.getAnnotationTexts(annotation, method))
             .flatMap(Set::stream)

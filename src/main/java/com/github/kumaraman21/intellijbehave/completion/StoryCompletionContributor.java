@@ -29,6 +29,8 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Limitations: see {@link com.github.kumaraman21.intellijbehave.resolver.StepDefinitionAnnotationConverter#convertFrom(PsiAnnotation[])}
+ *
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
 public class StoryCompletionContributor extends CompletionContributor {

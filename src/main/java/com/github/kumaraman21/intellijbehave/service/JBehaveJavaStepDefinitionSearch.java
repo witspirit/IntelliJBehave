@@ -20,7 +20,7 @@ public class JBehaveJavaStepDefinitionSearch implements QueryExecutor<PsiReferen
 
     @Override
     public boolean execute(@NotNull SearchParameters queryParameters, @NotNull Processor<? super PsiReference> consumer) {
-        if (!(queryParameters.getElementToSearch() instanceof PsiMethod method) || !compute(() -> isStepDefinition(method))) {
+        if (!(queryParameters.getElementToSearch() instanceof PsiMethod method) || !isStepDefinition(method)) {
             return true;
         }
 
