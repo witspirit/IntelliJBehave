@@ -6,6 +6,7 @@
 ### Changed
 - Improved some of the step definition and annotation handling logic by reducing the number of `Stream` creations.
 - Improved the performance of finding unused step declarations by reducing the number of necessary project content iterations.
+- Improved and deduplicated some logic regarding the step annotations processing for step completions in Story files.
 
 ## [1.69.1]
 ### Changed
