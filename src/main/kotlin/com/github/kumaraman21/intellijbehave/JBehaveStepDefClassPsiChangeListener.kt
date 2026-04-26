@@ -83,19 +83,25 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
 
     private fun isJavaJBehaveStepDefClass(aClass: PsiClass): Boolean {
         return try {
-            !aClass.isEnum && !aClass.isRecord && !aClass.isInterface && aClass.qualifiedName != null && aClass.allMethods.any {
-                return@any try {
-                    it.hasAnnotation("org.jbehave.core.annotations.Given")
+            !aClass.isEnum
+                && !aClass.isRecord
+                && !aClass.isInterface
+                && aClass.qualifiedName != null
+                //Treat only the public methods of this class as step defs as the visitor also goes into nested and
+                // super classes, so listing methods from no need
+                && aClass.methods.asSequence().filter { it.hasModifierProperty(PsiModifier.PUBLIC) }.any {
+                  return@any try {
+                         it.hasAnnotation("org.jbehave.core.annotations.Given")
                             || it.hasAnnotation("org.jbehave.core.annotations.When")
                             || it.hasAnnotation("org.jbehave.core.annotations.Then")
                             || it.hasAnnotation("org.jbehave.core.annotations.Alias")
                             || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
                             || it.hasAnnotation("org.jbehave.core.annotations.Composite")
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     false
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

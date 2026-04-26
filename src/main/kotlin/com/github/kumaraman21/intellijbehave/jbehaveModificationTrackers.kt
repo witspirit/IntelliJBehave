@@ -1,5 +1,6 @@
 package com.github.kumaraman21.intellijbehave
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -10,8 +11,8 @@ import com.intellij.openapi.util.SimpleModificationTracker
  * Tracks the modification count of JBehave step definition files in the given project.
  */
 @Service(Service.Level.PROJECT)
-class JBehaveStepDefClassesModificationTracker(val project: Project) : ModificationTrackerBase() {
-    companion object {
+class JBehaveStepDefClassesModificationTracker(val project: Project) : ModificationTrackerBase(), Disposable.Default {
+  companion object {
         @JvmStatic
         fun getInstance(project: Project) = project.service<JBehaveStepDefClassesModificationTracker>()
     }
