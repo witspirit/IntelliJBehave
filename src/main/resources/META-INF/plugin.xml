@@ -48,15 +48,9 @@
 
     <actions>
         <action id="IntelliJBehave.NewJBehaveStory"
-                class="com.github.kumaraman21.intellijbehave.creator.CreateStoryAction"
-                text="JBehave Story" description="Create New JBehave Story">
+                class="com.github.kumaraman21.intellijbehave.creator.CreateStoryAction">
             <add-to-group group-id="NewGroup1" anchor="after" relative-to-action="NewClass"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt S"/>
-        </action>
-        <action id="IntelliJBehave.RunJBehaveStory" class="com.github.kumaraman21.intellijbehave.runner.RunStoryAction"
-                text="Run Story" description="Run JBehave Story">
-            <add-to-group group-id="RunMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt shift F8"/>
         </action>
     </actions>
 
@@ -79,11 +73,13 @@
         <completion.contributor language="Story"
                                 implementationClass="com.github.kumaraman21.intellijbehave.completion.StoryCompletionContributor"/>
 
+        <runConfigurationProducer
+                implementation="com.github.kumaraman21.intellijbehave.execution.JBehaveRunConfigurationProducer"/>
         <referencesSearch
                 implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaStepDefinitionSearch"/>
         <methodReferencesSearch
                 implementation="com.github.kumaraman21.intellijbehave.service.JBehaveJavaMethodUsageSearcher"/>
-        
+
         <!--code inspections-->
         <localInspection id="unusedStepDeclaration" language="JAVA" displayName="Unused step declaration"
                          groupName="JBehave" enabledByDefault="false" level="WARNING"
@@ -96,7 +92,6 @@
                 implementation="com.github.kumaraman21.intellijbehave.resolver.StepPsiReferenceContributor"/>
 
         <applicationService serviceImplementation="com.github.kumaraman21.intellijbehave.settings.JBehaveSettings" />
-        <applicationService serviceImplementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
         <!--This Run Configuration type is registered explicitly because otherwise after running a story (run config created),
             then restarting IntelliJ, the previously created run config type is not recognized by IntelliJ.
             By registering it here, it will recognize the run configurations, and also gives the option to users
@@ -104,10 +99,12 @@
             Also, since multiple Run Configurations with the same name are not allowed to be saved by IntelliJ,
             this won't interfere with the default JBehave Story Runner.-->
         <configurationType implementation="com.github.kumaraman21.intellijbehave.runner.StoryRunnerConfigurationType" />
+        <configurationType implementation="com.github.kumaraman21.intellijbehave.execution.JBehaveConfigurationType" />
 
         <postStartupActivity implementation="com.github.kumaraman21.intellijbehave.startup.ProjectStartupActivity"/>
-        
+
         <lang.psiStructureViewFactory language="Story" implementationClass="com.github.kumaraman21.intellijbehave.structure.StoryStructureViewFactory" />
     </extensions>
+    <resource-bundle>messages.JBehaveBundle</resource-bundle>
 
 </idea-plugin>

@@ -15,8 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.creator;
 
-import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
-
+import com.github.kumaraman21.intellijbehave.JBehaveBundle;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.CreateElementActionBase;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -38,16 +37,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
+
 public class CreateStoryAction extends CreateElementActionBase {
 
   public CreateStoryAction() {
-    super("Create New Story File", STORY_FILE_TYPE.getDescription(), STORY_FILE_TYPE.getIcon());
+    super(JBehaveBundle.message("action.create.new.story.file.text"), STORY_FILE_TYPE.getDescription(), STORY_FILE_TYPE.getIcon());
   }
 
   @Override
   protected void invokeDialog(@NotNull Project project, @NotNull PsiDirectory directory, @NotNull Consumer<? super PsiElement[]> elementsConsumer) {
     var validator = new CreateElementActionBase.MyInputValidator(project, directory);
-    Messages.showInputDialog(project, "Enter a new file name:", "New Story File", Messages.getQuestionIcon(), "", validator);
+    Messages.showInputDialog(project,
+        JBehaveBundle.message("dialog.message.enter.new.file.name"),
+        JBehaveBundle.message("dialog.title.new.story.file"), Messages.getQuestionIcon(), "", validator);
     elementsConsumer.accept(validator.getCreatedElements());
   }
 
@@ -74,7 +77,7 @@ public class CreateStoryAction extends CreateElementActionBase {
 
   @Override
   protected String getErrorTitle() {
-    return "Cannot Create Story File";
+    return JBehaveBundle.message("dialog.title.cannot.create.story.file");
   }
 
   @NotNull

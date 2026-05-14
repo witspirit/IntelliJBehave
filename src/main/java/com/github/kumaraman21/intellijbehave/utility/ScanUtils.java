@@ -15,11 +15,19 @@
  */
 package com.github.kumaraman21.intellijbehave.utility;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
@@ -43,6 +51,17 @@ public final class ScanUtils {
         }
 
         return shouldContinue;
+    }
+
+
+    @Nullable
+    public static Module findModuleByClassName(@NotNull Project project, @NotNull String qualifiedName) {
+        JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        return ReadAction.compute(() -> {
+            PsiClass psiClass = facade.findClass(qualifiedName, scope);
+            return psiClass == null ? null : ModuleUtilCore.findModuleForPsiElement(psiClass);
+        });
     }
 
     private ScanUtils() {

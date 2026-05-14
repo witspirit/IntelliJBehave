@@ -45,7 +45,6 @@ public class StoryFile extends PsiFileBase {
 
     @NotNull
     public List<JBehaveStep> getSteps() {
-
         return getScenarios().stream()
                 .map(scenario -> scenario.getNode().getChildren(STEPS_TOKEN_SET))
                 .flatMap(Stream::of)

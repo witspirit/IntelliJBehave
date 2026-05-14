@@ -15,6 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.settings;
 
+import com.github.kumaraman21.intellijbehave.JBehaveBundle;
 import com.intellij.execution.configurations.ConfigurationUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.ClassFilter;
@@ -47,12 +48,13 @@ public final class JBehaveSettingsPanel {
         jBehaveSettings = JBehaveSettings.getInstance();
 
         storyRunnerLabel = new JLabel();
-        storyRunnerLabel.setText("Main class for running stories:");
-        storyRunnerLabel.setToolTipText("Class with a main function to receive the story file to run as a parameter");
+        storyRunnerLabel.setText(JBehaveBundle.message("settings.story.runner.class"));
+        storyRunnerLabel.setToolTipText(JBehaveBundle.message("settings.story.runner.label.tooltip"));
         storyRunnerField = new TextFieldWithBrowseButton();
         storyRunnerField.addActionListener(new BrowseMainClassListener(storyRunnerField));
 
-        enableCodeCompletionCheckBox = new JCheckBox("Enable code completion in *.story files");
+        enableCodeCompletionCheckBox = new JCheckBox(JBehaveBundle.message(
+            "settings.enable.code.completion.in.story.files"));
 
         contentPane = buildSettingsPanel();
     }
@@ -104,7 +106,7 @@ public final class JBehaveSettingsPanel {
 
             // TODO: display error message if project is null
 
-            var dialog = new TreeJavaClassChooserDialog("Main Class for Running Stories",
+            var dialog = new TreeJavaClassChooserDialog(JBehaveBundle.message("dialog.title.main.class.for.running.stories"),
                     project,
                     GlobalSearchScope.allScope(project),
                     MainClassFilter.INSTANCE,
