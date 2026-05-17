@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Icon;
 
+@Deprecated
 public class StoryRunnerConfigurationType extends ApplicationConfigurationType {
 
     public static final String JBEHAVE_STORY_RUNNER = "JBehave Story Runner";

@@ -43,6 +43,7 @@ import static com.intellij.openapi.ui.Messages.getErrorIcon;
 import static com.intellij.openapi.ui.Messages.showMessageDialog;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Deprecated
 public class RunStoryAction extends AnAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {

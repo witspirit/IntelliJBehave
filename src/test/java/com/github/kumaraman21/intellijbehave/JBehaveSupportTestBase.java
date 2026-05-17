@@ -1,12 +1,12 @@
 package com.github.kumaraman21.intellijbehave;
 
-import static com.intellij.openapi.application.ReadAction.compute;
-
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase5;
+
+import static com.intellij.openapi.application.ReadAction.compute;
 
 /**
  * Base test class for this plugin.
@@ -14,7 +14,8 @@ import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase5;
 public abstract class JBehaveSupportTestBase extends LightJavaCodeInsightFixtureTestCase5 {
 
     protected JBehaveSupportTestBase() {
-        super(new DefaultLightProjectDescriptor(() -> JavaSdk.getInstance().createJdk("Real JDK", System.getenv("JAVA_HOME"), false))
+        super(new DefaultLightProjectDescriptor(() -> JavaSdk.getInstance()
+            .createJdk("Real JDK", System.getenv("JAVA_HOME"), false))
             .withRepositoryLibrary("org.jbehave:jbehave-core:5.2.0"));
     }
 

@@ -1,7 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 
 plugins {
     id("java") // Java support
@@ -56,6 +56,12 @@ dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
+
+        testImplementation("org.jbehave:jbehave-spring:5.2.0")
+        testImplementation("org.jbehave:jbehave-guice:5.2.0")
+        testImplementation("org.jbehave:jbehave-needle:5.2.0")
+        testImplementation("org.jbehave:jbehave-weld:5.2.0")
+        testImplementation("org.jbehave:jbehave-pico:5.2.0")
     }
 
     implementation("org.jbehave:jbehave-core:5.2.0") {
@@ -69,6 +75,7 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     implementation("org.apache.commons:commons-text:1.13.0")
+    implementation("org.jcommander:jcommander:3.0")
 }
 
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
@@ -117,11 +124,18 @@ intellijPlatform {
 }
 
 //Uncomment this to start the IDE with the K2 Kotlin compiler enabled
-//tasks.named<RunIdeTask>("runIde") {
-//    jvmArgumentProviders += CommandLineArgumentProvider {
-//        listOf("-Didea.kotlin.plugin.use.k2=true")
-//    }
-//}
+tasks.named<RunIdeTask>("runIde") {
+    jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf(
+            "-Didea.kotlin.plugin.use.k2=true",
+            "-Dsun.java2d.metal=false",
+            "-Dcompose.swing.render.on.graphics=false",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+            "--add-opens=java.desktop/java.awt=ALL-UNNAMED"
+        )
+    }
+}
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
