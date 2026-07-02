@@ -131,7 +131,7 @@ public final class JBehaveSettingsPanel {
 
         @Override
         public boolean isAccepted(final PsiClass aClass) {
-            return ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null;
+            return PsiMethodUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null;
         }
     }
 }

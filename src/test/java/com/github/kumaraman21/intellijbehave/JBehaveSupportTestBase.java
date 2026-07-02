@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave;
 
-import static com.intellij.openapi.application.ReadAction.compute;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.psi.PsiElement;
@@ -23,10 +23,10 @@ public abstract class JBehaveSupportTestBase extends LightJavaCodeInsightFixture
     }
 
     protected int getCaretOffset() {
-        return compute(() -> getFixture().getCaretOffset());
+        return computeBlocking(() -> getFixture().getCaretOffset());
     }
 
     protected PsiElement getParentOfElementAtCaretIn(PsiFile psiFile) {
-        return compute(() -> psiFile.findElementAt(getFixture().getCaretOffset()).getParent());
+        return computeBlocking(() -> psiFile.findElementAt(getFixture().getCaretOffset()).getParent());
     }
 }

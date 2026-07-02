@@ -2,11 +2,11 @@ package com.github.kumaraman21.intellijbehave.service;
 
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getAnnotationTexts;
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getTheBiggestWordToSearchByIndex;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -23,7 +23,7 @@ public class JBehaveJavaMethodUsageSearcher extends QueryExecutorBase<PsiReferen
         if (queryParameters.getScopeDeterminedByUser() instanceof GlobalSearchScope scopeByUser) {
             final PsiMethod method = queryParameters.getMethod();
 
-            boolean hasNonEmptyBiggestWord = ReadAction.compute(() -> getAnnotationTexts(method))
+            boolean hasNonEmptyBiggestWord = computeBlocking(() -> getAnnotationTexts(method))
                 .stream()
                 .anyMatch(stepText -> isNotEmpty(getTheBiggestWordToSearchByIndex(stepText)));
 

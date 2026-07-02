@@ -1,9 +1,9 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class StepPsiReferenceContributorTest extends ContentEntryTestBase {
         assertThat(references).hasSize(1);
         assertThat(references[0])
             .isInstanceOf(StepPsiReference.class)
-            .extracting(ref -> ReadAction.compute(() -> ref.resolve().getText()))
+            .extracting(ref -> computeBlocking(() -> ref.resolve().getText()))
             .isEqualTo("""
                 @When("search for $string")
                     public void searchForText(@Named("string") String string) {

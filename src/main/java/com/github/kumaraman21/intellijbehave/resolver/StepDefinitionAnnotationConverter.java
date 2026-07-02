@@ -16,10 +16,7 @@
 package com.github.kumaraman21.intellijbehave.resolver;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
-import static com.intellij.openapi.application.ReadAction.compute;
-import static org.apache.commons.lang3.StringUtils.remove;
-import static org.apache.commons.lang3.StringUtils.removeEnd;
-import static org.apache.commons.lang3.StringUtils.removeStart;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.intellij.openapi.util.Ref;
@@ -27,6 +24,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteral;
+import org.apache.commons.lang3.Strings;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Aliases;
 import org.jbehave.core.steps.StepType;
@@ -71,7 +69,7 @@ public final class StepDefinitionAnnotationConverter {
         //Annotation processing
 
         for (PsiAnnotation annotation : annotations) {
-            var attributes = compute(() -> {
+            var attributes = computeBlocking(() -> {
                 annotationQualifiedName.set(annotation.getQualifiedName());
                 return annotation.getParameterList().getAttributes();
             });
@@ -94,7 +92,7 @@ public final class StepDefinitionAnnotationConverter {
 
                 //When the processed annotation is @Aliases
                 else if (annotationQualifiedName.get().equals(Aliases.class.getName())) {
-                    PsiAnnotationMemberValue attributeValue = compute(() -> attributes[0].getValue());
+                    PsiAnnotationMemberValue attributeValue = computeBlocking(() -> attributes[0].getValue());
                     if (attributeValue != null) {
                         PsiElement[] values = attributeValue.getChildren();
                         //Processes all specified alias values in the annotation attribute
@@ -121,10 +119,10 @@ public final class StepDefinitionAnnotationConverter {
     }
 
     /**
-     * By using a Supplier here, {@code compute()} calls can be deduplicated with call sites of this method.
+     * By using a Supplier here, {@code computeBlocking()} calls can be deduplicated with call sites of this method.
      */
     private static String getTextFromValue(Supplier<PsiElement> value) {
-        return remove(removeStart(removeEnd(compute(() -> value.get().getText()), "\""), "\""), "\\");
+        return Strings.CS.remove(Strings.CS.removeStart(Strings.CS.removeEnd(computeBlocking(() -> value.get().getText()), "\""), "\""), "\\");
     }
 
     private static final class AnnotationsHolder {

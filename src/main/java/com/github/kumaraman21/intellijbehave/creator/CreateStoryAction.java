@@ -17,7 +17,6 @@ package com.github.kumaraman21.intellijbehave.creator;
 
 import static com.github.kumaraman21.intellijbehave.language.StoryFileType.STORY_FILE_TYPE;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.CreateElementActionBase;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -79,8 +78,9 @@ public class CreateStoryAction extends CreateElementActionBase {
 
   @NotNull
   @Override
+  @SuppressWarnings("DialogTitleCapitalization")
   protected String getActionName(PsiDirectory directory, @NotNull String newName) {
-    return IdeBundle.message("progress.creating.file", STORY_FILE_TYPE.getName(), newName, directory.getName());
+    return "Creating file %s%s%s".formatted(STORY_FILE_TYPE.getName(), newName, directory.getName());
   }
 
   @Override

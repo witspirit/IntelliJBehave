@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.service;
 
-import static com.intellij.openapi.application.ReadAction.compute;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.fail;
 import com.github.kumaraman21.intellijbehave.ContentEntryTestBase;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.intellij.codeInsight.AnnotationUtil;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
         assertThat(stepDefinitions).hasSize(1);
         assertThat(stepDefinitions.iterator().next().getAnnotatedMethod().getContainingClass().getQualifiedName()).isEqualTo("StepDefs");
-        assertThat(compute(() -> stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY).toString()))
+        assertThat(computeBlocking(() -> stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY).toString()))
             .isEqualTo("MethodSignatureBackedByPsiMethod: openAUrl([PsiType:String])");
     }
 
@@ -55,7 +54,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
 
         assertThat(stepDefinitions).hasSize(1);
         assertThat(stepDefinitions.iterator().next().getAnnotatedMethod().getContainingClass().getQualifiedName()).isEqualTo("OtherStepDefs");
-        assertThat(stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY))
+        assertThat(computeBlocking(() -> stepDefinitions.iterator().next().getAnnotatedMethod().getSignature(PsiSubstitutor.EMPTY)))
             .hasToString("MethodSignatureBackedByPsiMethod: checkResultListSize([PsiType:int])");
     }
 
@@ -83,14 +82,14 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
         getFixture().configureByFile("test/resources/has_java_step_def.story");
 
         var scope = getFixture().getModule().getModuleWithDependenciesAndLibrariesScope(true);
-        var thenAnnotations = ReadAction.compute(() -> JavaFullClassNameIndex.getInstance().getClasses("org.jbehave.core.annotations.Then", getFixture().getProject(), scope));
+        var thenAnnotations = computeBlocking(() -> JavaFullClassNameIndex.getInstance().getClasses("org.jbehave.core.annotations.Then", getFixture().getProject(), scope));
         if (thenAnnotations.isEmpty()) fail("The @Then step def annotation was not found.");
 
-        var stepDefinitions = JBehaveStepsIndex.getInstance(getFixture().getProject()).getAllStepAnnotations(thenAnnotations.iterator().next(), scope);
+        var stepDefinitions = JBehaveStepsIndex.getAllStepAnnotations(thenAnnotations.iterator().next(), scope);
 
         assertThat(stepDefinitions).hasSize(3);
         var stepTexts = stepDefinitions.stream()
-            .map(annotation -> ReadAction.compute(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")))
+            .map(annotation -> computeBlocking(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")))
             .collect(toSet());
 
         assertThat(stepTexts).containsExactlyInAnyOrder(
