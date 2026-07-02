@@ -4,6 +4,7 @@ import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getAnnot
 import static com.github.kumaraman21.intellijbehave.service.JBehaveUtil.getTheBiggestWordToSearchByIndex;
 import static com.intellij.openapi.application.ReadAction.computeBlocking;
 import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
+import static com.intellij.util.containers.ContainerUtil.exists;
 
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
 import com.intellij.openapi.application.QueryExecutorBase;
@@ -23,9 +24,9 @@ public class JBehaveJavaMethodUsageSearcher extends QueryExecutorBase<PsiReferen
         if (queryParameters.getScopeDeterminedByUser() instanceof GlobalSearchScope scopeByUser) {
             final PsiMethod method = queryParameters.getMethod();
 
-            boolean hasNonEmptyBiggestWord = computeBlocking(() -> getAnnotationTexts(method))
-                .stream()
-                .anyMatch(stepText -> isNotEmpty(getTheBiggestWordToSearchByIndex(stepText)));
+            boolean hasNonEmptyBiggestWord = exists(
+                computeBlocking(() -> getAnnotationTexts(method)),
+                stepText -> isNotEmpty(getTheBiggestWordToSearchByIndex(stepText)));
 
             //Originally, this was executed for each non-empty biggest word, but since it performed the same reference search query, it became deduplicated.
             if (hasNonEmptyBiggestWord) {

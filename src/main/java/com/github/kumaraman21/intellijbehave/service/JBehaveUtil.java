@@ -2,6 +2,7 @@ package com.github.kumaraman21.intellijbehave.service;
 
 import static com.intellij.openapi.application.ReadAction.computeBlocking;
 import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
+import static com.intellij.util.containers.ContainerUtil.map2Set;
 
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.github.kumaraman21.intellijbehave.language.StoryFileType;
@@ -144,10 +145,10 @@ public final class JBehaveUtil {
 
     @NotNull
     private static Set<String> getAliasesAnnotationTexts(@NotNull PsiAnnotation aliasAnnotation) {
-        return computeBlocking(() -> AnnotationUtil.arrayAttributeValues(aliasAnnotation.findAttributeValue("values")))
-            .stream()
-            .map(attr -> computeBlocking(() -> AnnotationUtil.getStringAttributeValue(attr)))
-            .collect(Collectors.toSet());
+        return computeBlocking(() -> map2Set(
+            AnnotationUtil.arrayAttributeValues(aliasAnnotation.findAttributeValue("values")),
+            AnnotationUtil::getStringAttributeValue
+        ));
     }
 
     /**

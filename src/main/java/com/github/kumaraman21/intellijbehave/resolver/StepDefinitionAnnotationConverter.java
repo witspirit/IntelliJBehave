@@ -17,6 +17,7 @@ package com.github.kumaraman21.intellijbehave.resolver;
 
 import static com.github.kumaraman21.intellijbehave.utility.StepTypeMappings.ANNOTATION_TO_STEP_TYPE_MAPPING;
 import static com.intellij.openapi.application.ReadAction.computeBlocking;
+import static com.intellij.util.containers.ContainerUtil.map2Set;
 
 import com.github.kumaraman21.intellijbehave.jbehave.core.steps.PatternVariantBuilder;
 import com.intellij.openapi.util.Ref;
@@ -34,7 +35,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public final class StepDefinitionAnnotationConverter {
 
@@ -111,11 +111,9 @@ public final class StepDefinitionAnnotationConverter {
     }
 
     private static Set<StepDefinitionAnnotation> getPatternVariants(final StepType stepType, String annotationText, final PsiAnnotation annotation) {
-        return new PatternVariantBuilder(annotationText)
-            .allVariants()
-            .stream()
-            .map(variant -> new StepDefinitionAnnotation(stepType, variant, annotation))
-            .collect(Collectors.toSet());
+        return map2Set(
+            new PatternVariantBuilder(annotationText).allVariants(),
+            variant -> new StepDefinitionAnnotation(stepType, variant, annotation));
     }
 
     /**

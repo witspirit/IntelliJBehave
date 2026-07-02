@@ -1,11 +1,6 @@
 package com.github.kumaraman21.intellijbehave.structure;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Pattern;
-import javax.swing.*;
+import static com.intellij.util.containers.ContainerUtil.exists;
 
 import com.github.kumaraman21.intellijbehave.highlighter.StoryTokenType;
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
@@ -23,6 +18,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Represents an item in the structure view for .story files created by {@link StoryStructureViewFactory}.
@@ -144,7 +145,7 @@ public class JBehaveStructureViewElement extends PsiTreeElementBase<PsiElement> 
     private boolean isASTWrapperWithAnyType(PsiElement element, StoryElementType... types) {
         if (element instanceof ASTWrapperPsiElement) {
             IElementType elementType = elementTypeOf(element);
-            return Arrays.stream(types).anyMatch(type -> elementType == type);
+            return exists(types, type -> elementType == type);
         }
         return false;
     }

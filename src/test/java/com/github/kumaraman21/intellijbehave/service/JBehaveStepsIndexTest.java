@@ -1,7 +1,7 @@
 package com.github.kumaraman21.intellijbehave.service;
 
 import static com.intellij.openapi.application.ReadAction.computeBlocking;
-import static java.util.stream.Collectors.toSet;
+import static com.intellij.util.containers.ContainerUtil.map2Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -88,9 +88,7 @@ class JBehaveStepsIndexTest extends ContentEntryTestBase {
         var stepDefinitions = JBehaveStepsIndex.getAllStepAnnotations(thenAnnotations.iterator().next(), scope);
 
         assertThat(stepDefinitions).hasSize(3);
-        var stepTexts = stepDefinitions.stream()
-            .map(annotation -> computeBlocking(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")))
-            .collect(toSet());
+        var stepTexts = map2Set(stepDefinitions, annotation -> computeBlocking(() -> AnnotationUtil.getStringAttributeValue(annotation, "value")));
 
         assertThat(stepTexts).containsExactlyInAnyOrder(
             "result ends with $text",

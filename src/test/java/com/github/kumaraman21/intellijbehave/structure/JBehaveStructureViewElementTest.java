@@ -1,9 +1,7 @@
 package com.github.kumaraman21.intellijbehave.structure;
 
+import static com.intellij.util.containers.ContainerUtil.map;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.stream.Collectors;
-import javax.swing.*;
 
 import com.github.kumaraman21.intellijbehave.language.JBehaveIcons;
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
@@ -12,6 +10,8 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+
+import javax.swing.*;
 
 /**
  * Functional test for {@link JBehaveStructureViewElement}.
@@ -82,8 +82,10 @@ public class JBehaveStructureViewElementTest extends BasePlatformTestCase {
                 "Given a step that is executed before each scenario\n" +
                 "Scenario: a scenario");
 
-        var children = new JBehaveStructureViewElement(getStoryElement(psiFile)).getChildrenBase()
-            .stream().map(StructureViewTreeElement::getValue).collect(Collectors.toList());
+        var children = map(
+            new JBehaveStructureViewElement(getStoryElement(psiFile)).getChildrenBase(),
+            StructureViewTreeElement::getValue
+        );
 
         assertThat(children).doesNotHaveAnyElementsOfTypes(JBehaveStep.class);
     }
