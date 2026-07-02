@@ -116,7 +116,7 @@ public final class JBehaveStepsIndex implements Disposable {
             Collection<PsiAnnotation> annotations = computeBlocking(() -> {
                 Project project = annClass.getProject();
                 Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
-                if (KotlinConfigKt.getPluginIsEnabled()) {
+                if (KotlinConfigKt.isKotlinPluginEnabled()) {
                     String annotationFqn = annClass.getQualifiedName();
                     if (annotationFqn != null) {
                         psiAnnotations.addAll(KotlinAnnotationsLoader.getAnnotations(QualifiedName.fromDottedString(annotationFqn), project, scope));

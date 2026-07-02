@@ -114,12 +114,6 @@ intellijPlatform {
     }
 }
 
-//Uncomment this to start the IDE with the K2 Kotlin compiler enabled
-//tasks.named<RunIdeTask>("runIde") {
-//    jvmArgumentProviders += CommandLineArgumentProvider {
-//        listOf("-Didea.kotlin.plugin.use.k2=true")
-//    }
-//}
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {

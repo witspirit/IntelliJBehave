@@ -82,7 +82,7 @@ public abstract class StepDefinitionIterator implements ContentIterator {
         if (!(psiFile instanceof PsiClassOwner psiClassOwner)) return PsiClass.EMPTY_ARRAY;
 
         PsiClass[] psiClasses = null;
-        if (KotlinConfigKt.getPluginIsEnabled()) {
+        if (KotlinConfigKt.isKotlinPluginEnabled()) {
             psiClasses = KotlinPsiClassesHandler.getPsiClasses(psiFile);
         }
 
