@@ -1,7 +1,8 @@
 package com.github.kumaraman21.intellijbehave
 
-import com.github.kumaraman21.intellijbehave.kotlin.pluginIsEnabled
+import com.github.kumaraman21.intellijbehave.kotlin.isKotlinPluginEnabled
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesHandler
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import kotlinx.coroutines.launch
 
 /**
  * Reacts to changes in JBehave Java step definition files.
@@ -23,11 +25,11 @@ import com.intellij.util.ui.update.Update
 class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChangeAdapter() {
 
     private val updateQueue = MergingUpdateQueue(
-      "JBehaveStepDefClassPsiChangeListener",
-      300, // ms delay
-      true, // activate
-      null,
-      JBehaveStepDefClassesModificationTracker.getInstance(project) // disposable parent
+        "JBehaveStepDefClassPsiChangeListener",
+        300, // ms delay
+        true, // activate
+        null,
+        JBehaveStepDefClassesModificationTracker.getInstance(project) // disposable parent
     )
 
     override fun childrenChanged(event: PsiTreeChangeEvent) = updateJBehaveTestClassModificationTracker(event)
@@ -40,13 +42,17 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
     private fun updateJBehaveTestClassModificationTracker(event: PsiTreeChangeEvent) {
         val file = event.file
         if (file != null && file.isValid) {
-          updateQueue.queue(Update.create(project) { updateModificationTrackerIfFileContainsJBehaveStepDefClass(file) })
+            updateQueue.queue(Update.create(project) { updateModificationTrackerIfFileContainsJBehaveStepDefClass(file) })
         }
         //file is null when the file has just been deleted
         else {
             val child = event.child
             if (child is PsiJavaFile && child.isValid) {
-              updateQueue.queue(Update.create(project) { updateModificationTrackerIfFileContainsJBehaveStepDefClass(child) })
+                updateQueue.queue(Update.create(project) {
+                    updateModificationTrackerIfFileContainsJBehaveStepDefClass(
+                        child
+                    )
+                })
             }
         }
     }
@@ -58,47 +64,53 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
      */
     private fun updateModificationTrackerIfFileContainsJBehaveStepDefClass(file: PsiFile) {
         if (!DumbService.isDumb(project)) {
-            val hasJBehaveStepDefTestClass = Ref<Boolean>()
-            if (file is PsiJavaFile) {
-                //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
-                file.accept(object : JavaRecursiveElementVisitor() {
-                    override fun visitClass(aClass: PsiClass) {
-                        if (isJavaJBehaveStepDefClass(aClass)) {
-                            hasJBehaveStepDefTestClass.set(true)
-                            return
-                        }
-                        super.visitClass(aClass)
-                    }
-                })
-            } else if (pluginIsEnabled && KotlinPsiClassesHandler.isKotlinFile(file)) {
-                if (KotlinPsiClassesHandler.visitClasses(file))
-                    hasJBehaveStepDefTestClass.set(true)
-            }
+            val tracker = JBehaveStepDefClassesModificationTracker.getInstance(project)
 
-            if (!hasJBehaveStepDefTestClass.isNull && hasJBehaveStepDefTestClass.get()) {
-                JBehaveStepDefClassesModificationTracker.getInstance(project).increaseModificationCount()
+            tracker.cs.launch {
+                val hasJBehaveStepDefTestClass = Ref<Boolean>()
+                if (file is PsiJavaFile) {
+                    //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
+                    file.accept(object : JavaRecursiveElementVisitor() {
+                        override fun visitClass(aClass: PsiClass) {
+                            if (isJavaJBehaveStepDefClass(aClass)) {
+                                hasJBehaveStepDefTestClass.set(true)
+                                return
+                            }
+                            super.visitClass(aClass)
+                        }
+                    })
+                } else if (isKotlinPluginEnabled && KotlinPsiClassesHandler.isKotlinFile(file)) {
+                    if (KotlinPsiClassesHandler.visitClasses(file))
+                        hasJBehaveStepDefTestClass.set(true)
+                }
+
+                if (!hasJBehaveStepDefTestClass.isNull && hasJBehaveStepDefTestClass.get()) {
+                    tracker.increaseModificationCount()
+                }
             }
         }
     }
 
     private fun isJavaJBehaveStepDefClass(aClass: PsiClass): Boolean {
         return try {
-            !aClass.isEnum
-                && !aClass.isRecord
-                && !aClass.isInterface
-                && aClass.qualifiedName != null
-                //Treat only the public methods of this class as step defs as the visitor also goes into nested and
-                // super classes, so listing methods from no need
-                && aClass.methods.asSequence().filter { it.hasModifierProperty(PsiModifier.PUBLIC) }.any {
-                  return@any try {
-                         it.hasAnnotation("org.jbehave.core.annotations.Given")
-                            || it.hasAnnotation("org.jbehave.core.annotations.When")
-                            || it.hasAnnotation("org.jbehave.core.annotations.Then")
-                            || it.hasAnnotation("org.jbehave.core.annotations.Alias")
-                            || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
-                            || it.hasAnnotation("org.jbehave.core.annotations.Composite")
-                } catch (_: Exception) {
-                    false
+            ReadAction.computeBlocking<Boolean, Exception> {
+                !aClass.isEnum
+                        && !aClass.isRecord
+                        && !aClass.isInterface
+                        && aClass.qualifiedName != null
+                        //Treat only the public methods of this class as step defs as the visitor also goes into nested and
+                        // super classes, so listing methods from no need
+                        && aClass.methods.asSequence().filter { it.hasModifierProperty(PsiModifier.PUBLIC) }.any {
+                    return@any try {
+                        it.hasAnnotation("org.jbehave.core.annotations.Given")
+                                || it.hasAnnotation("org.jbehave.core.annotations.When")
+                                || it.hasAnnotation("org.jbehave.core.annotations.Then")
+                                || it.hasAnnotation("org.jbehave.core.annotations.Alias")
+                                || it.hasAnnotation("org.jbehave.core.annotations.Aliases")
+                                || it.hasAnnotation("org.jbehave.core.annotations.Composite")
+                    } catch (_: Exception) {
+                        false
+                    }
                 }
             }
         } catch (_: Exception) {

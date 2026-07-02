@@ -15,7 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import static com.intellij.openapi.application.ReadAction.compute;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.github.kumaraman21.intellijbehave.service.JBehaveStepsIndex;
@@ -98,7 +98,7 @@ public class StepPsiReference extends CachingReference implements PsiPolyVariant
         for (var resolvedJavaStepDefinition : resolveToDefinitions()) {
             final PsiMethod method = resolvedJavaStepDefinition.getAnnotatedMethod();
             if (method != null && !resolvedElements.contains(method)) {
-                if (manager == null) manager = compute(() -> getElement().getManager());
+                if (manager == null) manager = computeBlocking(() -> getElement().getManager());
                 if (manager.areElementsEquivalent(method, element)) {
                     return true;
                 }
@@ -120,7 +120,7 @@ public class StepPsiReference extends CachingReference implements PsiPolyVariant
 
     @NotNull
     private Collection<JavaStepDefinition> resolveToDefinitions() {
-        return JBehaveStepsIndex.getInstance(compute(myStep::getProject)).findStepDefinitions(myStep);
+        return JBehaveStepsIndex.getInstance(computeBlocking(myStep::getProject)).findStepDefinitions(myStep);
     }
 
     @Override

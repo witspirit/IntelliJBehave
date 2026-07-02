@@ -8,4 +8,4 @@ import com.intellij.openapi.extensions.PluginId
  */
 private const val kotlinPluginId = "org.jetbrains.kotlin"
 
-val pluginIsEnabled = PluginManagerCore.getPlugin(PluginId.getId(kotlinPluginId))?.isEnabled ?: false
+val isKotlinPluginEnabled = !PluginManagerCore.isDisabled(PluginId.getId(kotlinPluginId))

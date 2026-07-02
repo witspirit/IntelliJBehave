@@ -1,6 +1,5 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -51,11 +50,11 @@ dependencies {
 
         //Required for 'junit.framework.TestCase' referenced in 'com.intellij.testFramework.UsefulTestCase'
         testImplementation(libs.junit)
-        testImplementation(libs.opentest4j)
-        testImplementation("org.assertj:assertj-core:3.27.0")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
+        testImplementation("org.assertj:assertj-core:3.27.7")
+        testImplementation("org.junit.platform:junit-platform-launcher:1.14.1")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
     }
 
     implementation("org.jbehave:jbehave-core:5.2.0") {
@@ -105,7 +104,6 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
-//            untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
     }
 
@@ -116,12 +114,6 @@ intellijPlatform {
     }
 }
 
-//Uncomment this to start the IDE with the K2 Kotlin compiler enabled
-//tasks.named<RunIdeTask>("runIde") {
-//    jvmArgumentProviders += CommandLineArgumentProvider {
-//        listOf("-Didea.kotlin.plugin.use.k2=true")
-//    }
-//}
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {

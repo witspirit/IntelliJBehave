@@ -15,7 +15,7 @@
  */
 package com.github.kumaraman21.intellijbehave.resolver;
 
-import static com.intellij.openapi.application.ReadAction.compute;
+import static com.intellij.openapi.application.ReadAction.computeBlocking;
 
 import com.github.kumaraman21.intellijbehave.kotlin.KotlinConfigKt;
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesHandler;
@@ -54,11 +54,11 @@ public abstract class StepDefinitionIterator implements ContentIterator {
     public boolean processFile(@NotNull VirtualFile virtualFile) {
         if (virtualFile.isDirectory()) return true;
 
-        var psiClasses = compute(() -> getPsiClasses(PsiManager.getInstance(project).findFile(virtualFile)));
+        var psiClasses = computeBlocking(() -> getPsiClasses(PsiManager.getInstance(project).findFile(virtualFile)));
 
         for (PsiClass psiClass : psiClasses) {
-            for (PsiMethod method : compute(psiClass::getMethods)) {
-                PsiAnnotation[] annotations = compute(() -> method.getModifierList().getApplicableAnnotations());
+            for (PsiMethod method : computeBlocking(psiClass::getMethods)) {
+                PsiAnnotation[] annotations = computeBlocking(() -> method.getModifierList().getApplicableAnnotations());
 
                 for (StepDefinitionAnnotation stepDefinitionAnnotation : StepDefinitionAnnotationConverter.convertFrom(annotations)) {
                     if ((stepType == null || Objects.equals(stepType, stepDefinitionAnnotation.stepType()))
@@ -82,7 +82,7 @@ public abstract class StepDefinitionIterator implements ContentIterator {
         if (!(psiFile instanceof PsiClassOwner psiClassOwner)) return PsiClass.EMPTY_ARRAY;
 
         PsiClass[] psiClasses = null;
-        if (KotlinConfigKt.getPluginIsEnabled()) {
+        if (KotlinConfigKt.isKotlinPluginEnabled()) {
             psiClasses = KotlinPsiClassesHandler.getPsiClasses(psiFile);
         }
 
