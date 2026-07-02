@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.70.0]
+### Changed
+- New supported IDE version range: 2026.1+.
+- Converted Kotlin step def class analysis to use the K2 Analysis API.
+- Other minor improvements.
+
 ## [1.69.2]
 ### Changed
 - Improved some of the step definition and annotation handling logic by reducing the number of `Stream` creations.
