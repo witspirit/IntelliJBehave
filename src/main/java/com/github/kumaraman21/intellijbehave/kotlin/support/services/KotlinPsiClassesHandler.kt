@@ -45,19 +45,21 @@ class KotlinPsiClassesHandler private constructor() {
          * If the file is not a Kotlin file, it returns false.
          */
         @JvmStatic
-        fun visitClasses(file: PsiFile): Boolean {
+        suspend fun visitClasses(file: PsiFile): Boolean {
             val hasJBehaveStepDefTestClass = Ref<Boolean>(false)
             if (file is KtFile) {
-                analyze(file) {
-                    file.accept(object : KotlinRecursiveElementVisitor() {
-                        override fun visitClass(aClass: KtClass) {
-                            if (isKotlinJBehaveStepDefClass(aClass)) {
-                                hasJBehaveStepDefTestClass.set(true)
-                                return
+                readAction {
+                    analyze(file) {
+                        file.accept(object : KotlinRecursiveElementVisitor() {
+                            override fun visitClass(aClass: KtClass) {
+                                if (isKotlinJBehaveStepDefClass(aClass)) {
+                                    hasJBehaveStepDefTestClass.set(true)
+                                    return
+                                }
+                                super.visitClass(aClass)
                             }
-                            super.visitClass(aClass)
-                        }
-                    })
+                        })
+                    }
                 }
             }
 

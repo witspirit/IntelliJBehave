@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.70.2]
+### Fixed
+- Added a missing read action wrapper that caused some exceptions regarding Kotlin class analysis for step def methods.
+
 ## [1.70.1]
 ### Fixed
 - Fixed a `PsiInvalidElementAccessException` that could happen when e.g. commenting out Java step annotations.
