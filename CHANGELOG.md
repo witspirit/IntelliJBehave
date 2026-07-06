@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.70.1]
+### Fixed
+- Fixed a `PsiInvalidElementAccessException` that could happen when e.g. commenting out Java step annotations.
+
 ## [1.70.0]
 ### Changed
 - New supported IDE version range: 2026.1+.
