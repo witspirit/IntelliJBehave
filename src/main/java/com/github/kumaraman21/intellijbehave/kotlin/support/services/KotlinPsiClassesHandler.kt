@@ -1,6 +1,5 @@
 package com.github.kumaraman21.intellijbehave.kotlin.support.services
 
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -70,25 +69,23 @@ class KotlinPsiClassesHandler private constructor() {
          */
         private fun KaSession.isKotlinJBehaveStepDefClass(aClass: KtClass): Boolean {
             return try {
-                ReadAction.computeBlocking<Boolean, Exception> {
-                    !aClass.isEnum()
-                            && !aClass.isInterface()
-                            &&  aClass.fqName != null
-                            && aClass.body?.functions?.asSequence()?.filter { it.isPublic }?.any {
-                        return@any try {
-                            it.symbol.annotations.any { ann ->
-                                ann.classId == GIVEN
-                                        || ann.classId == WHEN
-                                        || ann.classId == THEN
-                                        || ann.classId == ALIAS
-                                        || ann.classId == ALIASES
-                                        || ann.classId == COMPOSITE
-                            }
-                        } catch (_: Exception) {
-                            false
+                !aClass.isEnum()
+                        && !aClass.isInterface()
+                        && aClass.fqName != null
+                        && aClass.body?.functions?.asSequence()?.filter { it.isPublic }?.any {
+                    return@any try {
+                        it.symbol.annotations.any { ann ->
+                            ann.classId == GIVEN
+                                    || ann.classId == WHEN
+                                    || ann.classId == THEN
+                                    || ann.classId == ALIAS
+                                    || ann.classId == ALIASES
+                                    || ann.classId == COMPOSITE
                         }
-                    } == true
-                }
+                    } catch (_: Exception) {
+                        false
+                    }
+                } == true
             } catch (_: Exception) {
                 false
             }
