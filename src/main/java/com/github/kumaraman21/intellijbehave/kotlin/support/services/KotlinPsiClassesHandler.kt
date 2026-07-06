@@ -44,7 +44,6 @@ class KotlinPsiClassesHandler private constructor() {
          *
          * If the file is not a Kotlin file, it returns false.
          */
-        @JvmStatic
         suspend fun visitClasses(file: PsiFile): Boolean {
             val hasJBehaveStepDefTestClass = Ref<Boolean>(false)
             if (file is KtFile) {
