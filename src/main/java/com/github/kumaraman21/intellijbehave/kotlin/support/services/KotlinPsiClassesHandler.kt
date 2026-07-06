@@ -1,6 +1,7 @@
 package com.github.kumaraman21.intellijbehave.kotlin.support.services
 
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
@@ -35,7 +36,6 @@ class KotlinPsiClassesHandler private constructor() {
             psiFile.classes
         } else null
 
-        @JvmStatic
         fun isKotlinFile(psiFile: PsiFile): Boolean = psiFile is KtFile
 
         /**
