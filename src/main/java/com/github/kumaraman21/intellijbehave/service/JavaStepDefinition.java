@@ -5,6 +5,7 @@ import static com.intellij.openapi.application.ReadAction.computeBlocking;
 
 import com.github.kumaraman21.intellijbehave.parser.JBehaveStep;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -26,7 +27,7 @@ public final class JavaStepDefinition {
     private static final StepPatternParser STEP_PATTERN_PARSER = new RegexPrefixCapturingPatternParser();
     private final SmartPsiElementPointer<PsiAnnotation> annotationPointer;
 
-    public JavaStepDefinition(PsiAnnotation annotation) {
+    public JavaStepDefinition(PsiAnnotation annotation) throws PsiInvalidElementAccessException {
         annotationPointer = computeBlocking(() -> SmartPointerManager.getInstance(annotation.getProject()).createSmartPsiElementPointer(annotation));
     }
 

@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
@@ -89,7 +90,12 @@ public final class JBehaveStepsIndex implements Disposable {
 
         for (PsiClass stepAnnotation : asList(stepAnnotations.given(), stepAnnotations.when(), stepAnnotations.then())) {
             for (PsiAnnotation stepDefAnnotation : getAllStepAnnotations(stepAnnotation, dependenciesScope)) {
-                javaStepDefs.add(new JavaStepDefinition(stepDefAnnotation));
+                try {
+                    javaStepDefs.add(new JavaStepDefinition(stepDefAnnotation));
+                } catch (PsiInvalidElementAccessException e) {
+                    //Fall through
+                    // If the creation of the Java step definition fails, no step def is added for the annotation.
+                }
             }
         }
 
