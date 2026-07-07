@@ -3,6 +3,7 @@ package com.github.kumaraman21.intellijbehave
 import com.github.kumaraman21.intellijbehave.kotlin.isKotlinPluginEnabled
 import com.github.kumaraman21.intellijbehave.kotlin.support.services.KotlinPsiClassesHandler
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -69,16 +70,18 @@ class JBehaveStepDefClassPsiChangeListener(val project: Project) : PsiTreeChange
             tracker.cs.launch {
                 val hasJBehaveStepDefTestClass = Ref<Boolean>()
                 if (file is PsiJavaFile) {
-                    //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
-                    file.accept(object : JavaRecursiveElementVisitor() {
-                        override fun visitClass(aClass: PsiClass) {
-                            if (isJavaJBehaveStepDefClass(aClass)) {
-                                hasJBehaveStepDefTestClass.set(true)
-                                return
+                    readAction {
+                        //If it finds a JBehave step def class in the file, then modification tracker will be eligible for update
+                        file.accept(object : JavaRecursiveElementVisitor() {
+                            override fun visitClass(aClass: PsiClass) {
+                                if (isJavaJBehaveStepDefClass(aClass)) {
+                                    hasJBehaveStepDefTestClass.set(true)
+                                    return
+                                }
+                                super.visitClass(aClass)
                             }
-                            super.visitClass(aClass)
-                        }
-                    })
+                        })
+                    }
                 } else if (isKotlinPluginEnabled && KotlinPsiClassesHandler.isKotlinFile(file)) {
                     if (KotlinPsiClassesHandler.visitClasses(file))
                         hasJBehaveStepDefTestClass.set(true)

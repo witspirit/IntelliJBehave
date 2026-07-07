@@ -1,6 +1,6 @@
 package com.github.kumaraman21.intellijbehave.kotlin.support.services
 
-import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
@@ -35,7 +35,6 @@ class KotlinPsiClassesHandler private constructor() {
             psiFile.classes
         } else null
 
-        @JvmStatic
         fun isKotlinFile(psiFile: PsiFile): Boolean = psiFile is KtFile
 
         /**
@@ -44,20 +43,21 @@ class KotlinPsiClassesHandler private constructor() {
          *
          * If the file is not a Kotlin file, it returns false.
          */
-        @JvmStatic
-        fun visitClasses(file: PsiFile): Boolean {
+        suspend fun visitClasses(file: PsiFile): Boolean {
             val hasJBehaveStepDefTestClass = Ref<Boolean>(false)
             if (file is KtFile) {
-                analyze(file) {
-                    file.accept(object : KotlinRecursiveElementVisitor() {
-                        override fun visitClass(aClass: KtClass) {
-                            if (isKotlinJBehaveStepDefClass(aClass)) {
-                                hasJBehaveStepDefTestClass.set(true)
-                                return
+                readAction {
+                    analyze(file) {
+                        file.accept(object : KotlinRecursiveElementVisitor() {
+                            override fun visitClass(aClass: KtClass) {
+                                if (isKotlinJBehaveStepDefClass(aClass)) {
+                                    hasJBehaveStepDefTestClass.set(true)
+                                    return
+                                }
+                                super.visitClass(aClass)
                             }
-                            super.visitClass(aClass)
-                        }
-                    })
+                        })
+                    }
                 }
             }
 
@@ -69,25 +69,23 @@ class KotlinPsiClassesHandler private constructor() {
          */
         private fun KaSession.isKotlinJBehaveStepDefClass(aClass: KtClass): Boolean {
             return try {
-                ReadAction.computeBlocking<Boolean, Exception> {
-                    !aClass.isEnum()
-                            && !aClass.isInterface()
-                            &&  aClass.fqName != null
-                            && aClass.body?.functions?.asSequence()?.filter { it.isPublic }?.any {
-                        return@any try {
-                            it.symbol.annotations.any { ann ->
-                                ann.classId == GIVEN
-                                        || ann.classId == WHEN
-                                        || ann.classId == THEN
-                                        || ann.classId == ALIAS
-                                        || ann.classId == ALIASES
-                                        || ann.classId == COMPOSITE
-                            }
-                        } catch (_: Exception) {
-                            false
+                !aClass.isEnum()
+                        && !aClass.isInterface()
+                        && aClass.fqName != null
+                        && aClass.body?.functions?.asSequence()?.filter { it.isPublic }?.any {
+                    return@any try {
+                        it.symbol.annotations.any { ann ->
+                            ann.classId == GIVEN
+                                    || ann.classId == WHEN
+                                    || ann.classId == THEN
+                                    || ann.classId == ALIAS
+                                    || ann.classId == ALIASES
+                                    || ann.classId == COMPOSITE
                         }
-                    } == true
-                }
+                    } catch (_: Exception) {
+                        false
+                    }
+                } == true
             } catch (_: Exception) {
                 false
             }
