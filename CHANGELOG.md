@@ -4,7 +4,7 @@
 
 ## [1.70.2]
 ### Fixed
-- Added a missing read action wrapper that caused some exceptions regarding Kotlin class analysis for step def methods.
+- Added missing read action wrappers that caused exceptions regarding Java and Kotlin class analysis for step def methods.
 
 ## [1.70.1]
 ### Fixed
