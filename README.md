@@ -8,6 +8,8 @@ IntelliJ IDEA Plugin for JBehave
 <!-- Plugin description -->
 This plugin provides some support for JBehave. It is a fork of IntelliJBehave, originally created by Aman Kumar.
 
+**NOTE**: This project is now looking for a maintainer. You can find contact information in the project's `plugin.xml` under vendor details.
+
 ## Features
 
 The plugin provides the following features:

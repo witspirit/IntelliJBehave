@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.70.3]
+### Changed
+- No functional changes. The readme and plugin description now mention that the project is looking for a maintainer.
+
 ## [1.70.2]
 ### Fixed
 - Added missing read action wrappers that caused exceptions regarding Java and Kotlin class analysis for step def methods.
